@@ -14,6 +14,7 @@ class Mongo {
         this.alerts = this.db.collection("alerts");
         this.sensors = this.db.collection("sensors");
         this.users = this.db.collection("users");
+        this.apikeys = this.db.collection("apikeys");
         console.log("Connected to MongoDB successfully");
         
 
@@ -34,5 +35,6 @@ Mongo.db = null
 Mongo.alerts = null
 Mongo.sensors = null
 Mongo.users = null
+Mongo.apikeys = null
 
 module.exports = { Mongo }
