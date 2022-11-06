@@ -105,3 +105,6 @@ dist
 
 # API keys
 api-keys
+
+# Mongo Credentials
+X509-cert-1301818279006279178.pem
