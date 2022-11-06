@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-//GET | /data?sensor=name | Returns all sensor data in json format
+//GET | /data?key=apikey&sensor=name | Returns all sensor data in json format
 
 router.get("/", async (req, res, next) => {
 
@@ -20,7 +20,7 @@ router.get("/", async (req, res, next) => {
         const sensor_api = require('../api/sensor_api');
         const data = await sensor_api.getSensorData(sensor);
         res.json(data);
-        
+
     } else {
         res.send("Invalid API key")
     }
