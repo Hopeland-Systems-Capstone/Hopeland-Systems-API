@@ -41,6 +41,19 @@ async function createSensor(name, latitude, longitude) {
 }
 
 /**
+ * Delete a sensor given a name
+ * @param {String} name
+ */
+ async function deleteSensor(name) {
+    const result = Mongo.sensors.deleteOne({
+        "name":`${name}`,
+    });
+    if (result.deletedCount === 1) {
+        console.log(`Deleted sensor with name: ${name}.`);
+    }
+}
+
+/**
  * Get sensor data given sensor name
  * @param {String} name
  */
@@ -58,4 +71,5 @@ async function getSensorData(name) {
 }
 
 exports.createSensor = createSensor;
+exports.deleteSensor = deleteSensor;
 exports.getSensorData = getSensorData;
