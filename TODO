@@ -1,5 +1,6 @@
 - API for adding new sensor data
 - API for retrieving alerts given parameters
+- API to return all sensors within distance of geolocation
 - Ability to add filter to data query for sensors
 
 - User data (TBD)
