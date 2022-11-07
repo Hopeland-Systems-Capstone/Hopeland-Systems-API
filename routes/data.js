@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
+const limiter = require('./rate_limit/rate_limiting').limiter
 
 //GET | /data?key=apikey&sensor=name | Returns all sensor data in json format
 
-router.get("/", async (req, res, next) => {
+router.get("/", limiter, async (req, res, next) => {
 
     const key = req.query.key;
     if (key == null) {

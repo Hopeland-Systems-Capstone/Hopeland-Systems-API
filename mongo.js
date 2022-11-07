@@ -23,9 +23,14 @@ class Mongo {
 
     static async initializeSimulation() { //TODO: Delete this
         const sensor_api = require('./api/sensor_api')
-        sensor_api.createSensor("sensor1",100,100);
-        sensor_api.createSensor("sensor2",200,200);
-        sensor_api.createSensor("sensor3",5.5,1.1);
+        await sensor_api.createSensor("sensor1",100,100);
+        await sensor_api.createSensor("sensor2",200,200);
+        await sensor_api.createSensor("sensor3",5.5,1.1);
+
+        //const apikeys_api = require('./api/apikeys_api')
+        //const level = await apikeys_api.getKeyLevel("aaa");
+        //console.log(level);
+
     }
 
 }
