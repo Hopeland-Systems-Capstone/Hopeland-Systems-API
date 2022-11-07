@@ -1,6 +1,5 @@
 - API for adding new sensor data
 - API for retrieving alerts given parameters
-- Add epoch time data to alerts when created in API
 - Ability to add filter to data query for sensors
 
 - User data (TBD)
