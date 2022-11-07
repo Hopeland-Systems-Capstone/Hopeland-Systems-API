@@ -12,6 +12,16 @@ class Mongo {
         this.client = await client.connect();
         this.db = this.client.db("hopelandsystems");
         this.alerts = this.db.collection("alerts");
+        
+        if (! await this.alerts.findOne({
+            "_id":"alert_id"
+        })) {
+            this.alerts.insertOne({
+                "_id":"alert_id",
+                "sequencevalue":0
+            });
+        }
+
         this.sensors = this.db.collection("sensors");
         this.users = this.db.collection("users");
         this.apikeys = this.db.collection("apikeys");
@@ -26,6 +36,9 @@ class Mongo {
         await sensor_api.createSensor("sensor1",100,100);
         await sensor_api.createSensor("sensor2",200,200);
         await sensor_api.createSensor("sensor3",5.5,1.1);
+        
+        //const alerts_api = require("./api/alerts_api");
+        //alerts_api.createAlert("New Alert", "This is a test alert");
 
         //const apikeys_api = require('./api/apikeys_api')
         //const level = await apikeys_api.getKeyLevel("aaa");
