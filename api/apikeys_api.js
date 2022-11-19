@@ -55,19 +55,19 @@ async function getKeyLevel(key) {
  * @param {Number} level
  */
  async function updateKeyLevel(key, level) {
-    const exists = await Mongo.apikeys.updateOne({
+    await Mongo.apikeys.updateOne({
         "key":`${key}`
     }, {
         $set: {
             "level":`${level}`
         }
+    }).then((res) => {
+        if (res.matchedCount > 0) {
+            console.log(`Changed level for API key ${key} to ${level}.`);
+        } else {
+            console.log(`Key ${key} does not exist.`);
+        } 
     });
-    if (exists) {
-        console.log(`Changed level for API key ${key} to ${level}.`);   
-    } else {
-        console.log(`Key ${key} does not exist.`);
-        return;
-    }
 }
 
 /**
