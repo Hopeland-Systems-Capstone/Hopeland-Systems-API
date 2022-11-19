@@ -54,7 +54,7 @@ async function getAlerts(from, to, days, amount) {
     toDefined = !isNaN(to)
     daysDefined = !isNaN(days)
 
-    const result = Mongo.alerts.find({
+    const result = await Mongo.alerts.find({
         "time":
         (fromDefined && toDefined) ? {$gte: from, $lte: to} :
         fromDefined ? {$gte: from} :
@@ -63,6 +63,9 @@ async function getAlerts(from, to, days, amount) {
         {$gte: 0}
     }
     ).sort({"_id":-1}).limit(amount).toArray();
+
+    console.log(`Returning ${result.length} alerts given parameters from ${from}, to ${to}, days ${days}, and amount ${amount}.`);
+
     return result;
 
 }
