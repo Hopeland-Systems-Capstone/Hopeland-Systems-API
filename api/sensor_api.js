@@ -19,8 +19,8 @@ async function createSensor(name, latitude, longitude) {
     Mongo.sensors.insertOne({
         "name":`${name}`,
         "geolocation":{
-            "latitude":`${latitude}`,
-            "longitude":`${longitude}`
+            "type": "Point",
+            "coordinates": [ latitude, longitude]
         },
         "battery":[
             //{
@@ -51,6 +51,16 @@ async function createSensor(name, latitude, longitude) {
     if (result.deletedCount === 1) {
         console.log(`Deleted sensor with name: ${name}.`);
     }
+}
+
+/**
+ * Get sensors given geolocation
+ * @param {Number} latitude
+ * @param {Number} longitude
+ * @param {Number} distance_kilometers Distance within geolocation in kilometers
+ */
+async function getSensorsByGeolocation(latitude, longitude, distance_kilometers) {
+
 }
 
 /**
@@ -108,5 +118,6 @@ async function getSensorData(name) {
 
 exports.createSensor = createSensor;
 exports.deleteSensor = deleteSensor;
+exports.getSensorsByGeolocation = getSensorsByGeolocation;
 exports.getSensorData = getSensorData;
 exports.addSensorData = addSensorData;
