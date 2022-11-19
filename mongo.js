@@ -44,8 +44,8 @@ class Mongo {
         await sensor_api.createSensor("sensor2",50,70);
         await sensor_api.createSensor("sensor3",5.5,1.1);
 
-        const sensors = await sensor_api.getSensorsByGeolocation(0,0,1000000);
-        console.log(sensors);
+        //const sensors = await sensor_api.getSensorsByGeolocation(0,0,1000000);
+        //console.log(sensors);
 
         //await sensor_api.addSensorData("sensor3", "battery", 100)
         
