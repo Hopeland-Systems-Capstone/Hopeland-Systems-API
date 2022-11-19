@@ -14,10 +14,27 @@
 
 #
 ## Install Packages
-    npm install
+```
+npm install
+```
 
 ## Run in development mode
-    npm run dev
+```
+npm run dev
+```
+
+## Run normally
+```
+npm start
+```
+
+## Docker
+```
+docker build -t hopeland/backend-api:1.0 .
+```
+```
+docker run -p 3000:3000 hopeland/backend-api:1.0
+```
 
 # API Usage
 ## Sensors:
