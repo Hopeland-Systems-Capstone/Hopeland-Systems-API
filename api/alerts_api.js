@@ -41,5 +41,32 @@ async function createAlert(title,alert) {
     }
 }
 
+/**
+ * Get alerts given parameters. Returns alerts from newest to oldest.
+ * @param {Number} from epoch start time
+ * @param {Number} to epoch end time
+ * @param {Number} days how many days back to go
+ * @param {Number} amount max amount of alerts to return
+ */
+async function getAlerts(from, to, days, amount) {
+    
+    fromDefined = !isNaN(from)
+    toDefined = !isNaN(to)
+    daysDefined = !isNaN(days)
+
+    const result = Mongo.alerts.find({
+        "time":
+        (fromDefined && toDefined) ? {$gte: from, $lte: to} :
+        fromDefined ? {$gte: from} :
+        toDefined ? {$lte: to} :
+        daysDefined ? {$gte: (Date.now()-(days*86400*1000))} :
+        {$gte: 0}
+    }
+    ).sort({"_id":-1}).limit(amount).toArray();
+    return result;
+
+}
+
 exports.createAlert = createAlert;
 exports.deleteAlert = deleteAlert;
+exports.getAlerts = getAlerts
