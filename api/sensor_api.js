@@ -70,6 +70,43 @@ async function getSensorData(name) {
     return JSON.parse(JSON.stringify(exists));
 }
 
+/**
+ * Add new battery, temperature, humidity, or pressure data to sensor
+ * @param {String} sensor_name
+ * @param {String} data_type
+ * @param {Number} temperature
+ */
+ async function addSensorData(sensor_name, data_type, value) {
+
+    if (data_type != "battery" && data_type != "temperature" && data_type != "humidity" && data_type != "pressure") {
+        console.log(`Invalid data type ${data_type}.`);
+        return;
+    }
+
+    time = Date.now()
+
+    var key = data_type.toLowerCase(),
+    new_data = {
+        [key]: {
+            "time":time,
+            "value":value
+        }
+    };
+
+    await Mongo.sensors.updateOne({
+        "name":`${sensor_name}`
+    }, {
+        $push: new_data
+    }).then((res) => {
+        if (res.matchedCount > 0) {
+            console.log(`Added ${data_type} of ${value} at ${time} to sensor ${sensor_name}.`);
+        } else {
+            console.log(`Sensor with name ${sensor_name} does not exist.`);
+        } 
+    });
+}
+
 exports.createSensor = createSensor;
 exports.deleteSensor = deleteSensor;
 exports.getSensorData = getSensorData;
+exports.addSensorData = addSensorData;

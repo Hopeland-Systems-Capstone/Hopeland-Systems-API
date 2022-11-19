@@ -36,6 +36,8 @@ class Mongo {
         await sensor_api.createSensor("sensor1",100,100);
         await sensor_api.createSensor("sensor2",200,200);
         await sensor_api.createSensor("sensor3",5.5,1.1);
+
+        //await sensor_api.addSensorData("sensor3", "battery", 100)
         
         //const alerts_api = require("./api/alerts_api");
         //alerts_api.createAlert("New Alert", "This is a test alert");
