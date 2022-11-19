@@ -1,12 +1,17 @@
 const { Mongo } = require('../mongo.js');
 
 /**
- * Create a new sensor given a name, latitude, and longitude
+ * Create a new sensor given a name, longitude, and latitude
  * @param {String} name
- * @param {Number} latitude
  * @param {Number} longitude
+ * @param {Number} latitude
  */
-async function createSensor(name, latitude, longitude) {
+async function createSensor(name, longitude, latitude) {
+
+    if (longitude > 180 || longitude < -180 || latitude > 90 || latitude < -90) {
+        console.log(`Invalid longitude/longitude`);
+        return;
+    }
 
     const exists = await Mongo.sensors.findOne({
         "name":`${name}`
@@ -20,7 +25,7 @@ async function createSensor(name, latitude, longitude) {
         "name":`${name}`,
         "geolocation":{
             "type": "Point",
-            "coordinates": [ latitude, longitude]
+            "coordinates": [ longitude, latitude]
         },
         "battery":[
             //{
@@ -37,7 +42,7 @@ async function createSensor(name, latitude, longitude) {
         "pressure":[
         ]
     });
-    console.log(`Created new sensor with name: ${name}, at ${latitude},${longitude}.`);
+    console.log(`Created new sensor with name: ${name}, at ${longitude},${latitude}.`);
 }
 
 /**
@@ -55,12 +60,32 @@ async function createSensor(name, latitude, longitude) {
 
 /**
  * Get sensors given geolocation
- * @param {Number} latitude
  * @param {Number} longitude
- * @param {Number} distance_kilometers Distance within geolocation in kilometers
+ * @param {Number} latitude
+ * @param {Number} distance_kilometers Distance within geolocation in meters
  */
-async function getSensorsByGeolocation(latitude, longitude, distance_kilometers) {
+async function getSensorsByGeolocation(longitude, latitude, distance_meters) {
 
+    if (longitude > 180 || longitude < -180 || latitude > 90 || latitude < -90) {
+        console.log(`Invalid longitude/longitude`);
+        return;
+    }
+
+    const result = await Mongo.sensors.find({
+        "geolocation": {
+            $nearSphere: {
+                $geometry: {
+                    "type": "Point",
+                    "coordinates": [longitude, latitude]
+                },
+                $maxDistance: distance_meters
+            }
+        }
+    }).toArray();
+
+    console.log(`Returning ${result.length} sensors within ${distance_meters} meters of longitude: ${longitude}, latitude: ${latitude}.`);
+
+    return result;
 }
 
 /**

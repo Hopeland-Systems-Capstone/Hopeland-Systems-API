@@ -23,6 +23,7 @@ class Mongo {
         }
 
         this.sensors = this.db.collection("sensors");
+        this.initializeGeospacialIndex();
         this.users = this.db.collection("users");
         this.apikeys = this.db.collection("apikeys");
         console.log("Connected to MongoDB successfully");
@@ -31,11 +32,20 @@ class Mongo {
         this.initializeSimulation(); //TODO: Delete this
     }
 
+    static async initializeGeospacialIndex() {
+        await this.sensors.createIndex({
+            "geolocation":'2dsphere'
+        });
+    }
+
     static async initializeSimulation() { //TODO: Delete this
         const sensor_api = require('./api/sensor_api')
-        await sensor_api.createSensor("sensor1",100,100);
+        await sensor_api.createSensor("sensor1",0,0);
         await sensor_api.createSensor("sensor2",50,70);
         await sensor_api.createSensor("sensor3",5.5,1.1);
+
+        const sensors = await sensor_api.getSensorsByGeolocation(0,0,1000000);
+        console.log(sensors);
 
         //await sensor_api.addSensorData("sensor3", "battery", 100)
         
