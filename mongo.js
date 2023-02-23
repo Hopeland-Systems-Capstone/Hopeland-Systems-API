@@ -23,6 +23,16 @@ class Mongo {
         }
 
         this.sensors = this.db.collection("sensors");
+
+        if (! await this.sensors.findOne({
+            "_id":"sensor_id"
+        })) {
+            this.sensors.insertOne({
+                "_id":"sensor_id",
+                "sequencevalue":0
+            });
+        }
+
         this.initializeGeospacialIndex();
         this.users = this.db.collection("users");
         this.apikeys = this.db.collection("apikeys");

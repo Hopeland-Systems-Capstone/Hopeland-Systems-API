@@ -1,6 +1,18 @@
 const { Mongo } = require('../mongo.js');
 
 /**
+ * Returns next sensor id
+ * @returns {Number}
+ */
+async function getNextSensorID() {
+    const sequence = await Mongo.sensors.findOneAndUpdate({
+       "_id":`sensor_id`
+    },{ $inc: { "sequencevalue":1 },},{ new:true }
+    );
+    return sequence.value.sequencevalue;
+ }
+
+/**
  * Create a new sensor given a name, longitude, and latitude
  * @param {String} name
  * @param {Number} longitude
@@ -21,7 +33,9 @@ async function createSensor(name, longitude, latitude) {
         return;
     }
 
+    const sensor_id = await getNextSensorID();
     Mongo.sensors.insertOne({
+        "sensor_id":sensor_id,
         "name":`${name}`,
         "geolocation":{
             "type": "Point",
