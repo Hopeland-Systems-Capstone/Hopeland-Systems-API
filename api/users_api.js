@@ -174,6 +174,56 @@ async function verifyEmailPasswordCombo(email, hashed_password) {
     return true;
 }
 
+/**
+ * Add a sensor to a user's list of sensors
+ * @param {String} username
+ * @param {Number} sensor_id
+ */
+async function addSensorToUserWithUsername(name, sensor_id) {
+    await Mongo.users.updateOne({
+        "name":`${name}`
+    }, {
+        $addToSet: {
+            "sensors": sensor_id
+        }
+    }).then((res) => {
+        if (res.matchedCount > 0) {
+            if (res.modifiedCount > 0) {
+                console.log(`Added sensor with sensor_id ${sensor_id} to ${name}'s sensors.`);
+            } else {
+                console.log(`Sensor with sensor_id ${sensor_id} already exists in ${name}'s sensors.`);
+            }
+        } else {
+            console.log(`User with username ${name} does not exist.`);
+        } 
+    });
+}
+
+/**
+ * Add a sensor to a user's list of sensors
+ * @param {String} email
+ * @param {Number} sensor_id
+ */
+async function addSensorToUserWithEmail(email, sensor_id) {
+    await Mongo.users.updateOne({
+        "email":`${email}`
+    }, {
+        $addToSet: {
+            "sensors": sensor_id
+        }
+    }).then((res) => {
+        if (res.matchedCount > 0) {
+            if (res.modifiedCount > 0) {
+                console.log(`Added sensor with sensor_id ${sensor_id} to ${email}'s sensors.`);
+            } else {
+                console.log(`Sensor with sensor_id ${sensor_id} already exists in ${email}'s sensors.`);
+            }
+        } else {
+            console.log(`User with email ${email} does not exist.`);
+        } 
+    });
+}
+
 exports.createUser = createUser;
 exports.deleteUser = deleteUser;
 exports.getUserByUsername = getUserByUsername;
@@ -182,3 +232,5 @@ exports.getUserSensorsByUsername = getUserSensorsByUsername;
 exports.getUserSensorsByEmail = getUserSensorsByEmail;
 exports.verifyUsernamePasswordCombo = verifyUsernamePasswordCombo;
 exports.verifyEmailPasswordCombo = verifyEmailPasswordCombo;
+exports.addSensorToUserWithUsername = addSensorToUserWithUsername;
+exports.addSensorToUserWithEmail = addSensorToUserWithEmail;

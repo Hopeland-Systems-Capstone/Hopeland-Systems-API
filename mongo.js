@@ -69,6 +69,9 @@ class Mongo {
         await users_api.createUser("Jacob", "jdpark10@asu.edu", "aaa");
         await users_api.createUser("Sunil", "sbinstoc@asu.edu", "aaa");
 
+        await users_api.addSensorToUserWithUsername("Jacob",1);
+        await users_api.addSensorToUserWithUsername("Jacob",2);
+
         //const sensors = await sensor_api.getSensorsByGeolocation(0,0,1000000);
         //console.log(sensors);
 
