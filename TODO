@@ -1,2 +1,3 @@
-- User data (TBD)
 - Ability to add/remove users from sensors
+- Ability to verify if username/hashed password combo is valid
+- Ability to verify if email/hashed password combo is valid
