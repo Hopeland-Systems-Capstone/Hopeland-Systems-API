@@ -224,6 +224,56 @@ async function addSensorToUserWithEmail(email, sensor_id) {
     });
 }
 
+/**
+ * Remove a sensor from a user's list of sensors
+ * @param {String} username
+ * @param {Number} sensor_id
+ */
+async function removeSensorFromUserWithUsername(name, sensor_id) {
+    await Mongo.users.updateOne({
+        "name":`${name}`
+    }, {
+        $pull: {
+            "sensors": sensor_id
+        }
+    }).then((res) => {
+        if (res.matchedCount > 0) {
+            if (res.modifiedCount > 0) {
+                console.log(`Removed sensor with sensor_id ${sensor_id} from ${name}'s sensors.`);
+            } else {
+                console.log(`Sensor with sensor_id ${sensor_id} does not exist in ${name}'s sensors.`);
+            }
+        } else {
+            console.log(`User with username ${name} does not exist.`);
+        } 
+    });
+}
+
+/**
+ * Remove a sensor from a user's list of sensors
+ * @param {String} email
+ * @param {Number} sensor_id
+ */
+async function removeSensorFromUserWithEmail(email, sensor_id) {
+    await Mongo.users.updateOne({
+        "email":`${email}`
+    }, {
+        $pull: {
+            "sensors": sensor_id
+        }
+    }).then((res) => {
+        if (res.matchedCount > 0) {
+            if (res.modifiedCount > 0) {
+                console.log(`Removed sensor with sensor_id ${sensor_id} from ${email}'s sensors.`);
+            } else {
+                console.log(`Sensor with sensor_id ${sensor_id} does not exist in ${email}'s sensors.`);
+            }
+        } else {
+            console.log(`User with email ${email} does not exist.`);
+        } 
+    });
+}
+
 exports.createUser = createUser;
 exports.deleteUser = deleteUser;
 exports.getUserByUsername = getUserByUsername;
@@ -234,3 +284,5 @@ exports.verifyUsernamePasswordCombo = verifyUsernamePasswordCombo;
 exports.verifyEmailPasswordCombo = verifyEmailPasswordCombo;
 exports.addSensorToUserWithUsername = addSensorToUserWithUsername;
 exports.addSensorToUserWithEmail = addSensorToUserWithEmail;
+exports.removeSensorFromUserWithUsername = removeSensorFromUserWithUsername;
+exports.removeSensorFromUserWithEmail = removeSensorFromUserWithEmail;

@@ -71,6 +71,9 @@ class Mongo {
 
         await users_api.addSensorToUserWithUsername("Jacob",1);
         await users_api.addSensorToUserWithUsername("Jacob",2);
+        await users_api.addSensorToUserWithUsername("Jacob",3);
+        await users_api.removeSensorFromUserWithUsername("Jacob",3);
+        await users_api.removeSensorFromUserWithUsername("Jacob",3);
 
         //const sensors = await sensor_api.getSensorsByGeolocation(0,0,1000000);
         //console.log(sensors);
