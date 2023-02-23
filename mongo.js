@@ -34,7 +34,18 @@ class Mongo {
         }
 
         this.initializeGeospacialIndex();
+
         this.users = this.db.collection("users");
+
+        if (! await this.users.findOne({
+            "_id":"user_id"
+        })) {
+            this.users.insertOne({
+                "_id":"user_id",
+                "sequencevalue":0
+            });
+        }
+
         this.apikeys = this.db.collection("apikeys");
         console.log("Connected to MongoDB successfully");
         
@@ -49,10 +60,14 @@ class Mongo {
     }
 
     static async initializeSimulation() { //TODO: Delete this
-        const sensor_api = require('./api/sensor_api')
+        const sensor_api = require('./api/sensor_api');
         await sensor_api.createSensor("sensor1",0,0);
         await sensor_api.createSensor("sensor2",50,70);
         await sensor_api.createSensor("sensor3",5.5,1.1);
+
+        const users_api = require('./api/users_api');
+        await users_api.createUser("Jacob", "jdpark10@asu.edu", "aaa");
+        await users_api.createUser("Sunil", "sbinstoc@asu.edu", "aaa");
 
         //const sensors = await sensor_api.getSensorsByGeolocation(0,0,1000000);
         //console.log(sensors);
