@@ -136,9 +136,49 @@ async function getUserSensorsByEmail(email) {
     return JSON.parse(JSON.stringify(exists));
 }
 
+/**
+ * Check if a username/password combo is correct
+ * @param {String} name
+ * @param {String} hashed_password
+ */
+async function verifyUsernamePasswordCombo(name, hashed_password) {
+
+    const exists = await Mongo.users.findOne({
+        "name":`${name}`,
+        "password":`${hashed_password}`
+    });
+    if (!exists) {
+        console.log(`Username ${name} with hashed password ${hashed_password} is invalid.`);
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * Check if a email/password combo is correct
+ * @param {String} email
+ * @param {String} hashed_password
+ */
+async function verifyEmailPasswordCombo(email, hashed_password) {
+
+    const exists = await Mongo.users.findOne({
+        "email":`${email}`,
+        "password":`${hashed_password}`
+    });
+    if (!exists) {
+        console.log(`Email ${email} with hashed password ${hashed_password} is invalid.`);
+        return false;
+    }
+
+    return true;
+}
+
 exports.createUser = createUser;
 exports.deleteUser = deleteUser;
 exports.getUserByUsername = getUserByUsername;
 exports.getUserByEmail = getUserByEmail;
 exports.getUserSensorsByUsername = getUserSensorsByUsername;
 exports.getUserSensorsByEmail = getUserSensorsByEmail;
+exports.verifyUsernamePasswordCombo = verifyUsernamePasswordCombo;
+exports.verifyEmailPasswordCombo = verifyEmailPasswordCombo;
