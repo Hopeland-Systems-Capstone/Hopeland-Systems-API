@@ -102,6 +102,45 @@ apikeys_api.getKeyLevel("4124bc0a9335c27f086f24ba207a4912");
 apikeys_api.updateKeyLevel("4124bc0a9335c27f086f24ba207a4912", 1);
 ```
 
+## Users:
+```javascript
+// Create a user with a name, username, and password
+users_api.createUser("User1","user1@gmail.com","xxxx");
+
+// Delete the user with user_id 0
+users_api.deleteUser(0);
+
+// Get the user who's name is User1
+users_api.getUserByUsername("User1");
+
+// Get the user who's email is user1@gmail.com
+users_api.getUserByEmail("user1@gmail.com");
+
+// Get all sensors User1 has access to
+users_api.getUserSensorsByUsername("User1");
+
+// Get all sensors user1@gmail.com has access to
+users_api.getUserSensorsByEmail("user1@gmail.com");
+
+// Check if User1's hashed password is xxxx
+users_api.verifyUsernamePasswordCombo("User1","xxxx");
+
+// Check if user1@gmail.com's hashed password is xxxx
+users_api.verifyEmailPasswordCombo("user1@gmail.com","xxxx");
+
+// Add sensor 0 to User1
+users_api.addSensorToUserWithUsername("User1",0);
+
+// Add sensor 0 to user1@gmail.com
+users_api.addSensorToUserWithEmail("user1@gmail.com",0);
+
+// Remove sensor 0 from User1
+users_api.removeSensorFromUserWithUsername("User1",0);
+
+// Remove sensor 0 from user1@gmail.com
+users_api.removeSensorFromUserWithEmail("user1@gmail.com",0);
+```
+
 # REST API
 
 ## Sensors:
