@@ -34,4 +34,64 @@ router.get("/", limiter, async (req, res, next) => {
 
 });
 
+router.post("/", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const name = req.query.sensor;
+    const longitude = parseInt(req.query.longitude);
+    const latitude = parseInt(req.query.latitude);
+
+    if (!name || isNaN(longitude) || isNaN(latitude)) {
+        return res.status(400).json({ error: 'Invalid arguments.' });
+    }
+
+    try {
+        if (await sensor_api.createSensor(name, longitude, latitude)) {
+            return res.status(201).json({ message: 'Sensor created successfully.' });
+        } else {
+            return res.status(500).json({ message: 'Error creating sensor.' });
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Error creating sensor.' });
+    }
+});
+
+router.delete("/", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const name = req.query.sensor;
+
+    if (!name) {
+        return res.status(400).json({ error: 'Invalid arguments.' });
+    }
+
+    if (await sensor_api.deleteSensor(name)) {
+        return res.status(200).json({ message: 'Sensor deleted successfully.' });
+    } else {
+        return res.status(500).json({ message: 'Error deleting sensor.' });
+    }
+});
+
+router.put("/", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const name = req.query.sensor;
+    const datatype = req.query.datatype;
+    const value = parseInt(req.query.value);
+
+    if (!name || !datatype || isNaN(value)) {
+        return res.status(400).json({ error: 'Invalid arguments.' });
+    }
+
+    if (await sensor_api.addSensorData(name, datatype, value)) {
+        return res.status(200).json({ message: `Added ${value} to ${datatype} for sensor ${name}.` });
+    } else {
+        return res.status(500).json({ message: 'Error adding data to sensor.' });
+    }
+});
+
 module.exports = router;

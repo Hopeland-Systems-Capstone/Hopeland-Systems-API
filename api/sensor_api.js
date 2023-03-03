@@ -22,7 +22,7 @@ async function createSensor(name, longitude, latitude) {
 
     if (longitude > 180 || longitude < -180 || latitude > 90 || latitude < -90) {
         console.log(`Invalid longitude/longitude`);
-        return;
+        return false;
     }
 
     const exists = await Mongo.sensors.findOne({
@@ -30,7 +30,7 @@ async function createSensor(name, longitude, latitude) {
     });
     if (exists) {
         console.log(`Sensor with name: ${name} already exists.`);
-        return;
+        return false;
     }
 
     const sensor_id = await getNextSensorID();
@@ -57,6 +57,7 @@ async function createSensor(name, longitude, latitude) {
         ]
     });
     console.log(`Created new sensor with name: ${name}, at ${longitude},${latitude}.`);
+    return true;
 }
 
 /**
@@ -64,11 +65,15 @@ async function createSensor(name, longitude, latitude) {
  * @param {String} name
  */
  async function deleteSensor(name) {
-    const result = Mongo.sensors.deleteOne({
+    const result = await Mongo.sensors.deleteOne({
         "name":`${name}`,
     });
     if (result.deletedCount === 1) {
         console.log(`Deleted sensor with name: ${name}.`);
+        return true;
+    } else {
+        console.log(`Sensor with name ${name} does not exist.`);
+        return false;
     }
 }
 
@@ -129,7 +134,7 @@ async function getSensorData(name) {
 
     if (data_type != "battery" && data_type != "temperature" && data_type != "humidity" && data_type != "pressure") {
         console.log(`Invalid data type ${data_type}.`);
-        return;
+        return false;
     }
 
     time = Date.now()
@@ -142,6 +147,7 @@ async function getSensorData(name) {
         }
     };
 
+    passed = false;
     await Mongo.sensors.updateOne({
         "name":`${sensor_name}`
     }, {
@@ -149,10 +155,13 @@ async function getSensorData(name) {
     }).then((res) => {
         if (res.matchedCount > 0) {
             console.log(`Added ${data_type} of ${value} at ${time} to sensor ${sensor_name}.`);
+            passed = true;
         } else {
             console.log(`Sensor with name ${sensor_name} does not exist.`);
+            passed = false;
         } 
     });
+    return passed;
 }
 
 module.exports = {
