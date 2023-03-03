@@ -146,8 +146,8 @@ users_api.removeSensorFromUserWithEmail("user1@gmail.com",0);
 ## Sensors:
 | Method | Path | Description |
 |:------- |:-------|:------|
-| **GET** | /data?key=val&sensor=val | Returns all sensors with name of `sensor` |
-| **GET** | /data?key=val&longitude=val&latitude=val&distance=val | Returns all sensors within `distance` meters of `longitude` and `latitude` |
+| **GET** | /sensors?key=val&sensor=val | Returns all sensors with name of `sensor` |
+| **GET** | /sensors?key=val&longitude=val&latitude=val&distance=val | Returns all sensors within `distance` meters of `longitude` and `latitude` |
 
 ## Alerts:
 | Method | Path | Description |
