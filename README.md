@@ -176,6 +176,7 @@ users_api.removeSensorFromUserWithEmail("user1@gmail.com",0);
 [
     {
         "_id": "63785425c97a925662a44651",
+        "sensor_id": 0,
         "name": "sensor1",
         "geolocation": {
             "type": "Point",
@@ -218,6 +219,20 @@ users_api.removeSensorFromUserWithEmail("user1@gmail.com",0);
         "_id": "636850102c006ea387181db7",
         "key": "098f6bcd4621d373cade4e832627b4f6",
         "level": "1"
+    }
+]
+```
+
+## User Format
+```json
+[
+    {
+        "_id": "63f729a661a5521ee483e416",
+        "user_id": 0,
+        "name": "Jacob",
+        "email": "jdpark10@asu.edu",
+        "password": "aaa",
+        "sensors": [],
     }
 ]
 ```
