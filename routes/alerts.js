@@ -9,6 +9,9 @@ const limiter = require('./rate_limit/rate_limiting').limiter
 //GET | /alerts?key=apikey&days=10 | Returns all alerts from the past 10 days
 //GET | /alerts?key=apikey&days=10&amount=100 | Returns all alerts from the past 10 days, but caps at 100 alerts
 //GET | /alerts?key=apikey&amount=10 | Returns the last 10 alerts
+//POST | /alerts?key=apikey&title=New%20Alert&alert=This%20is%20a%20new%20alert | Create a new alert with a title and alert
+//DELETE | /alerts?key=apikey&alert_id=0 | Delete alert with alert_id
+
 
 router.get("/", limiter, async (req, res, next) => {
 
