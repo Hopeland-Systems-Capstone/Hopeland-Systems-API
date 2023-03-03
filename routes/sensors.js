@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const limiter = require('./rate_limit/rate_limiting').limiter
+const sensor_api = require('../api/sensor_api');
 const api_key_util = require('./util/api_key_util');
 
 //GET | /sensors?key=apikey&sensor=name | Returns all sensor data in json format
@@ -14,26 +15,22 @@ router.get("/", limiter, async (req, res, next) => {
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
     const sensor = req.query.sensor;
-
-    if (sensor != undefined) {
-        const sensor_api = require('../api/sensor_api');
+    if (sensor) {
         const data = await sensor_api.getSensorData(sensor);
-        res.json(data);
-        return;
+        return res.status(200).json(data);
     }
 
     const longitude = parseInt(req.query.longitude);
     const latitude = parseInt(req.query.latitude);
     const distance = parseInt(req.query.distance);
 
-    if (!isNaN(longitude) && !isNaN(latitude) && !isNaN(distance)) {
-        const sensor_api = require('../api/sensor_api');
-        const data = await sensor_api.getSensorsByGeolocation(longitude,latitude,distance);
-        res.json(data);
-        return;
+    if (isNaN(longitude) || isNaN(latitude) || isNaN(distance)) {
+        return res.status(400).json({ error: 'Invalid arguments.' });
     }
 
-    res.send("Invalid arguments")
+    const data = await sensor_api.getSensorsByGeolocation(longitude,latitude,distance);
+    return res.status(200).json(data);
+    
 
 });
 
