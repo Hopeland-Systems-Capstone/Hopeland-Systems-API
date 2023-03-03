@@ -70,6 +70,8 @@ async function getAlerts(from, to, days, amount) {
 
 }
 
-exports.createAlert = createAlert;
-exports.deleteAlert = deleteAlert;
-exports.getAlerts = getAlerts
+module.exports = {
+    createAlert,
+    deleteAlert,
+    getAlerts,
+};

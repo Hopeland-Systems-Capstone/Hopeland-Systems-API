@@ -274,15 +274,17 @@ async function removeSensorFromUserWithEmail(email, sensor_id) {
     });
 }
 
-exports.createUser = createUser;
-exports.deleteUser = deleteUser;
-exports.getUserByUsername = getUserByUsername;
-exports.getUserByEmail = getUserByEmail;
-exports.getUserSensorsByUsername = getUserSensorsByUsername;
-exports.getUserSensorsByEmail = getUserSensorsByEmail;
-exports.verifyUsernamePasswordCombo = verifyUsernamePasswordCombo;
-exports.verifyEmailPasswordCombo = verifyEmailPasswordCombo;
-exports.addSensorToUserWithUsername = addSensorToUserWithUsername;
-exports.addSensorToUserWithEmail = addSensorToUserWithEmail;
-exports.removeSensorFromUserWithUsername = removeSensorFromUserWithUsername;
-exports.removeSensorFromUserWithEmail = removeSensorFromUserWithEmail;
+module.exports = {
+    createUser,
+    deleteUser,
+    getUserByUsername,
+    getUserByEmail,
+    getUserSensorsByUsername,
+    getUserSensorsByEmail,
+    verifyUsernamePasswordCombo,
+    verifyEmailPasswordCombo,
+    addSensorToUserWithUsername,
+    addSensorToUserWithEmail,
+    removeSensorFromUserWithUsername,
+    removeSensorFromUserWithEmail,
+};

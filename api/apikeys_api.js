@@ -85,8 +85,11 @@ async function getKeyLevel(key) {
     }
 }
 
-exports.addKey = addKey;
-exports.keyExists = keyExists;
-exports.getKeyLevel = getKeyLevel;
-exports.updateKeyLevel = updateKeyLevel;
-exports.deleteKey = deleteKey;
+module.exports = {
+    addKey,
+    keyExists,
+    getKeyLevel,
+    updateKeyLevel,
+    deleteKey,
+};
+  

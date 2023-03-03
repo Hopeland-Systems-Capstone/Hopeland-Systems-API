@@ -155,8 +155,11 @@ async function getSensorData(name) {
     });
 }
 
-exports.createSensor = createSensor;
-exports.deleteSensor = deleteSensor;
-exports.getSensorsByGeolocation = getSensorsByGeolocation;
-exports.getSensorData = getSensorData;
-exports.addSensorData = addSensorData;
+module.exports = {
+    createSensor,
+    deleteSensor,
+    getSensorsByGeolocation,
+    getSensorData,
+    addSensorData,
+};
+  
