@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const limiter = require('./rate_limit/rate_limiting').limiter
-const apiKeyUtil = require('./util/api_key_util');
+const alerts_api = require('../api/alerts_api');
+const api_key_util = require('./util/api_key_util');
 
 //GET | /alerts?key=apikey&from=epochstart | Returns all alerts from "from date" to "now date" (epoch times)
 //GET | /alerts?key=apikey&to=epochend | Returns all alerts from "beginning of time date" to "to date" (epoch times)
@@ -15,18 +16,57 @@ const apiKeyUtil = require('./util/api_key_util');
 
 router.get("/", limiter, async (req, res, next) => {
 
-    if (!await apiKeyUtil.checkKey(res,req.query.key)) return;
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
 
     const from = parseInt(req.query.from);
     const to = parseInt(req.query.to);
     const days = parseInt(req.query.days);
     const amount = parseInt(req.query.amount);
 
-    const alerts_api = require('../api/alerts_api');
     const data = await alerts_api.getAlerts(from, to, days, amount);
 
     res.json(data);
 
+});
+
+router.post("/", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const title = req.query.title;
+    const alert = req.query.alert;
+
+    if (!title || !alert) {
+        return res.status(400).json({ error: 'Missing required parameters.' });
+    }
+
+    try {
+        if (await alerts_api.createAlert(title, alert)) {
+            return res.status(201).json({ message: 'Alert created successfully.' });
+        } else {
+            return res.status(500).json({ message: 'Error creating alert.' });
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Error creating alert.' });
+    }
+});
+
+router.delete("/", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const alert_id = parseInt(req.query.alert_id);
+
+    if (!alert_id) {
+        return res.status(400).json({ error: 'Missing required parameters.' });
+    }
+
+    if (await alerts_api.deleteAlert(alert_id)) {
+        return res.status(200).json({ message: 'Alert deleted successfully.' });
+    } else {
+        return res.status(500).json({ message: 'Error deleting alert.' });
+    }
 });
 
 module.exports = router;

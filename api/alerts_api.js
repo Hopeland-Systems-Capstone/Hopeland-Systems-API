@@ -26,6 +26,7 @@ async function createAlert(title,alert) {
         "time":Date.now()
     });
     console.log(`Created new alert with title: ${title}, alert of: ${alert}, and alert_id of ${alert_id}.`);
+    return true;
 }
 
 /**
@@ -33,12 +34,15 @@ async function createAlert(title,alert) {
  * @param {Number} alert_id
  */
  async function deleteAlert(alert_id) {
-    const result = Mongo.alerts.deleteOne({
-        "alert_id":`${id}`,
+    const result = await Mongo.alerts.deleteOne({
+        "alert_id":parseInt(alert_id),
     });
     if (result.deletedCount === 1) {
-        console.log(`Deleted alert with alert_id: ${id}.`);
+        console.log(`Deleted alert with alert_id: ${alert_id}.`);
+        return true;
     }
+    console.log(`No alert with alert_id ${alert_id} found.`);
+    return false;
 }
 
 /**

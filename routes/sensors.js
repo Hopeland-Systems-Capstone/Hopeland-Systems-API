@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const limiter = require('./rate_limit/rate_limiting').limiter
-const apiKeyUtil = require('./util/api_key_util');
+const api_key_util = require('./util/api_key_util');
 
 //GET | /sensors?key=apikey&sensor=name | Returns all sensor data in json format
 //GET | /sensors?key=apikey&longitude=0&latitude=0&distance=1000 | Returns all sensors within 1000 meters of longitude=0,latitude=0
@@ -11,7 +11,7 @@ const apiKeyUtil = require('./util/api_key_util');
 
 router.get("/", limiter, async (req, res, next) => {
 
-    if (!await apiKeyUtil.checkKey(res,req.query.key)) return;
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
 
     const sensor = req.query.sensor;
 
