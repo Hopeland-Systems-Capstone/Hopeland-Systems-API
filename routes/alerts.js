@@ -12,7 +12,6 @@ const limiter = require('./rate_limit/rate_limiting').limiter
 //POST | /alerts?key=apikey&title=New%20Alert&alert=This%20is%20a%20new%20alert | Create a new alert with a title and alert
 //DELETE | /alerts?key=apikey&alert_id=0 | Delete alert with alert_id
 
-
 router.get("/", limiter, async (req, res, next) => {
 
     const key = req.query.key;
@@ -24,19 +23,21 @@ router.get("/", limiter, async (req, res, next) => {
     const apikeys_api = require('../api/apikeys_api');
     const valid = await apikeys_api.keyExists(`${key}`);
 
-    if (valid) {
-        const from = parseInt(req.query.from);
-        const to = parseInt(req.query.to);
-        const days = parseInt(req.query.days);
-        const amount = parseInt(req.query.amount);
-
-        const alerts_api = require('../api/alerts_api');
-        const data = await alerts_api.getAlerts(from, to, days, amount);
-
-        res.json(data);
-    } else {
-        res.send("Invalid API key")
+    if (!valid) {
+        res.send("Invalid API key");
+        return;
     }
+    
+    const from = parseInt(req.query.from);
+    const to = parseInt(req.query.to);
+    const days = parseInt(req.query.days);
+    const amount = parseInt(req.query.amount);
+
+    const alerts_api = require('../api/alerts_api');
+    const data = await alerts_api.getAlerts(from, to, days, amount);
+
+    res.json(data);
+
 });
 
 module.exports = router;
