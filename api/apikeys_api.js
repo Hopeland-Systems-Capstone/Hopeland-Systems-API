@@ -17,7 +17,7 @@ async function addKey(key, level = 1) {
 
     Mongo.apikeys.insertOne({
         "key":`${key}`,
-        "level":`${level}`
+        "level":parseInt(level)
     });
     console.log(`Added API key ${key}.`);
 }
@@ -59,7 +59,7 @@ async function getKeyLevel(key) {
         "key":`${key}`
     }, {
         $set: {
-            "level":`${level}`
+            "level":parseInt(level)
         }
     }).then((res) => {
         if (res.matchedCount > 0) {

@@ -53,7 +53,7 @@ async function createUser(name, email, hashed_password) {
  */
  async function deleteUser(user_id) {
     const result = Mongo.users.deleteOne({
-        "user_id":`${user_id}`,
+        "user_id":parseInt(user_id),
     });
     if (result.deletedCount === 1) {
         console.log(`Deleted user with user_id: ${user_id}.`);

@@ -123,7 +123,7 @@ async function getSensorData(name) {
  * Add new battery, temperature, humidity, or pressure data to sensor
  * @param {String} sensor_name
  * @param {String} data_type
- * @param {Number} temperature
+ * @param {Number} value
  */
  async function addSensorData(sensor_name, data_type, value) {
 
