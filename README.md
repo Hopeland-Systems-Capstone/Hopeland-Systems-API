@@ -159,6 +159,8 @@ users_api.removeSensorFromUserWithEmail("user1@gmail.com",0);
 | **GET** | /alerts?key=val&days=val | Returns all alerts from the past `days` days |
 | **GET** | /alerts?key=val&days=val&amount=val | Returns all alerts from the past `days` days, but caps at `amount` alerts |
 | **GET** | /alerts?key=val&amount=val | Returns the last `amount` alerts |
+| **POST** | /alerts?key=apikey&title=val&alert=val | Create an alert with title and alert |
+| **DELETE** | /alerts?key=apikey&alert_id=val | Delete an alert given an alert_id
 
 ## Rate Limiting:
 > API keys are rate limited based on their level. By default, API keys are issued at Level 1.
