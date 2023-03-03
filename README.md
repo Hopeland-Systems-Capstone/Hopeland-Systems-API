@@ -238,6 +238,7 @@ users_api.removeSensorFromUserWithEmail("user1@gmail.com",0);
         "email": "jdpark10@asu.edu",
         "password": "aaa",
         "sensors": [],
+        "alerts": []
     }
 ]
 ```

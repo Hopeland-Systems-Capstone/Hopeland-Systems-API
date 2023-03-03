@@ -42,7 +42,8 @@ async function createUser(name, email, hashed_password) {
         "name":`${name}`,
         "email":`${email}`,
         "password":`${hashed_password}`,
-        "sensors":[]
+        "sensors":[],
+        "alerts":[]
     });
     console.log(`Created new user with name: ${name} and email ${email}.`);
 }
@@ -274,6 +275,106 @@ async function removeSensorFromUserWithEmail(email, sensor_id) {
     });
 }
 
+/**
+ * Add an alert to a user's list of alerts
+ * @param {String} username
+ * @param {Number} alert_id
+ */
+async function addAlertToUserWithUsername(name, alert_id) {
+    await Mongo.alerts.updateOne({
+        "name":`${name}`
+    }, {
+        $addToSet: {
+            "alerts": alert_id
+        }
+    }).then((res) => {
+        if (res.matchedCount > 0) {
+            if (res.modifiedCount > 0) {
+                console.log(`Added alert with alert_id ${alert_id} to ${name}'s alerts.`);
+            } else {
+                console.log(`Alert with alert_id ${alert_id} already exists in ${name}'s alerts.`);
+            }
+        } else {
+            console.log(`User with username ${name} does not exist.`);
+        } 
+    });
+}
+
+/**
+ * Add an alert to a user's list of alerts
+ * @param {String} email
+ * @param {Number} alert_id
+ */
+async function addAlertToUserWithEmail(email, alert_id) {
+    await Mongo.alerts.updateOne({
+        "email":`${email}`
+    }, {
+        $addToSet: {
+            "alerts": alert_id
+        }
+    }).then((res) => {
+        if (res.matchedCount > 0) {
+            if (res.modifiedCount > 0) {
+                console.log(`Added alert with alert_id ${alert_id} to ${email}'s alerts.`);
+            } else {
+                console.log(`Alert with alert_id ${alert_id} already exists in ${email}'s alerts.`);
+            }
+        } else {
+            console.log(`User with email ${email} does not exist.`);
+        } 
+    });
+}
+
+/**
+ * Remove an alert from a user's list of alert
+ * @param {String} username
+ * @param {Number} alert_id
+ */
+async function removeAlertFromUserWithUsername(name, alert_id) {
+    await Mongo.users.updateOne({
+        "name":`${name}`
+    }, {
+        $pull: {
+            "alerts": alert_id
+        }
+    }).then((res) => {
+        if (res.matchedCount > 0) {
+            if (res.modifiedCount > 0) {
+                console.log(`Removed alert with alert_id ${alert_id} from ${name}'s alerts.`);
+            } else {
+                console.log(`Alert with alert_id ${alert_id} does not exist in ${name}'s alerts.`);
+            }
+        } else {
+            console.log(`User with name ${name} does not exist.`);
+        } 
+    });
+}
+
+/**
+ * Remove an alert from a user's list of alert
+ * @param {String} email
+ * @param {Number} alert_id
+ */
+async function removeAlertFromUserWithEmail(email, alert_id) {
+    await Mongo.users.updateOne({
+        "email":`${email}`
+    }, {
+        $pull: {
+            "alerts": alert_id
+        }
+    }).then((res) => {
+        if (res.matchedCount > 0) {
+            if (res.modifiedCount > 0) {
+                console.log(`Removed alert with alert_id ${alert_id} from ${email}'s alerts.`);
+            } else {
+                console.log(`Alert with alert_id ${alert_id} does not exist in ${email}'s alerts.`);
+            }
+        } else {
+            console.log(`User with email ${email} does not exist.`);
+        } 
+    });
+}
+
 module.exports = {
     createUser,
     deleteUser,
@@ -287,4 +388,8 @@ module.exports = {
     addSensorToUserWithEmail,
     removeSensorFromUserWithUsername,
     removeSensorFromUserWithEmail,
+    addAlertToUserWithUsername,
+    addAlertToUserWithEmail,
+    removeAlertFromUserWithUsername,
+    removeAlertFromUserWithEmail,
 };
