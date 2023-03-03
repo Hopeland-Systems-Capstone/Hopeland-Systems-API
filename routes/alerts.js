@@ -25,7 +25,7 @@ router.get("/", limiter, async (req, res, next) => {
 
     const data = await alerts_api.getAlerts(from, to, days, amount);
 
-    res.json(data);
+    res.status(200).json(data);
 
 });
 
