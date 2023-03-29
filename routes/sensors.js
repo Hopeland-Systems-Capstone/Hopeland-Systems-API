@@ -2,10 +2,13 @@ const express = require("express");
 const router = express.Router();
 const limiter = require('./rate_limit/rate_limiting').limiter
 const sensor_api = require('../api/sensor_api');
+const users_api = require('../api/users_api');
 const api_key_util = require('./util/api_key_util');
 
 //GET | /sensors?key=apikey&sensor=name | Returns all sensor data in json format
 //GET | /sensors?key=apikey&longitude=0&latitude=0&distance=1000 | Returns all sensors within 1000 meters of longitude=0,latitude=0
+//GET | /sensors?key=apikey&username=name | Return all sensors a user has access to given only username
+//GET | /sensors?key=apikey&email=email | Return all sensors a user has access to given only email
 //POST | /sensors?key=apikey&sensor=name&longitude=0&latitude=0 | Create a sensor with a name, longitude, and latitude
 //DELETE | /sensors?key=apikey&sensor=name | Delete a sensor with a name
 //PUT | /sensors?key=apikey&sensor=name&datatype=battery&value=100 | Add new data to a sensor
@@ -13,6 +16,19 @@ const api_key_util = require('./util/api_key_util');
 router.get("/", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const username = req.query.username;
+    const email = req.query.email;
+
+    if (username || email) {
+        if (username) {
+            const sensors = await users_api.getUserSensorsByUsername(username);
+            return res.status(200).json(sensors);
+        } else if (email) {
+            const sensors = await users_api.getUserSensorsByEmail(email);
+            return res.status(200).json(sensors);
+        }
+    }
 
     const sensor = req.query.sensor;
     if (sensor) {
