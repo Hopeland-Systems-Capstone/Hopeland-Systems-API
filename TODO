@@ -1,0 +1,65 @@
+Some notes for the updates site parameters:
+
+New/updated methods:
+- Sensor - getReadings(timeStart,timeEnd,dataType) | Retrieves all readings between timeStart and timeEnd in epoch time of type dataType (temp, pressure, etc). This will allow creating the graphs.
+- Sensor - getStatus(sensor_id) | Retrieves status for sensor (Online/Offline)
+- Sensor - setStatus(sensor_id,status) | Set status for sensor (Online/Offline)
+- Sensor - getName(sensor_id) | Retrieves sensor name
+- Sensor - getLastReading(sensor_id,dataType) | Retrieves the last reading for dataType from a sensor
+- Sensor - getLastUpdated(sensor_id) | Retrieves the time in minutes since the last update
+- Sensor - countForest() | Returns amount of forest sensors
+- Sensor - countFlood() | Returns amount of flood sensors
+- Sensor - countAlarm() | Returns amount of alarm sensors
+- Sensor - countNormal() | Returns amount of normal sensors
+- Sensor - countOffline() | Returns amount of offline sensors
+- Sensor - countOnline() | Returns amount of online sensors
+- Sensor - countActive() | Returns amount of active sensors
+- Sensor - countInactive() | Returns amount of inactive sensors
+
+- Alert - getSensor(alert_id) | Returns the sensor_id associated with the alert
+
+- User - getAlerts(user_id) | Returns a list of alerts sent to the user
+- User - addAlertToUserWithUsername(username,alert_id) | Add an alert to a user
+- User - addAlertToUserWithEmail(email,alert_id) | Add an alert to a user
+- User - removeAlertFromUserWithUsername(username,alert_id) | Delete an alert from a user
+- User - removeAlertFromUserWithEmail(email,alert_id) | Delete an alert from a user
+
+- User - updateUser(user_id,email,name,company_name,phone_number) | Update user's basic information
+
+- User - getEmail(user_id) | Get email for a user
+- User - getName(user_id) | Get name for a user
+- User - getCompanyName(user_id) | Get company name for a user
+- User - getPhoneNumber(user_id) | Get phone number for a user
+- User - getTimeZone(user_id) | Get timezone for a user
+- User - setTimeZone(user_id,timezone) | Set timezone for a user
+- User - updatePassword(user_id,old_password,new_password) | Update password for user
+
+- User - addCard(user_id,cardNumber,nameOnCard,cardExpiration,cvc,address1,address2,city,state,country,zip) | Add a card for a user
+- User - updateCard(user_id,card_id,cardNumber,nameOnCard,cardExpiration,cvc,address1,address2,city,state,country,zip) | Update a card for a user
+- User - deleteCard(user_id,card_id) | Delete a card for a user
+- User - getActiveCard(user_id) | Get the active card for a user
+- User - setActiveCard(user_id,card_id) | Set the active card for a user
+- User - getCards(user_id) | Get all cards on file for a user
+
+- User - createBill(user_id,billing_date,amount) | Create a bill for a user
+- User - updateBill(user_id,bill_id,status) | Update the status of a bill for a user
+- User - getBills(user_id) | Get all bills for a user
+
+- User - getAlarmRecipients(user_id) | Get all alarm recipients for user
+- User - addAlarmRecipient(user_id,name,email) | Add an alarm recipient for user
+- User - deleteAlarmRecipient(user_id,recipient_id) | Delete an alarm recipient for a user
+- User - setAlarmRecipientStatus(user_id,recipient_id,enabled) | Set enabled or disabled for alarm recipient for a user
+
+REST API Changes:
+
+
+Notes:
+- Only going to store the current barometric pressure, temperature, co2, water level, humidity, etc. The high, averages, and lows need to be calculated in javascript on the frontend.
+- Added associated_sensor for alerts which references a sensor_id
+- Added phone number to users
+- Added company name to users
+- Added bills array to users
+- Added cards array to users
+- Added timezone to users
+- Added alarm_recipients array to users
+- Added status to sensors
