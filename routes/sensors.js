@@ -97,7 +97,7 @@ router.put("/", limiter, async (req, res, next) => {
 
     const name = req.query.sensor;
     const datatype = req.query.datatype;
-    const value = parseInt(req.query.value);
+    const value = Number(req.query.value);
 
     if (!name || !datatype || isNaN(value)) {
         return res.status(400).json({ error: 'Invalid arguments.' });
