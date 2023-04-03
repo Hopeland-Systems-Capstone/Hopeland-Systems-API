@@ -1,4 +1,5 @@
 const { Mongo } = require('../mongo.js');
+const { Long } = require('mongodb');
 
 /**
  * Returns next sensor id
@@ -137,7 +138,7 @@ async function getSensorData(name) {
         return false;
     }
 
-    time = Date.now()
+    time = Long.fromString(Date.now().toString());
 
     var key = data_type.toLowerCase(),
     new_data = {
