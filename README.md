@@ -139,6 +139,18 @@ users_api.removeSensorFromUserWithUsername("User1",0);
 
 // Remove sensor 0 from user1@gmail.com
 users_api.removeSensorFromUserWithEmail("user1@gmail.com",0);
+
+// Add alert with alert id 0 to user User1
+users_api.addAlertToUserWithUsername("User1", 0)
+
+// Add alert with alert id 0 to user user1@gmail.com
+users_api.addAlertToUserWithEmail("user1@gmail.com", 0)
+
+// Remove alert with alert id 0 from user User1
+users_api.removeAlertFromUserWithUsername("User1", 0)
+
+// Remove alert with alert id 0 from user user1@gmail.com
+users_api.removeAlertFromUserWithEmail("user1@gmail.com", 0)
 ```
 
 # REST API
@@ -148,6 +160,8 @@ users_api.removeSensorFromUserWithEmail("user1@gmail.com",0);
 |:------- |:-------|:------|
 | **GET** | /sensors?key=val&sensor=val | Returns all sensors with name of `sensor` |
 | **GET** | /sensors?key=val&longitude=val&latitude=val&distance=val | Returns all sensors within `distance` meters of `longitude` and `latitude` |
+| **GET** | /sensors?key=val&username=val | Return all sensors a user has access to given username |
+| **GET** | /sensors?key=val&email=val | Return all sensors a user has access to given email |
 | **POST** | /sensors?key=val&sensor=val&longitude=val&latitude=val | Create a sensor with a `name`, `longitude`, and `latitude` |
 | **DELETE** | /sensors?key=val&sensor=val | Delete a sensor with a `sensor` name |
 | **PUT** | /sensors?key=val&sensor=val&datatype=val&value=val | Add new data of `datatype` with `value` to `sensor` with name |
@@ -164,6 +178,24 @@ users_api.removeSensorFromUserWithEmail("user1@gmail.com",0);
 | **GET** | /alerts?key=val&amount=val | Returns the last `amount` alerts |
 | **POST** | /alerts?key=val&title=val&alert=val | Create an alert with `title` and `alert` |
 | **DELETE** | /alerts?key=val&alert_id=val | Delete an alert given an `alert_id` |
+
+## Users:
+| Method | Path | Description |
+|:------- |:-------|:------|
+| **GET** | /users?key=val&username=val | Return user information when only given username |
+| **GET** | /users?key=val&email=val | Return user information when only given email |
+| **GET** | /users?key=val&username=val&hashed_password=val | Verify user password combo when given username and password |
+| **GET** | /users?key=val&email=val&hashed_password=val | Verify user password combo when given email and password |
+| **POST** | /users?key=val&username=val&email=val&hashed_password=val | Create new user given username, email, hashed_password |
+| **DELETE** | /users?key=val&user_id=val | Delete user give user_id |
+| **DELETE** | /users?key=val&username=val&sensor_id=val | Delete sensor from user when given sensor_id and username |
+| **DELETE** | /users?key=val&email=val&sensor_id=val | Delete sensor from user when given sensor_id and email |
+| **DELETE** | /users?key=val&username=val&alert_id=val | Delete alert from user when given alert_id and username |
+| **DELETE** | /users?key=val&email=val&alert_id=val | Delete alert from user when given alert_id and email |
+| **PUT** | /users?key=val&username=val&sensor_id=val | Add sensor to user when given sensor_id and name |
+| **PUT** | /users?key=val&email=val&sensor_id=val | Add sensor to user when given sensor_id and email |
+| **PUT** | /users?key=val&username=val&alert_id=val | Add alert to user when given alert_id and username |
+| **PUT** | /users?key=val&email=val&salert_id=val | Add alert to user when given alert_id and email |
 
 ## Rate Limiting:
 > API keys are rate limited based on their level. By default, API keys are issued at Level 1.
