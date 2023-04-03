@@ -23,6 +23,7 @@ app.use((req, res, next) => {
 //Routes
 app.use("/sensors", require("./routes/sensors")); //REST API requests for sensors
 app.use("/alerts", require("./routes/alerts")); //REST API requests for alerts
+app.use("/users", require("./routes/users")); //REST API requests for users
 
 //Setup MongoDB
 const { Mongo } = require('./mongo.js')
