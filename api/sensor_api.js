@@ -34,10 +34,14 @@ async function createSensor(name, longitude, latitude) {
         return false;
     }
 
+    const time = Long.fromString(Date.now().toString());
+
     const sensor_id = await getNextSensorID();
     Mongo.sensors.insertOne({
         "sensor_id":sensor_id,
         "name":`${name}`,
+        "status":"Online",
+        "last_update":time,
         "geolocation":{
             "type": "Point",
             "coordinates": [ longitude, latitude]
@@ -142,6 +146,7 @@ async function getSensorData(name) {
 
     var key = data_type.toLowerCase(),
     new_data = {
+        "last_update":time,
         [key]: {
             "time":time,
             "value":value
@@ -165,11 +170,193 @@ async function getSensorData(name) {
     return passed;
 }
 
+/**
+ * Get sensor status
+ * @param {Number} sensor_id
+ */
+async function getStatus(sensor_id) {
+    const exists = await Mongo.sensors.findOne({
+        "sensor_id":sensor_id
+    });
+    if (!exists) {
+        console.log(`Sensor ${sensor_id} does not exist.`);
+        return;
+    }
+    return exists.status;
+}
+
+/**
+ * Set sensor status
+ * @param {Number} sensor_id
+ * @param {String} status
+ */
+async function setStatus(sensor_id, status) {
+    const exists = await Mongo.sensors.findOne({ "sensor_id": sensor_id });
+    if (!exists) {
+        console.log(`Sensor ${sensor_id} does not exist.`);
+        return null;
+    }
+    await Mongo.sensors.updateOne({ "sensor_id": sensor_id }, { $set: { "status":`${status}` } });
+}
+
+/**
+ * Get sensor name
+ * @param {Number} sensor_id
+ */
+async function getName(sensor_id) {
+    const exists = await Mongo.sensors.findOne({
+        "sensor_id":sensor_id
+    });
+    if (!exists) {
+        console.log(`Sensor ${sensor_id} does not exist.`);
+        return;
+    }
+    return exists.name;
+}
+
+/**
+ * Get sensor readings for a specified time range and data type
+ * @param {Number} sensor_id - sensor ID
+ * @param {String} dataType - data type (temperature, pressure, humidity, co2, or battery)
+ * @param {Number} timeStart - start time (epoch)
+ * @param {Number} timeEnd - end time (epoch)
+ */
+async function getReadings(sensor_id, dataType, timeStart, timeEnd) {
+
+    const sensor = await Mongo.sensors.findOne({
+        "sensor_id":sensor_id
+    });
+
+    if (!sensor) {
+        console.log(`Sensor ${sensor_id} does not exist.`);
+        return null;
+    }
+    
+    const readingsArray = sensor[dataType];
+    if (!readingsArray) {
+        console.log(`Sensor ${sensor_id} does not have any ${dataType} readings.`);
+        return null;
+    }
+
+    const results = [];
+    readingsArray.forEach((reading) => {
+        if (reading.time >= timeStart && reading.time <= timeEnd) {
+            results.push(reading.value);
+        }
+    });
+
+    return results;
+}
+
+/**
+ * Get last sensor reading for a specified sensor ID and data type
+ * @param {Number} sensor_id - sensor ID
+ * @param {String} dataType - data type (temperature, pressure, humidity, co2, or battery)
+ */
+async function getLastReading(sensor_id, dataType) {
+
+    const sensor = await Mongo.sensors.findOne({
+        "sensor_id":sensor_id
+    });
+
+    if (!sensor) {
+        console.log(`Sensor ${sensor_id} does not exist.`);
+        return null;
+    }
+
+    const readingsArray = sensor[dataType];
+    if (!readingsArray || readingsArray.length === 0) {
+        console.log(`Sensor ${sensor_id} does not have any ${dataType} readings.`);
+        return null;
+    }
+
+    const lastReading = readingsArray[readingsArray.length - 1];
+
+    return lastReading.value;
+}
+
+/**
+ * Get sensor last updated time
+ * @param {Number} sensor_id
+ */
+async function getLastUpdated(sensor_id) {
+    const exists = await Mongo.sensors.findOne({
+        "sensor_id":sensor_id
+    });
+    if (!exists) {
+        console.log(`Sensor ${sensor_id} does not exist.`);
+        return;
+    }
+    return exists.last_update;
+}
+
+/**
+ * Count the number of online sensors associated with a user_id
+ * @param {Number} user_id - user id
+ */
+async function countOnline(user_id) {
+    const projection = { sensors: 1, _id: 0 };
+
+    const user = await Mongo.users.findOne({
+        "user_id":user_id
+    }, projection);
+
+    if (!user) {
+        console.log(`User ${user_id} does not exist.`);
+        return null;
+    }
+
+    const sensorIds = user.sensors.map(sensor => sensor.sensor_id);
+
+    const onlineSensors = await Mongo.sensors.countDocuments({
+        sensor_id: { $in: sensorIds },
+        status: "Online"
+    });
+
+    return onlineSensors;
+}
+
+/**
+ * Count the number of offline sensors associated with a user_id
+ * @param {Number} user_id - user id
+ */
+async function countOffline(user_id) {
+    const projection = { sensors: 1, _id: 0 };
+
+    const user = await Mongo.users.findOne({
+        "user_id":user_id
+    }, projection);
+
+    if (!user) {
+        console.log(`User ${user_id} does not exist.`);
+        return null;
+    }
+
+    const sensorIds = user.sensors.map(sensor => sensor.sensor_id);
+
+    const offlineSensors = await Mongo.sensors.countDocuments({
+        sensor_id: { $in: sensorIds },
+        status: "Offline"
+    });
+
+    return offlineSensors;
+}
+
+
+
 module.exports = {
     createSensor,
     deleteSensor,
     getSensorsByGeolocation,
     getSensorData,
     addSensorData,
+    getStatus,
+    setStatus,
+    getName,
+    getReadings,
+    getLastReading,
+    getLastUpdated,
+    countOnline,
+    countOffline,
 };
   

@@ -56,12 +56,36 @@ sensor_api.addSensorData("sensor1","battery",100);
 
 // Add temperature value of 70 to sensor1
 sensor_api.addSensorData("sensor1","temperature",70);
+
+// Get sensor status of sensor 0
+sensor_api.getStatus(0)
+
+// Set sensor status of sensor 0
+sensor_api.setStatus(0,"Online")
+
+// Get name of sensor 0
+sensor_api.getName(0)
+
+// Get readings for battery from sensor 0 from 1 epoch time to another
+sensor_api.getReadings(0,"battery",1668466625,1668898625)
+
+// Get last reading for battery from sensor 0
+sensor_api.getLastReading(0,"battery")
+
+// Get last update time for sensor 0
+sensor_api.getLastUpdate(0)
+
+// Count online sensors for user 0
+sensor_api.getOnline(0)
+
+// Count offline sensors for user 0
+sensor_api.getOffline(0)
 ```
 
 ## Alerts:
 ```javascript
-// Create a new alert titled "New Alert" with a message of "This is a test alert"
-alerts_api.createAlert("New Alert","This is a test alert");
+// Create a new alert titled "New Alert" with a message of "This is a test alert" and associated with sensor_id 0
+alerts_api.createAlert("New Alert","This is a test alert",0);
 
 // Delete alert with alert_id 0
 alerts_api.deleteAlert(0);
@@ -74,6 +98,9 @@ alerts_api.getAlerts(NaN, NaN, 15, NaN);
 
 // Get last 10 alerts
 alerts_api.getAlerts(NaN, NaN, NaN, 10);
+
+// Get sensor id associated with alert 0
+alerts_api.getSensor(0)
 
 /*
 getAlerts can have mixed parameters
@@ -106,6 +133,9 @@ apikeys_api.updateKeyLevel("4124bc0a9335c27f086f24ba207a4912", 1);
 ```javascript
 // Create a user with a name, username, and password
 users_api.createUser("User1","user1@gmail.com","xxxx");
+
+// Update a user's basic information (name, email, phone number, company name)
+users_api.updateUser(0,"User1","user1@gmail.com","0000000000","Hopeland")
 
 // Delete the user with user_id 0
 users_api.deleteUser(0);
@@ -151,6 +181,30 @@ users_api.removeAlertFromUserWithUsername("User1", 0)
 
 // Remove alert with alert id 0 from user user1@gmail.com
 users_api.removeAlertFromUserWithEmail("user1@gmail.com", 0)
+
+// Get all alerts from user with id 0
+users_api.getAlerts(0)
+
+// Get email for user with id 0
+users_api.getEmail(0)
+
+// Get name for user with id 0
+users_api.getName(0)
+
+// Get company name for user with id 0
+users_api.getCompanyName(0)
+
+// Get phone number for user with id 0
+users_api.getPhoneNumber(0)
+
+// Get timezone for user with id 0
+users_api.getTimezone(0)
+
+// Set timezone for user with id 0
+users_api.setTimezone(0,"MST")
+
+// Update password for user with id 0 (Password values should be hashed values)
+users_api.updatePassword(0,"oldPassword","newPassword")
 ```
 
 # REST API
@@ -176,7 +230,7 @@ users_api.removeAlertFromUserWithEmail("user1@gmail.com", 0)
 | **GET** | /alerts?key=val&days=val | Returns all alerts from the past `days` days |
 | **GET** | /alerts?key=val&days=val&amount=val | Returns all alerts from the past `days` days, but caps at `amount` alerts |
 | **GET** | /alerts?key=val&amount=val | Returns the last `amount` alerts |
-| **POST** | /alerts?key=val&title=val&alert=val | Create an alert with `title` and `alert` |
+| **POST** | /alerts?key=val&title=val&alert=val&associated_sensor=val | Create an alert with `title` and `alert` and associated with sensor_id `associated_sensor` |
 | **DELETE** | /alerts?key=val&alert_id=val | Delete an alert given an `alert_id` |
 
 ## Users:
@@ -186,7 +240,7 @@ users_api.removeAlertFromUserWithEmail("user1@gmail.com", 0)
 | **GET** | /users?key=val&email=val | Return user information when only given email |
 | **GET** | /users?key=val&username=val&hashed_password=val | Verify user password combo when given username and password |
 | **GET** | /users?key=val&email=val&hashed_password=val | Verify user password combo when given email and password |
-| **POST** | /users?key=val&username=val&email=val&hashed_password=val | Create new user given username, email, hashed_password |
+| **POST** | /users?key=val&username=val&email=val&hashed_password=val&phone_number=val&company_name=val&timezone=val | Create new user given username, email, hashed_password, and optional phone_number, company_name, and timezone |
 | **DELETE** | /users?key=val&user_id=val | Delete user give user_id |
 | **DELETE** | /users?key=val&username=val&sensor_id=val | Delete sensor from user when given sensor_id and username |
 | **DELETE** | /users?key=val&email=val&sensor_id=val | Delete sensor from user when given sensor_id and email |

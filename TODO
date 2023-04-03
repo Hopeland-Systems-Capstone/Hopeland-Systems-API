@@ -1,20 +1,14 @@
 Some notes for the updates site parameters:
 
 New/updated methods:
-- Sensor - getReadings(timeStart,timeEnd,dataType) | Retrieves all readings between timeStart and timeEnd in epoch time of type dataType (temp, pressure, etc). This will allow creating the graphs.
+- Sensor - getReadings(sensor_id,dataType,timeStart,timeEnd) | Retrieves all readings between timeStart and timeEnd in epoch time of type dataType (temp, pressure, etc). This will allow creating the graphs.
 - Sensor - getStatus(sensor_id) | Retrieves status for sensor (Online/Offline)
 - Sensor - setStatus(sensor_id,status) | Set status for sensor (Online/Offline)
 - Sensor - getName(sensor_id) | Retrieves sensor name
 - Sensor - getLastReading(sensor_id,dataType) | Retrieves the last reading for dataType from a sensor
 - Sensor - getLastUpdated(sensor_id) | Retrieves the time in minutes since the last update
-- Sensor - countForest() | Returns amount of forest sensors
-- Sensor - countFlood() | Returns amount of flood sensors
-- Sensor - countAlarm() | Returns amount of alarm sensors
-- Sensor - countNormal() | Returns amount of normal sensors
 - Sensor - countOffline() | Returns amount of offline sensors
 - Sensor - countOnline() | Returns amount of online sensors
-- Sensor - countActive() | Returns amount of active sensors
-- Sensor - countInactive() | Returns amount of inactive sensors
 
 - Alert - getSensor(alert_id) | Returns the sensor_id associated with the alert
 
@@ -63,3 +57,4 @@ Notes:
 - Added timezone to users
 - Added alarm_recipients array to users
 - Added status to sensors
+- Added last_update to sensors

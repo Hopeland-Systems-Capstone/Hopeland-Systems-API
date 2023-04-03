@@ -16,14 +16,16 @@ async function getNextAlertID() {
  * Create a new alert given a title and alert
  * @param {String} title
  * @param {String} alert
+ * @param {Number} associated_sensor
  */
-async function createAlert(title,alert) {
+async function createAlert(title,alert,associated_sensor) {
     const alert_id = await getNextAlertID();
     Mongo.alerts.insertOne({
         "alert_id":alert_id,
         "title":`${title}`,
         "alert":`${alert}`,
-        "time":Date.now()
+        "time":Date.now(),
+        "associated_sensor":associated_sensor
     });
     console.log(`Created new alert with title: ${title}, alert of: ${alert}, and alert_id of ${alert_id}.`);
     return true;
@@ -74,8 +76,24 @@ async function getAlerts(from, to, days, amount) {
 
 }
 
+/**
+ * Get sensor id associated with alert
+ * @param {Number} alert_id Alert ID
+ */
+async function getSensor(alert_id) {
+    const exists = await Mongo.alerts.findOne({
+        "alert_id":alert_id
+    });
+    if (!exists) {
+        console.log(`Alert with id ${alert_id} does not exist.`);
+        return -1;
+    }
+    return result.associated_sensor;
+}
+
 module.exports = {
     createAlert,
     deleteAlert,
     getAlerts,
+    getSensor
 };

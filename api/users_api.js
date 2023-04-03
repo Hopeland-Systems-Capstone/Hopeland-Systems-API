@@ -17,8 +17,11 @@ async function getNextUserID() {
  * @param {String} name
  * @param {String} email
  * @param {String} hashed_password
+ * @param {String} phone_number
+ * @param {String} company_name
+ * @param {String} timezone
  */
-async function createUser(name, email, hashed_password) {
+async function createUser(name, email, hashed_password, phone_number = "", company_name = "", timezone = "") {
 
     const nameExists = await Mongo.users.findOne({
         "name":`${name}`
@@ -42,10 +45,47 @@ async function createUser(name, email, hashed_password) {
         "name":`${name}`,
         "email":`${email}`,
         "password":`${hashed_password}`,
+        "phone_number":`${phone_number}`,
+        "company_name":`${company_name}`,
+        "timezone":`${timezone}`,
+        "cards":[],
+        "bills":[],
+        "alarm_recipients":[],
         "sensors":[],
         "alerts":[]
     });
     console.log(`Created new user with name: ${name} and email ${email}.`);
+}
+
+/**
+ * Update a user's basic information
+ * @param {Number} user_id
+ * @param {String} name
+ * @param {String} email
+ * @param {String} phone_number
+ * @param {String} company_name
+ */
+async function updateUser(user_id, name, email, phone_number = "", company_name = "") {
+
+    const exists = await Mongo.users.findOne({
+        "user_id":user_id
+    });
+    if (!exists) {
+        console.log(`User with id ${user_id} does not exist.`);
+        return;
+    }
+
+    await Mongo.users.updateOne(
+        { "user_id": user_id },
+        { $set: {
+            "name":`${name}`,
+            "email":`${email}`,
+            "phone_number":`${phone_number}`,
+            "company_name":`${company_name}`
+        } }
+    );
+
+    console.log(`Updated user ${user_id} with name: ${name}, email ${email}, phone_number ${phone_number}, and company_name ${company_name}.`);
 }
 
 /**
@@ -281,7 +321,7 @@ async function removeSensorFromUserWithEmail(email, sensor_id) {
  * @param {Number} alert_id
  */
 async function addAlertToUserWithUsername(name, alert_id) {
-    await Mongo.alerts.updateOne({
+    await Mongo.users.updateOne({
         "name":`${name}`
     }, {
         $addToSet: {
@@ -306,7 +346,7 @@ async function addAlertToUserWithUsername(name, alert_id) {
  * @param {Number} alert_id
  */
 async function addAlertToUserWithEmail(email, alert_id) {
-    await Mongo.alerts.updateOne({
+    await Mongo.users.updateOne({
         "email":`${email}`
     }, {
         $addToSet: {
@@ -375,8 +415,147 @@ async function removeAlertFromUserWithEmail(email, alert_id) {
     });
 }
 
+/**
+ * Get all alerts for a user
+ * @param {Number} user_id
+ */
+async function getAlerts(user_id) {
+
+    const exists = await Mongo.users.findOne({
+        "user_id":user_id
+    });
+    if (!exists) {
+        console.log(`User ${user_id} does not exist.`);
+        return null;
+    }
+
+    return exists.alerts;
+}
+
+/**
+ * Get email for a user
+ * @param {Number} user_id
+ */
+async function getEmail(user_id) {
+
+    const exists = await Mongo.users.findOne({
+        "user_id":user_id
+    });
+    if (!exists) {
+        console.log(`User ${user_id} does not exist.`);
+        return null;
+    }
+
+    return exists.email;
+}
+
+/**
+ * Get name for a user
+ * @param {Number} user_id
+ */
+async function getName(user_id) {
+
+    const exists = await Mongo.users.findOne({
+        "user_id":user_id
+    });
+    if (!exists) {
+        console.log(`User ${user_id} does not exist.`);
+        return null;
+    }
+
+    return exists.name;
+}
+
+/**
+ * Get company name for a user
+ * @param {Number} user_id
+ */
+async function getCompanyName(user_id) {
+
+    const exists = await Mongo.users.findOne({
+        "user_id":user_id
+    });
+    if (!exists) {
+        console.log(`User ${user_id} does not exist.`);
+        return null;
+    }
+
+    return exists.company_name;
+}
+
+/**
+ * Get phone number for a user
+ * @param {Number} user_id
+ */
+async function getPhoneNumber(user_id) {
+
+    const exists = await Mongo.users.findOne({
+        "user_id":user_id
+    });
+    if (!exists) {
+        console.log(`User ${user_id} does not exist.`);
+        return null;
+    }
+
+    return exists.phone_number;
+}
+
+/**
+ * Get timezone for a user
+ * @param {Number} user_id
+ */
+async function getTimezone(user_id) {
+
+    const exists = await Mongo.users.findOne({
+        "user_id":user_id
+    });
+    if (!exists) {
+        console.log(`User ${user_id} does not exist.`);
+        return null;
+    }
+
+    return exists.timezone;
+}
+
+/**
+ * Set timezone for a user
+ * @param {Number} user_id
+ * @param {String} timezone
+ */
+async function setTimezone(user_id, timezone) {
+    const exists = await Mongo.users.findOne({ "user_id": user_id });
+    if (!exists) {
+        console.log(`User ${user_id} does not exist.`);
+        return null;
+    }
+
+    await Mongo.users.updateOne({ "user_id": user_id }, { $set: { "timezone":`${timezone}` } });
+}
+
+/**
+ * Update password for a user
+ * @param {Number} user_id
+ * @param {String} old_password
+ * @param {String} new_password
+ */
+async function updatePassword(user_id, old_password, new_password) {
+    const user = await Mongo.users.findOne({ "user_id": user_id });
+    if (!user) {
+        console.log(`User ${user_id} does not exist.`);
+        return null;
+    }
+    if (user.password !== old_password) {
+        console.log(`Old password does not match current password.`);
+        return null;
+    }
+    await Mongo.users.updateOne({ "user_id": user_id }, { $set: { password:`${new_password}` } });
+}
+
+
+
 module.exports = {
     createUser,
+    updateUser,
     deleteUser,
     getUserByUsername,
     getUserByEmail,
@@ -392,4 +571,12 @@ module.exports = {
     addAlertToUserWithEmail,
     removeAlertFromUserWithUsername,
     removeAlertFromUserWithEmail,
+    getAlerts,
+    getEmail,
+    getName,
+    getCompanyName,
+    getPhoneNumber,
+    getTimezone,
+    setTimezone,
+    updatePassword,
 };

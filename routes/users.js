@@ -8,7 +8,7 @@ const api_key_util = require('./util/api_key_util');
 //GET | /users?key=apikey&email=email | Return user information when only given email
 //GET | /users?key=apikey&username=name&hashed_password=hashed_password | Verify user password combo when given username and password
 //GET | /users?key=apikey&email=email&hashed_password=hashed_password | Verify user password combo when given email and password
-//POST | /users?key=apikey&username=name&email=email&hashed_password=hashed_password | Create new user given username, email, hashed_password
+//POST | /users?key=apikey&username=name&email=email&hashed_password=hashed_password&phone_number=0000000000&company_name=Hopeland&timezone=MST | Create new user given username, email, hashed_password (Optional phone_number, company_name, and timezone)
 //DELETE | /users?key=apikey&user_id=user_id | Delete user give user_id
 //DELETE | /users?key=apikey&username=name&sensor_id=sensor_id | Delete sensor from user when given sensor_id and username
 //DELETE | /users?key=apikey&email=email&sensor_id=sensor_id | Delete sensor from user when given sensor_id and email
@@ -63,13 +63,16 @@ router.post("/", limiter, async (req, res, next) => {
     const username = req.query.username;
     const email = req.query.email;
     const hashed_password = req.query.hashed_password;
+    const phone_number = req.query.phone_number;
+    const company_name = req.query.company_name;
+    const timezone = req.query.timezone;
 
     if (!username || !email || !hashed_password) {
         return res.status(400).json({ error: 'Invalid arguments.' });
     }
 
     try {
-        if (await users_api.createUser(username, email, hashed_password)) {
+        if (await users_api.createUser(username, email, hashed_password, phone_number, company_name, timezone)) {
             return res.status(201).json({ message: 'User created successfully.' });
         } else {
             return res.status(500).json({ message: 'Error creating user.' });
