@@ -205,6 +205,51 @@ users_api.setTimezone(0,"MST")
 
 // Update password for user with id 0 (Password values should be hashed values)
 users_api.updatePassword(0,"oldPassword","newPassword")
+
+// Add new card for user with user_id 0
+users_api.addCard(0, card_number, name, expiration, cvc, address1, address2, city, state, country, zip)
+
+// Update card with card_id 1 for user with user_id 0
+users_api.updateCard(0, 1, card_number, name, expiration, cvc, address1, address2, city, state, country, zip)
+
+// Delete card with card_id 1 for user with user_id 0
+users_api.deleteCard(0, 1)
+
+// Get user_id 0's active card
+users_api.getActiveCard(0)
+
+// Set user_id 0's active card to their card with card_id 5
+users_api.setActiveCard(0, 5)
+
+// Get a list of all user_id 0's cards
+users_api.getCards(0)
+
+// Create a bill for user with user_id 0 using an epoch time and for $100
+users_api.createBill(0, 1680591084, 100)
+
+// Set user with user_id 0's bill with id 1 to status Paid
+users_api.updateBill(0, 1, "Paid")
+
+// Delete bill with bill_id 1 for user with user_id 0
+users_api.deleteBill(0, 1)
+
+// Get a list of all user_id 0's bills
+users_api.getBills(0)
+
+// Make John Doe with email joedoe@gmail.com an alarm recipient for user with id 0
+users_api.addAlarmRecipient(0, "John Doe", "johndoe@gmail.com")
+
+// Delete alarm recipient with id 1 from user with id 0
+users_api.deleteAlarmRecipient(0, 1)
+
+// Get a list of user with id 0's alarm recipients
+users_api.getAlarmRecipients(0)
+
+// Get alarm recipient status for recipient with id 1 for user with id 0
+users_api.getAlarmRecipientStatus(0, 1)
+
+// Set alarm recipient status to disabled for recipient with id 2 for user with id 0
+users_api.setAlarmRecipientStatus(0, 2, false)
 ```
 
 # REST API

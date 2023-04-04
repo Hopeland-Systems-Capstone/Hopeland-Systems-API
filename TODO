@@ -1,6 +1,5 @@
-Some notes for the updates site parameters:
+Methods that need REST API:
 
-New/updated methods:
 - Sensor - getReadings(sensor_id,dataType,timeStart,timeEnd) | Retrieves all readings between timeStart and timeEnd in epoch time of type dataType (temp, pressure, etc). This will allow creating the graphs.
 - Sensor - getStatus(sensor_id) | Retrieves status for sensor (Online/Offline)
 - Sensor - setStatus(sensor_id,status) | Set status for sensor (Online/Offline)
@@ -37,24 +36,11 @@ New/updated methods:
 
 - User - createBill(user_id,billing_date,amount) | Create a bill for a user
 - User - updateBill(user_id,bill_id,status) | Update the status of a bill for a user
+- User - deleteBill(user_id,bill_id) | Delete a bill for a user
 - User - getBills(user_id) | Get all bills for a user
 
-- User - getAlarmRecipients(user_id) | Get all alarm recipients for user
 - User - addAlarmRecipient(user_id,name,email) | Add an alarm recipient for user
-- User - deleteAlarmRecipient(user_id,recipient_id) | Delete an alarm recipient for a user
-- User - setAlarmRecipientStatus(user_id,recipient_id,enabled) | Set enabled or disabled for alarm recipient for a user
-
-REST API Changes:
-
-
-Notes:
-- Only going to store the current barometric pressure, temperature, co2, water level, humidity, etc. The high, averages, and lows need to be calculated in javascript on the frontend.
-- Added associated_sensor for alerts which references a sensor_id
-- Added phone number to users
-- Added company name to users
-- Added bills array to users
-- Added cards array to users
-- Added timezone to users
-- Added alarm_recipients array to users
-- Added status to sensors
-- Added last_update to sensors
+- User - deleteAlarmRecipient(user_id,alarm_recipient_id) | Delete an alarm recipient for a user
+- User - getAlarmRecipientStatus(user_id,alarm_recipient_id) | Get enabled (true or false) for alarm recipient for a user
+- User - setAlarmRecipientStatus(user_id,alarm_recipient_id,enabled) | Set enabled (true or false) for alarm recipient for a user
+- User - getAlarmRecipients(user_id) | Get all alarm recipients for user

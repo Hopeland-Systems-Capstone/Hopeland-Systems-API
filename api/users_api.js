@@ -49,6 +49,7 @@ async function createUser(name, email, hashed_password, phone_number = "", compa
         "company_name":`${company_name}`,
         "timezone":`${timezone}`,
         "cards":[],
+        "active_card":"",
         "bills":[],
         "alarm_recipients":[],
         "sensors":[],
@@ -551,7 +552,480 @@ async function updatePassword(user_id, old_password, new_password) {
     await Mongo.users.updateOne({ "user_id": user_id }, { $set: { password:`${new_password}` } });
 }
 
+/**
+ * Gets the next available card ID by finding the highest existing card ID in the database and adding 1 to it.
+ *
+ * @returns {number} - The next available card ID.
+ */
+async function getNextCardID() {
+    const result = await Mongo.users.aggregate([
+      { $unwind: "$cards" },
+      { $group: { _id: null, maxCardID: { $max: "$cards.card_id" } } }
+    ]).toArray();
+    
+    const maxCardID = result[0]?.maxCardID || 0;
+    
+    return maxCardID + 1;
+  }
 
+/**
+ * Adds a new card to the specified user's account and sets it as the active card.
+ *
+ * @param {string} user_id - The ID of the user to add the card to.
+ * @param {string} cardNumber - The card number of the new card.
+ * @param {string} nameOnCard - The name on the new card.
+ * @param {string} cardExpiration - The expiration date of the new card.
+ * @param {string} cvc - The security code of the new card.
+ * @param {string} address1 - The first line of the billing address for the new card.
+ * @param {string} address2 - The second line of the billing address for the new card.
+ * @param {string} city - The city of the billing address for the new card.
+ * @param {string} state - The state of the billing address for the new card.
+ * @param {string} country - The country of the billing address for the new card.
+ * @param {string} zip - The zip code of the billing address for the new card.
+ */
+async function addCard(user_id, cardNumber, nameOnCard, cardExpiration, cvc, address1, address2, city, state, country, zip) {
+    const user = await Mongo.users.findOne({ "user_id": user_id });
+    if (!user) {
+      console.log(`User with id ${user_id} not found.`);
+      return;
+    }
+
+    const card_id = await getNextCardID();
+    
+    const newCard = {
+      "card_id": card_id,
+      "cardNumber": cardNumber,
+      "nameOnCard": nameOnCard,
+      "cardExpiration": cardExpiration,
+      "cvc": cvc,
+      "address1": address1,
+      "address2": address2,
+      "city": city,
+      "state": state,
+      "country": country,
+      "zip": zip
+    };
+    
+    await Mongo.users.updateOne(
+        { "user_id": user_id },
+        { $push: { "cards": newCard }, $set: { "active_card": card_id } }
+    );
+    
+    console.log(`Added card with id ${card_id} and number ${cardNumber} to user with id ${user_id}.`);
+}
+
+/**
+ * Updates the specified card for the given user with the new values.
+ *
+ * @param {string} user_id - The ID of the user who owns the card to update.
+ * @param {number} card_id - The ID of the card to update.
+ * @param {string} cardNumber - The new card number for the card.
+ * @param {string} nameOnCard - The new name on the card.
+ * @param {string} cardExpiration - The new expiration date for the card.
+ * @param {string} cvc - The new security code for the card.
+ * @param {string} address1 - The new first line of the billing address for the card.
+ * @param {string} address2 - The new second line of the billing address for the card.
+ * @param {string} city - The new city of the billing address for the card.
+ * @param {string} state - The new state of the billing address for the card.
+ * @param {string} country - The new country of the billing address for the card.
+ * @param {string} zip - The new zip code of the billing address for the card.
+ */
+async function updateCard(user_id, card_id, cardNumber, nameOnCard, cardExpiration, cvc, address1, address2, city, state, country, zip) {
+    const user = await Mongo.users.findOne({ "user_id": user_id });
+    if (!user) {
+      console.log(`User with id ${user_id} not found.`);
+      return;
+    }
+  
+    const cardIndex = user.cards.findIndex((card) => card.card_id === card_id);
+    if (cardIndex === -1) {
+      console.log(`Card with id ${card_id} not found for user with id ${user_id}.`);
+      return;
+    }
+  
+    const updatedCard = {
+      "card_id": card_id,
+      "cardNumber": cardNumber,
+      "nameOnCard": nameOnCard,
+      "cardExpiration": cardExpiration,
+      "cvc": cvc,
+      "address1": address1,
+      "address2": address2,
+      "city": city,
+      "state": state,
+      "country": country,
+      "zip": zip
+    };
+  
+    await Mongo.users.updateOne(
+      { "user_id": user_id, "cards.card_id": card_id },
+      { $set: { "cards.$": updatedCard } }
+    );
+  
+    console.log(`Updated card with id ${card_id} for user with id ${user_id}.`);
+  }
+  
+  /**
+ * Deletes the specified card for the given user.
+ *
+ * @param {string} user_id - The ID of the user who owns the card to delete.
+ * @param {number} card_id - The ID of the card to delete.
+ */
+async function deleteCard(user_id, card_id) {
+    const user = await Mongo.users.findOne({ "user_id": user_id });
+    if (!user) {
+      console.log(`User with id ${user_id} not found.`);
+      return;
+    }
+  
+    const cardIndex = user.cards.findIndex((card) => card.card_id === card_id);
+    if (cardIndex === -1) {
+      console.log(`Card with id ${card_id} not found for user with id ${user_id}.`);
+      return;
+    }
+  
+    await Mongo.users.updateOne(
+      { "user_id": user_id },
+      { $pull: { "cards": { "card_id": card_id } } }
+    );
+  
+    console.log(`Deleted card with id ${card_id} for user with id ${user_id}.`);
+  }
+  
+/**
+ * Gets the ID of the active card for the given user.
+ *
+ * @param {string} user_id - The ID of the user whose active card ID to get.
+ * @returns {number|null} The ID of the active card, or null if the user or active card is not found.
+ */
+async function getActiveCard(user_id) {
+    const user = await Mongo.users.findOne({ "user_id": user_id });
+    if (!user) {
+      console.log(`User with id ${user_id} not found.`);
+      return null;
+    }
+  
+    const activeCardId = user.active_card;
+    const activeCard = user.cards.find((card) => card.card_id === activeCardId);
+    if (!activeCard) {
+      console.log(`Active card with id ${activeCardId} not found for user with id ${user_id}.`);
+      return null;
+    }
+  
+    return activeCardId;
+  }
+  
+  
+  /**
+   * Sets the active card for the given user.
+   *
+   * @param {string} user_id - The ID of the user whose active card to set.
+   * @param {number} card_id - The ID of the card to set as the active card.
+   */
+  async function setActiveCard(user_id, card_id) {
+    const user = await Mongo.users.findOne({ "user_id": user_id });
+    if (!user) {
+      console.log(`User with id ${user_id} not found.`);
+      return;
+    }
+  
+    const card = user.cards.find((card) => card.card_id === card_id);
+    if (!card) {
+      console.log(`Card with id ${card_id} not found for user with id ${user_id}.`);
+      return;
+    }
+  
+    await Mongo.users.updateOne(
+      { "user_id": user_id },
+      { $set: { "active_card": card_id } }
+    );
+  
+    console.log(`Set active card with id ${card_id} for user with id ${user_id}.`);
+  }
+  
+/**
+ * Gets all the cards for the given user.
+ *
+ * @param {string} user_id - The ID of the user whose cards to get.
+ * @returns {Object[]} An array of card objects for the user, or an empty array if the user is not found or has no cards.
+ */
+async function getCards(user_id) {
+    const user = await Mongo.users.findOne({ "user_id": user_id });
+    if (!user) {
+      console.log(`User with id ${user_id} not found.`);
+      return [];
+    }
+  
+    const cards = user.cards || [];
+    return cards;
+  }
+  
+/**
+ * Generates a new unique bill ID.
+ *
+ * @returns {number} A new unique bill ID.
+ */
+async function getNextBillID() {
+    const lastBill = await Mongo.bills.findOne({}, { sort: { "bill_id": -1 } });
+    const maxID = lastBill ? lastBill.bill_id : 0;
+    return maxID + 1;
+  }
+
+/**
+ * Creates a new bill for the given user.
+ *
+ * @param {string} user_id - The ID of the user to create the bill for.
+ * @param {number} billing_date - The billing date of the bill as a Unix timestamp.
+ * @param {number} amount - The amount of the bill.
+ */
+async function createBill(user_id, billing_date, amount) {
+    const user = await Mongo.users.findOne({ "user_id": user_id });
+    if (!user) {
+      console.log(`User with id ${user_id} not found.`);
+      return;
+    }
+  
+    const bill_id = await getNextBillID();
+    const newBill = {
+      "bill_id": bill_id,
+      "billing_date": billing_date,
+      "amount": amount,
+      "status": "Unpaid"
+    };
+  
+    await Mongo.users.updateOne(
+      { "user_id": user_id },
+      { $push: { "bills": newBill } }
+    );
+  
+    console.log(`Created new bill with id ${bill_id} for user with id ${user_id}.`);
+  }
+
+  /**
+ * Updates the status of the specified bill for the given user.
+ *
+ * @param {string} user_id - The ID of the user whose bill to update.
+ * @param {number} bill_id - The ID of the bill to update.
+ * @param {string} status - The new status of the bill.
+ */
+async function updateBill(user_id, bill_id, status) {
+    const user = await Mongo.users.findOne({ "user_id": user_id });
+    if (!user) {
+      console.log(`User with id ${user_id} not found.`);
+      return;
+    }
+  
+    const billIndex = user.bills.findIndex((bill) => bill.bill_id === bill_id);
+    if (billIndex === -1) {
+      console.log(`Bill with id ${bill_id} not found for user with id ${user_id}.`);
+      return;
+    }
+  
+    await Mongo.users.updateOne(
+      { "user_id": user_id, "bills.bill_id": bill_id },
+      { $set: { "bills.$.status": status } }
+    );
+  
+    console.log(`Updated status of bill with id ${bill_id} to ${status} for user with id ${user_id}.`);
+  }
+  
+  /**
+ * Deletes the specified bill for the given user.
+ *
+ * @param {string} user_id - The ID of the user whose bill to delete.
+ * @param {number} bill_id - The ID of the bill to delete.
+ */
+async function deleteBill(user_id, bill_id) {
+    const user = await Mongo.users.findOne({ "user_id": user_id });
+    if (!user) {
+      console.log(`User with id ${user_id} not found.`);
+      return;
+    }
+  
+    const billIndex = user.bills.findIndex((bill) => bill.bill_id === bill_id);
+    if (billIndex === -1) {
+      console.log(`Bill with id ${bill_id} not found for user with id ${user_id}.`);
+      return;
+    }
+  
+    await Mongo.users.updateOne(
+      { "user_id": user_id },
+      { $pull: { "bills": { "bill_id": bill_id } } }
+    );
+  
+    console.log(`Deleted bill with id ${bill_id} for user with id ${user_id}.`);
+  }
+
+  /**
+ * Gets all the bills for the given user.
+ *
+ * @param {string} user_id - The ID of the user whose bills to get.
+ * @returns {Object[]} An array of bill objects for the user, or an empty array if the user is not found or has no bills.
+ */
+async function getBills(user_id) {
+    const user = await Mongo.users.findOne({ "user_id": user_id });
+    if (!user) {
+      console.log(`User with id ${user_id} not found.`);
+      return [];
+    }
+  
+    const bills = user.bills || [];
+    return bills;
+  }
+  
+/**
+ * Generates a new unique ID for an alarm recipient.
+ *
+ * @returns {number} A new unique ID for an alarm recipient.
+ */
+async function getNextAlarmRecipientID() {
+    const result = await Mongo.counters.findOneAndUpdate(
+      { "_id": "alarm_recipient_id" },
+      { $inc: { "sequence_value": 1 } },
+      { returnOriginal: false }
+    );
+  
+    return result.value.sequence_value;
+  }
+  
+
+/**
+ * Adds a new alarm recipient for the given user.
+ *
+ * @param {string} user_id - The ID of the user to add the alarm recipient for.
+ * @param {string} name - The name of the alarm recipient.
+ * @param {string} email - The email of the alarm recipient.
+ */
+async function addAlarmRecipient(user_id, name, email) {
+    const user = await Mongo.users.findOne({ "user_id": user_id });
+    if (!user) {
+      console.log(`User with id ${user_id} not found.`);
+      return;
+    }
+  
+    const alarmRecipientID = await getNextAlarmRecipientID();
+    const newAlarmRecipient = {
+      "alarm_recipient_id": alarmRecipientID,
+      "name": name,
+      "email": email,
+      "enabled":true
+    };
+  
+    await Mongo.users.updateOne(
+      { "user_id": user_id },
+      { $push: { "alarm_recipients": newAlarmRecipient } }
+    );
+  
+    console.log(`Added new alarm recipient with id ${alarmRecipientID} for user with id ${user_id}.`);
+  }
+
+  /**
+ * Deletes the specified alarm recipient for the given user.
+ *
+ * @param {string} user_id - The ID of the user whose alarm recipient to delete.
+ * @param {number} alarm_recipient_id - The ID of the alarm recipient to delete.
+ */
+async function deleteAlarmRecipient(user_id, alarm_recipient_id) {
+    const user = await Mongo.users.findOne({ "user_id": user_id });
+    if (!user) {
+      console.log(`User with id ${user_id} not found.`);
+      return;
+    }
+  
+    const alarmRecipientIndex = user.alarm_recipients.findIndex(
+      (alarmRecipient) => alarmRecipient.alarm_recipient_id === alarm_recipient_id
+    );
+    if (alarmRecipientIndex === -1) {
+      console.log(`Alarm recipient with id ${alarm_recipient_id} not found for user with id ${user_id}.`);
+      return;
+    }
+  
+    await Mongo.users.updateOne(
+      { "user_id": user_id },
+      { $pull: { "alarm_recipients": { "alarm_recipient_id": alarm_recipient_id } } }
+    );
+  
+    console.log(`Deleted alarm recipient with id ${alarm_recipient_id} for user with id ${user_id}.`);
+  }
+
+  /**
+ * Gets the alarm recipients for the given user.
+ *
+ * @param {string} user_id - The ID of the user whose alarm recipients to get.
+ * @returns {Object[]} An array of alarm recipient objects for the user, or an empty array if the user is not found or has no alarm recipients.
+ */
+async function getAlarmRecipients(user_id) {
+    const user = await Mongo.users.findOne({ "user_id": user_id });
+    if (!user) {
+      console.log(`User with id ${user_id} not found.`);
+      return [];
+    }
+  
+    const alarmRecipients = user.alarm_recipients || [];
+    return alarmRecipients;
+  }
+  
+/**
+ * Gets the status of the specified alarm recipient for the given user.
+ *
+ * @param {string} user_id - The ID of the user whose alarm recipient to retrieve.
+ * @param {number} alarm_recipient_id - The ID of the alarm recipient to retrieve.
+ * @returns {boolean} The status of the alarm recipient, or null if the alarm recipient is not found.
+ */
+async function getAlarmRecipientStatus(user_id, alarm_recipient_id) {
+    const user = await Mongo.users.findOne({ "user_id": user_id });
+    if (!user) {
+      console.log(`User with id ${user_id} not found.`);
+      return null;
+    }
+  
+    const alarmRecipient = user.alarm_recipients.find(
+      (alarmRecipient) => alarmRecipient.alarm_recipient_id === alarm_recipient_id
+    );
+    if (!alarmRecipient) {
+      console.log(`Alarm recipient with id ${alarm_recipient_id} not found for user with id ${user_id}.`);
+      return null;
+    }
+  
+    console.log(`Retrieved status of alarm recipient with id ${alarm_recipient_id} for user with id ${user_id}.`);
+    return alarmRecipient.enabled;
+  }
+  
+
+  /**
+ * Sets the status of the specified alarm recipient for the given user.
+ *
+ * @param {string} user_id - The ID of the user whose alarm recipient to update.
+ * @param {number} alarm_recipient_id - The ID of the alarm recipient to update.
+ * @param {boolean} enabled - Whether the alarm recipient should be enabled or not.
+ */
+async function setAlarmRecipientStatus(user_id, alarm_recipient_id, enabled) {
+    const user = await Mongo.users.findOne({ "user_id": user_id });
+    if (!user) {
+      console.log(`User with id ${user_id} not found.`);
+      return;
+    }
+  
+    const alarmRecipientIndex = user.alarm_recipients.findIndex(
+      (alarmRecipient) => alarmRecipient.alarm_recipient_id === alarm_recipient_id
+    );
+    if (alarmRecipientIndex === -1) {
+      console.log(`Alarm recipient with id ${alarm_recipient_id} not found for user with id ${user_id}.`);
+      return;
+    }
+  
+    const updatedAlarmRecipient = {
+      ...user.alarm_recipients[alarmRecipientIndex],
+      "enabled": enabled
+    };
+  
+    await Mongo.users.updateOne(
+      { "user_id": user_id, "alarm_recipients.alarm_recipient_id": alarm_recipient_id },
+      { $set: { "alarm_recipients.$": updatedAlarmRecipient } }
+    );
+  
+    console.log(`Updated status of alarm recipient with id ${alarm_recipient_id} for user with id ${user_id}.`);
+  }
 
 module.exports = {
     createUser,
@@ -579,4 +1053,22 @@ module.exports = {
     getTimezone,
     setTimezone,
     updatePassword,
+    getNextCardID,
+    addCard,
+    updateCard,
+    deleteCard,
+    getActiveCard,
+    setActiveCard,
+    getCards,
+    getNextBillID,
+    createBill,
+    updateBill,
+    deleteBill,
+    getBills,
+    getNextAlarmRecipientID,
+    addAlarmRecipient,
+    deleteAlarmRecipient,
+    getAlarmRecipients,
+    getAlarmRecipientStatus,
+    setAlarmRecipientStatus,
 };
