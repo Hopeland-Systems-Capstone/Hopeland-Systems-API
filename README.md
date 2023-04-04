@@ -131,8 +131,8 @@ apikeys_api.updateKeyLevel("4124bc0a9335c27f086f24ba207a4912", 1);
 
 ## Users:
 ```javascript
-// Create a user with a name, username, and password
-users_api.createUser("User1","user1@gmail.com","xxxx");
+// Create a user with a name, username, password, phone number, company name, and timezone. Phone number, company name, and timezone are optional.
+users_api.createUser("User1","user1@gmail.com","xxxx","4801234567","Hopeland","MST");
 
 // Update a user's basic information (name, email, phone number, company name)
 users_api.updateUser(0,"User1","user1@gmail.com","0000000000","Hopeland")
@@ -314,6 +314,8 @@ users_api.setAlarmRecipientStatus(0, 2, false)
         "_id": "63785425c97a925662a44651",
         "sensor_id": 0,
         "name": "sensor1",
+        "status":"Online",
+        "last_update":1668896333401,
         "geolocation": {
             "type": "Point",
             "coordinates": [
@@ -343,7 +345,8 @@ users_api.setAlarmRecipientStatus(0, 2, false)
         "alert_id": 0,
         "title": "New Alert",
         "alert": "This is a test alert",
-        "time": 1667786839503
+        "time": 1667786839503,
+        "associated_sensor": 0
     }
 ]
 ```
@@ -368,8 +371,15 @@ users_api.setAlarmRecipientStatus(0, 2, false)
         "name": "Jacob",
         "email": "jdpark10@asu.edu",
         "password": "aaa",
-        "sensors": [],
-        "alerts": []
+        "phone_number":"0000000000",
+        "company_name":"Hopeland",
+        "timezone":"MST",
+        "cards":[],
+        "active_card":-1,
+        "bills":[],
+        "alarm_recipients":[],
+        "sensors":[],
+        "alerts":[]
     }
 ]
 ```
