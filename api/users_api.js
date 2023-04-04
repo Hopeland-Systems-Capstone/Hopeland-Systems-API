@@ -49,7 +49,7 @@ async function createUser(name, email, hashed_password, phone_number = "", compa
         "company_name":`${company_name}`,
         "timezone":`${timezone}`,
         "cards":[],
-        "active_card":"",
+        "active_card":-1,
         "bills":[],
         "alarm_recipients":[],
         "sensors":[],
