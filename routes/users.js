@@ -165,3 +165,5 @@ router.put("/", limiter, async (req, res, next) => {
     return res.status(400).json({ error: 'Invalid arguments.' });
 
 });
+
+module.exports = router;
