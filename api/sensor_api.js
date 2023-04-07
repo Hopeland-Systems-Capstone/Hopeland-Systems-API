@@ -19,7 +19,7 @@ async function getNextSensorID() {
  * @param {Number} longitude
  * @param {Number} latitude
  */
-async function createSensor(name, longitude, latitude) {
+async function createSensor(name, longitude, latitude, type) {
 
     if (longitude > 180 || longitude < -180 || latitude > 90 || latitude < -90) {
         console.log(`Invalid longitude/longitude`);
@@ -41,6 +41,7 @@ async function createSensor(name, longitude, latitude) {
         "sensor_id":sensor_id,
         "name":`${name}`,
         "status":"Online",
+        "type":`${type}`,
         "last_update":time,
         "geolocation":{
             "type": "Point",
@@ -137,28 +138,29 @@ async function getSensorData(name) {
  */
  async function addSensorData(sensor_name, data_type, value) {
 
-    if (data_type != "battery" && data_type != "temperature" && data_type != "humidity" && data_type != "pressure") {
+    if (data_type != "battery" && data_type != "temperature" && data_type != "humidity" && data_type != "pressure" && data_type != "co2") {
         console.log(`Invalid data type ${data_type}.`);
         return false;
     }
 
     time = Long.fromString(Date.now().toString());
 
-    var key = data_type.toLowerCase(),
-    new_data = {
-        "last_update":time,
-        [key]: {
-            "time":time,
-            "value":value
+    var key = data_type.toLowerCase();
+    var new_data = {
+        $set: {
+            "last_update": time
+        },
+        $push: {
+            [key]: {
+                "time": time,
+                "value": value
+            }
         }
     };
 
     passed = false;
-    await Mongo.sensors.updateOne({
-        "name":`${sensor_name}`
-    }, {
-        $push: new_data
-    }).then((res) => {
+
+    await Mongo.sensors.updateOne({"name": `${sensor_name}`}, new_data).then((res) => {
         if (res.matchedCount > 0) {
             console.log(`Added ${data_type} of ${value} at ${time} to sensor ${sensor_name}.`);
             passed = true;

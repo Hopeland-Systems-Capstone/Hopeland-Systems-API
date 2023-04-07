@@ -461,176 +461,145 @@ class Mongo {
               "First Name": "Jack",
               "Last Name": "Walker"
             }
-           ];
+        ];
           
-          const USERS_TO_GENERATE = 20;
-          const SENSORS_TO_GENERATE = 40;
-          const ALERTS_TO_GENERATE = 10;
-          const MS_TO_5MIN = 1000*60*5;
-          
-          var userList = [];
-          var sensorList = [];
-          var alertList = []
-          
-          function makePassword(n) {
-            let result = '';
-            const characters = "abcdefghijklmnopqrstuvwxyz";
-            let counter = 0;
-            while (counter < n) {
-              result += characters.charAt(Math.floor(Math.random() * 26));
-              counter++;
-            }
-            return result;
-          }
-          
-          //USERS
-          var uid = 100;
-          for (uid = 100; uid < 100 + USERS_TO_GENERATE; uid++) {
-            const n = names.shift();
-            const a1 = names.shift();
-            const a2 = names.shift();
-            const a3 = names.shift();
-            
-            const name = `${n["First Name"]} ${n["Last Name"]}`;
-            const email = `${n["First Name"]}${n["Last Name"]}@mail.com`;
-            const password = makePassword(3);
-            const phone_number = `${Math.round(Math.random() * 9999999999)}`;
-            const company_name = "Hopeland";
-            const timezone = "MST";
-            const card = {
-              number: `${Math.round(Math.random() * 9999999999999999)}`,
-              expiration_month: `${Math.ceil(Math.random() * 12)}`,
-              expiration_month: `${Math.ceil(Math.random() * 5) + 2023}`,
-              cvc: `${Math.round(Math.random() * 999)}`
-            }
-            const bill = {
-              time: Date.now(),
-              amount: `${Math.ceil(Math.random() * 100)}`,
-              status: "Unpaid"
-            }
-            const alarm1 = {
-              name: `${a1["First Name"]} ${a1["Last Name"]}`,
-              email: `${a1["First Name"]}${a1["Last Name"]}@mail.com`
-            }
-            const alarm2 = {
-              name: `${a2["First Name"]} ${a2["Last Name"]}`,
-              email: `${a2["First Name"]}${a2["Last Name"]}@mail.com`
-            }
-            const alarm3 = {
-              name: `${a3["First Name"]} ${a3["Last Name"]}`,
-              email: `${a3["First Name"]}${a3["Last Name"]}@mail.com`
-            }
-          
-            userList.push({
-              user_id: uid,
-              name: name,
-              email: email,
-              password: password,
-              phone_number: phone_number,
-              company_name: company_name,
-              timezone: timezone,
-              cards: [card],
-              active_card: `1`,
-              bills: [bill],
-              alarm_recipients: [alarm1, alarm2, alarm3]
-            })
-          }
-          
-          
-          //SENSORS
-          var sid = 100;
-          for (sid = 100; sid < 100 + SENSORS_TO_GENERATE; sid++) {
-            const name = `sensor${sid}`;
-            const status = Math.random() > 0.5 ? `Online` : `Offline`;
-            const last_update = Date.now();
-            const geolocation = [Math.random()*4.3+32.7, Math.random()*4.8-109];
-            const battery = {
-              time: Date.now(),
-              value: Math.random()*100
-            }
-            const temperature1 = {
-              time: Date.now() - MS_TO_5MIN,
-              value: Math.random()*20+60
-            }
-            const temperature2 = {
-              time: Date.now() - 2 * MS_TO_5MIN,
-              value: Math.random()*20+60
-            }
-            const temperature3 = {
-              time: Date.now() - 3 * MS_TO_5MIN,
-              value: Math.random()*20+60
-            }
-          
-            const humidity1 = {
-              time: Date.now() - MS_TO_5MIN,
-              value: Math.random()*100
-            }
-            const humidity2 = {
-              time: Date.now() - 2 * MS_TO_5MIN,
-              value: Math.random()*100
-            }
-            const humidity3 = {
-              time: Date.now() - 3 * MS_TO_5MIN,
-              value: Math.random()*100
-            }
-          
-            const co1 = {
-              time: Date.now() - MS_TO_5MIN,
-              value: Math.random()*300+400
-            }
-            const co2 = {
-              time: Date.now() - 2 * MS_TO_5MIN,
-              value: Math.random()*300+400
-            }
-            const co3 = {
-              time: Date.now() - 3 * MS_TO_5MIN,
-              value: Math.random()*300+400
-            }
-          
-            const pressure1 = {
-              time: Date.now() - MS_TO_5MIN,
-              value: Math.random()*50+1000
-            }
-            const pressure2 = {
-              time: Date.now() - 2 * MS_TO_5MIN,
-              value: Math.random()*50+1000
-            }
-            const pressure3 = {
-              time: Date.now() - 3 * MS_TO_5MIN,
-              value: Math.random()*50+1000
-            }
-          
-            sensorList.push({
-              sensor_id: sid,
-              name: name,
-              status: status,
-              last_update: last_update,
-              geolocation: { coordinates: geolocation },
-              battery: [battery],
-              temperature: [temperature3,temperature2,temperature1],
-              humidity: [humidity3,humidity2,humidity1],
-              co2: [co3,co2,co1],
-              pressure: [pressure3, pressure2, pressure1]
-            })
-          }
+        //Change these values to add documents to database
+        const USERS_TO_GENERATE = 0; //MAX 20
+        const SENSORS_TO_GENERATE = 0; //MAX 40
+        const ALERTS_TO_GENERATE = 0; //MAX 10
 
-          var aid;
-          for (aid = 0; aid < ALERTS_TO_GENERATE; aid++) {
-            alertList.push({
-                title: `Alert ${aid}`,
-                alert: `This is an alert...`,
-                time: Date.now() - Math.random()*10000*MS_TO_5MIN,
-                associated_sensor: aid*4
-            })
-          }
+        const MS_TO_5MIN = 1000*60*5;
+        
+        var userList = [];
+        var sensorList = [];
+        var alertList = []
+        
+        function makePassword(n) {
+        let result = '';
+        const characters = "abcdefghijklmnopqrstuvwxyz";
+        let counter = 0;
+        while (counter < n) {
+            result += characters.charAt(Math.floor(Math.random() * 26));
+            counter++;
+        }
+        return result;
+        }
+        
+        //USERS
+        var uid = 100;
+        for (uid = 100; uid < 100 + USERS_TO_GENERATE; uid++) {
+        const n = names.shift();
+        const a1 = names.shift();
+        const a2 = names.shift();
+        const a3 = names.shift();
+        
+        const name = `${n["First Name"]} ${n["Last Name"]}`;
+        const email = `${n["First Name"]}${n["Last Name"]}@mail.com`;
+        const password = makePassword(3);
+        const phone_number = `${Math.round(Math.random() * 9999999999)}`;
+        const company_name = "Hopeland";
+        const timezone = "MST";
+        const card = {
+            number: `${Math.round(Math.random() * 9999999999999999)}`,
+            expiration_month: `${Math.ceil(Math.random() * 12)}`,
+            expiration_month: `${Math.ceil(Math.random() * 5) + 2023}`,
+            cvc: `${Math.round(Math.random() * 999)}`
+        }
+        const bill = {
+            time: Date.now(),
+            amount: `${Math.ceil(Math.random() * 100)}`,
+            status: "Unpaid"
+        }
+        const alarm1 = {
+            name: `${a1["First Name"]} ${a1["Last Name"]}`,
+            email: `${a1["First Name"]}${a1["Last Name"]}@mail.com`
+        }
+        const alarm2 = {
+            name: `${a2["First Name"]} ${a2["Last Name"]}`,
+            email: `${a2["First Name"]}${a2["Last Name"]}@mail.com`
+        }
+        const alarm3 = {
+            name: `${a3["First Name"]} ${a3["Last Name"]}`,
+            email: `${a3["First Name"]}${a3["Last Name"]}@mail.com`
+        }
+        
+        userList.push({
+            user_id: uid,
+            name: name,
+            email: email,
+            password: password,
+            phone_number: phone_number,
+            company_name: company_name,
+            timezone: timezone,
+            cards: [card],
+            active_card: `1`,
+            bills: [bill],
+            alarm_recipients: [alarm1, alarm2, alarm3]
+        })
+        }
+        
+        
+        //SENSORS
+        var sid = 100;
+        for (sid = 100; sid < 100 + SENSORS_TO_GENERATE; sid++) {
+        const name = `sensor${sid}`;
+        const status = Math.random() > 0.5 ? `Online` : `Offline`;
+        const type = Math.random() > 0.33 ? (Math.random() > 0.66 ? "Gateway" : "Flood") : "Forest";
+        const last_update = Date.now();
+        const geolocation = [Math.random()*4.3+32.7, Math.random()*4.8-113.8];
+        const battery = {
+            time: Date.now(),
+            value: Math.random()*100
+        }
+        const temperature1 = Math.random()*20+60;
+        const temperature2 = Math.random()*20+60;
+        const temperature3 = Math.random()*20+60;
+        
+        const humidity1 = Math.random()*100;
+        const humidity2 = Math.random()*100;
+        const humidity3 = Math.random()*100;
+        
+        const co1 = Math.random()*300+400;
+        const co2 = Math.random()*300+400;
+        const co3 = Math.random()*300+400;
+        
+        const pressure1 = Math.random()*50+1000;
+        const pressure2 = Math.random()*50+1000;
+        const pressure3 = Math.random()*50+1000;
+        
+        sensorList.push({
+            sensor_id: sid,
+            name: name,
+            status: status,
+            type: type,
+            last_update: last_update,
+            geolocation: { coordinates: geolocation },
+            battery: [battery],
+            temperature: [temperature3,temperature2,temperature1],
+            humidity: [humidity3,humidity2,humidity1],
+            co2: [co3,co2,co1],
+            pressure: [pressure3, pressure2, pressure1]
+        })
+        }
 
+        var aid;
+        for (aid = 0; aid < ALERTS_TO_GENERATE; aid++) {
+        alertList.push({
+            title: `Alert ${aid}`,
+            alert: `This is an alert...`,
+            time: Date.now() - Math.random()*10000*MS_TO_5MIN,
+            associated_sensor: aid*4
+        })
+        }
+
+        
 
         const sensor_api = require('./api/sensor_api');
         var i;
         for (i = 0; i < SENSORS_TO_GENERATE; i++) {
             const s = sensorList[i];
             const coord = s.geolocation.coordinates
-            await sensor_api.createSensor(s.name,coord[1],coord[0]);
+            await sensor_api.createSensor(s.name,coord[1],coord[0],s.type);
             var j;
             for (j = 0; j < 3; j++) {
                 await sensor_api.addSensorData(s.name,"temperature",s.temperature[j]);
@@ -644,8 +613,8 @@ class Mongo {
         for (i = 0; i < USERS_TO_GENERATE; i++) {
             const u = userList[i];
             await users_api.createUser(u.name,u.email,u.password,u.phone_number,u.company_name,u.timezone);
-            await users_api.addSensorToUserWithUsername(u.name,i*2+3)
-            await users_api.addSensorToUserWithUsername(u.name,i*2+4)
+            await users_api.addSensorToUserWithUsername(u.name,i*2)
+            await users_api.addSensorToUserWithUsername(u.name,i*2+1)
         }
 
         const alerts_api = require('./api/alerts_api');
@@ -653,18 +622,6 @@ class Mongo {
             const a = alertList[i];
             await alerts_api.createAlert(a.title,a.alert,a.associated_sensor);
         }
-
-        //const sensors = await sensor_api.getSensorsByGeolocation(0,0,1000000);
-        //console.log(sensors);
-
-        //await sensor_api.addSensorData("sensor3", "battery", 100)
-        
-        //const alerts_api = require("./api/alerts_api");
-        //alerts_api.createAlert("New Alert", "This is a test alert");
-
-        //const apikeys_api = require('./api/apikeys_api')
-        //const level = await apikeys_api.getKeyLevel("aaa");
-        //console.log(level);
 
     }
 
