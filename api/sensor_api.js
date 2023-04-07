@@ -144,21 +144,22 @@ async function getSensorData(name) {
 
     time = Long.fromString(Date.now().toString());
 
-    var key = data_type.toLowerCase(),
-    new_data = {
-        "last_update":time,
-        [key]: {
-            "time":time,
-            "value":value
+    var key = data_type.toLowerCase();
+    var new_data = {
+        $set: {
+            "last_update": time
+        },
+        $push: {
+            [key]: {
+                "time": time,
+                "value": value
+            }
         }
     };
 
     passed = false;
-    await Mongo.sensors.updateOne({
-        "name":`${sensor_name}`
-    }, {
-        $push: new_data
-    }).then((res) => {
+
+    await Mongo.sensors.updateOne({"name": `${sensor_name}`}, new_data).then((res) => {
         if (res.matchedCount > 0) {
             console.log(`Added ${data_type} of ${value} at ${time} to sensor ${sensor_name}.`);
             passed = true;
