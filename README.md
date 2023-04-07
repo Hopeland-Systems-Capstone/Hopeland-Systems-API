@@ -80,6 +80,18 @@ sensor_api.getOnline(0)
 
 // Count offline sensors for user 0
 sensor_api.getOffline(0)
+
+// Get sensor name for sensor 0
+sensor_api.getName(0)
+
+// Get sensor status for sensor 0
+sensor_api.getStatus(0)
+
+// Set sensor status via sensor 0
+sensor_api.setStatus(0, "status")
+
+// Get sensor Pressure readings from epoch 0 to epoch 1 for sensor 0
+sensor_api.getReadings(0, "Pressure", 0, 1)
 ```
 
 ## Alerts:
@@ -264,6 +276,11 @@ users_api.setAlarmRecipientStatus(0, 2, false)
 | **POST** | /sensors?key=val&sensor=val&longitude=val&latitude=val | Create a sensor with a `name`, `longitude`, and `latitude` |
 | **DELETE** | /sensors?key=val&sensor=val | Delete a sensor with a `sensor` name |
 | **PUT** | /sensors?key=val&sensor=val&datatype=val&value=val | Add new data of `datatype` with `value` to `sensor` with name |
+| **GET** | /sensors/sensor_id/getName?key=val | Return sensor name given `sensor_id`|
+| **GET** | /sensors/sensor_id/getStatus?key=val | Return sensor status given `sensor_id`|
+| **PUT** | /sensors/sensor_id/status/setStatus?key=val | Set sensor with `sensor_id` to `status`|
+| **GET** | /sensors/sensor_id/dataType/timeStart/timeEnd/getReadings?key=val | Return sensor readings of `dataType` from `timeStart` to `timeEnd` for `sensor_id`|
+
 
 ## Alerts:
 | Method | Path | Description |

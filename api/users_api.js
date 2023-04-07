@@ -563,7 +563,7 @@ async function getNextCardID() {
       { $group: { _id: null, maxCardID: { $max: "$cards.card_id" } } }
     ]).toArray();
     
-    const maxCardID = result[0]?.maxCardID || 0;
+    const maxCardID = result[0].maxCardID || 0;
     
     return maxCardID + 1;
   }
