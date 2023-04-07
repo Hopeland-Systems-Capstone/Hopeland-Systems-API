@@ -19,6 +19,81 @@ const api_key_util = require('./util/api_key_util');
 //PUT | /users?key=apikey&username=name&alert_id=alert_id | Add alert to user when given alert_id and username 
 //PUT | /users?key=apikey&email=email&salert_id=alert_id | Add alert to user when given alert_id and email
 
+router.get("/:user_id/getPhoneNumber", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const user_Id = parseInt(req.params.user_id);
+
+    if ( user_Id === NaN) {
+        return res.status(400).json({error: `Invalid arguments`})
+    } else {
+        const data = await users_api.getPhoneNumber(user_Id);
+        return res.status(200).json(data);
+    }
+
+});
+
+router.get("/:user_id/getCompanyName", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const user_Id = parseInt(req.params.user_id);
+
+    if ( user_Id === NaN) {
+        return res.status(400).json({error: `Invalid arguments`})
+    } else {
+        const data = await users_api.getCompanyName(user_Id);
+        return res.status(200).json(data);
+    }
+
+});
+
+router.get("/:user_id/getName", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const user_Id = parseInt(req.params.user_id);
+
+    if ( user_Id === NaN) {
+        return res.status(400).json({error: `Invalid arguments`})
+    } else {
+        const data = await users_api.getName(user_Id);
+        return res.status(200).json(data);
+    }
+
+});
+
+router.get("/:user_id/getEmail", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const user_Id = parseInt(req.params.user_id);
+
+    if ( user_Id === NaN) {
+        return res.status(400).json({error: `Invalid arguments`})
+    } else {
+        const data = await users_api.getEmail(user_Id);
+        return res.status(200).json(data);
+    }
+
+});
+
+router.get("/:user_id/getAlerts", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const user_Id = parseInt(req.params.user_id);
+
+    if ( user_Id === NaN) {
+        return res.status(400).json({error: `Invalid arguments`})
+    } else {
+        const data = await users_api.getAlerts(user_Id);
+        return res.status(200).json(data);
+    }
+
+});
+
 router.get("/", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
@@ -165,5 +240,23 @@ router.put("/", limiter, async (req, res, next) => {
     return res.status(400).json({ error: 'Invalid arguments.' });
 
 });
+
+router.put("/:user_id/:name/:email/:phone_number/:company_name/updateUser", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const user_Id = parseInt(req.params.user_id);
+    const name = String(req.params.name);
+    const email = String(req.params.email);
+    const phone_number = String(req.params.phone_number);
+    const company_name = String(req.params.company_name);
+
+    if ( user_Id === NaN || !name || !email || !phone_number || !company_name) {
+        return res.status(400).json({error: `Invalid arguments`})
+    } else {
+        await users_api.updateUser(user_Id,name,email,phone_number,company_name);
+        return res.status(200).json({message: `Updated user ${user_Id}`});
+    }
+});    
 
 module.exports = router;

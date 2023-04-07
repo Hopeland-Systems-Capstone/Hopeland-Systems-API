@@ -13,6 +13,72 @@ const api_key_util = require('./util/api_key_util');
 //DELETE | /sensors?key=apikey&sensor=name | Delete a sensor with a name
 //PUT | /sensors?key=apikey&sensor=name&datatype=battery&value=100 | Add new data to a sensor
 
+router.get('/:user_id/countOffline', async (req, res) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const user_Id = parseInt(req.params.user_id);
+    
+    if (user_Id === NaN) {
+        res.status(400).send('Invalid arguments');
+    } else {
+        const data = await sensor_api.countOffline(user_Id);
+        res.status(200).json(data);
+    }
+});
+
+router.get('/:user_id/countOnline', async (req, res) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const user_Id = parseInt(req.params.user_id);
+    
+    if (user_Id === NaN) {
+        res.status(400).send('Invalid arguments');
+    } else {
+        const data = await sensor_api.countOnline(user_Id);
+        res.status(200).json(data);
+    }
+});
+
+router.get('/:sensor_id/getLastUpdated', async (req, res) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const sensor_Id = parseInt(req.params.sensor_id);
+    
+    if (sensor_Id === NaN) {
+        res.status(400).send('Invalid arguments');
+    } else {
+        try {
+            const reading = await sensor_api.getLastUpdated(sensor_Id);
+            if (reading) {
+                return res.status(200).json(reading);
+            } else {
+                return res.status(500).json({message: `Error getting last update`});
+            }
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({message: `Error getting last update`});  
+        }
+    }
+});
+
+router.get('/:sensor_id/:dataType/getLastReading', async (req, res) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const sensor_Id = parseInt(req.params.sensor_id);
+    const dataType = String(req.params.dataType);
+    
+    if (sensor_Id === NaN || !dataType) {
+        res.status(400).send('Invalid arguments')
+    } else {
+        const data = await sensor_api.getLastReading(sensor_Id, dataType);
+        return res.status(200).json(data)
+    }
+});
+
 router.get('/:sensor_id/:dataType/:timeStart/:timeEnd/getReadings', async (req, res) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
@@ -21,8 +87,6 @@ router.get('/:sensor_id/:dataType/:timeStart/:timeEnd/getReadings', async (req, 
     const dataType = String(req.params.dataType);
     const timeStart = parseInt(req.params.timeStart);
     const timeEnd = parseInt(req.params.timeEnd);
-
-    console.log(sensor_Id, dataType, timeStart, timeEnd)
 
     if (sensor_Id === NaN || !dataType || timeStart === NaN || timeEnd === NaN) {
         res.status(400).send('Invalid arguments')
