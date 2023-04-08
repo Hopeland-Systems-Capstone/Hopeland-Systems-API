@@ -46,6 +46,15 @@ class Mongo {
             });
         }
 
+        if (! await this.users.findOne({
+            "_id":"bill_id"
+        })) {
+            this.users.insertOne({
+                "_id":"bill_id",
+                "sequencevalue":0
+            });
+        }
+
         this.apikeys = this.db.collection("apikeys");
         console.log("Connected to MongoDB successfully");
         
