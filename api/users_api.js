@@ -766,10 +766,13 @@ async function getCards(user_id) {
  * @returns {number} A new unique bill ID.
  */
 async function getNextBillID() {
-    const lastBill = await Mongo.bills.findOne({}, { sort: { "bill_id": -1 } });
-    const maxID = lastBill ? lastBill.bill_id : 0;
-    return maxID + 1;
-  }
+    const sequence = await Mongo.users.findOneAndUpdate({
+        "_id":`bill_id`
+    },{ $inc: { "sequencevalue":1 },},{ new:true }
+    );
+    return sequence.value.sequencevalue;
+}
+
 
 /**
  * Creates a new bill for the given user.
@@ -879,14 +882,12 @@ async function getBills(user_id) {
  * @returns {number} A new unique ID for an alarm recipient.
  */
 async function getNextAlarmRecipientID() {
-    const result = await Mongo.counters.findOneAndUpdate(
-      { "_id": "alarm_recipient_id" },
-      { $inc: { "sequence_value": 1 } },
-      { returnOriginal: false }
+    const sequence = await Mongo.users.findOneAndUpdate({
+        "_id":`alarm_recipient_id`
+    },{ $inc: { "sequencevalue":1 },},{ new:true }
     );
-  
-    return result.value.sequence_value;
-  }
+    return sequence.value.sequencevalue;
+}
   
 
 /**

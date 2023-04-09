@@ -46,6 +46,24 @@ class Mongo {
             });
         }
 
+        if (! await this.users.findOne({
+          "_id":"bill_id"
+      })) {
+          this.users.insertOne({
+              "_id":"bill_id",
+              "sequencevalue":0
+          });
+      }
+
+      if (! await this.users.findOne({
+        "_id":"alarm_recipient_id"
+    })) {
+        this.users.insertOne({
+            "_id":"alarm_recipient_id",
+            "sequencevalue":0
+        });
+    }
+
         this.apikeys = this.db.collection("apikeys");
         console.log("Connected to MongoDB successfully");
         
@@ -464,9 +482,9 @@ class Mongo {
         ];
           
         //Change these values to add documents to database
-        const USERS_TO_GENERATE = 0; //MAX 20
-        const SENSORS_TO_GENERATE = 0; //MAX 40
-        const ALERTS_TO_GENERATE = 0; //MAX 10
+        const USERS_TO_GENERATE = 20; //MAX 20
+        const SENSORS_TO_GENERATE = 40; //MAX 40
+        const ALERTS_TO_GENERATE = 10; //MAX 10
 
         const MS_TO_5MIN = 1000*60*5;
         
@@ -600,6 +618,7 @@ class Mongo {
             const s = sensorList[i];
             const coord = s.geolocation.coordinates
             await sensor_api.createSensor(s.name,coord[1],coord[0],s.type);
+            await sensor_api.setStatus(i,s.status);
             var j;
             for (j = 0; j < 3; j++) {
                 await sensor_api.addSensorData(s.name,"temperature",s.temperature[j]);
