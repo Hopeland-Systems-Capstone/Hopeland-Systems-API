@@ -80,18 +80,6 @@ sensor_api.getOnline(0)
 
 // Count offline sensors for user 0
 sensor_api.getOffline(0)
-
-// Get sensor name for sensor 0
-sensor_api.getName(0)
-
-// Get sensor status for sensor 0
-sensor_api.getStatus(0)
-
-// Set sensor status via sensor 0
-sensor_api.setStatus(0, "status")
-
-// Get sensor Pressure readings from epoch 0 to epoch 1 for sensor 0
-sensor_api.getReadings(0, "Pressure", 0, 1)
 ```
 
 ## Alerts:
@@ -280,6 +268,10 @@ users_api.setAlarmRecipientStatus(0, 2, false)
 | **GET** | /sensors/sensor_id/getStatus?key=val | Return sensor status given `sensor_id`|
 | **PUT** | /sensors/sensor_id/status/setStatus?key=val | Set sensor with `sensor_id` to `status`|
 | **GET** | /sensors/sensor_id/dataType/timeStart/timeEnd/getReadings?key=val | Return sensor readings of `dataType` from `timeStart` to `timeEnd` for `sensor_id`|
+| **GET** | /sensors/sensor_id/dataType/getLastReading?key=val | Return last sensor reading of `dataType` for `sensor_id`|
+| **GET** | /sensors/sensor_id/getLastUpdate?key=val | Return last sensor update for `sensor_id`|
+| **GET** | /sensors/user_id/countOnline?key=val | Return amount of online sensors for user `user_id`|
+| **GET** | /sensors/user_id/countOffline?key=val | Return amount of offline sensors for user `user_id`|
 
 
 ## Alerts:
@@ -294,6 +286,7 @@ users_api.setAlarmRecipientStatus(0, 2, false)
 | **GET** | /alerts?key=val&amount=val | Returns the last `amount` alerts |
 | **POST** | /alerts?key=val&title=val&alert=val&associated_sensor=val | Create an alert with `title` and `alert` and associated with sensor_id `associated_sensor` |
 | **DELETE** | /alerts?key=val&alert_id=val | Delete an alert given an `alert_id` |
+| **GET** | /alerts/alert_id/getSensor?key=val | Return sensor_id associated with `alert_id`|
 
 ## Users:
 | Method | Path | Description |
@@ -312,6 +305,12 @@ users_api.setAlarmRecipientStatus(0, 2, false)
 | **PUT** | /users?key=val&email=val&sensor_id=val | Add sensor to user when given sensor_id and email |
 | **PUT** | /users?key=val&username=val&alert_id=val | Add alert to user when given alert_id and username |
 | **PUT** | /users?key=val&email=val&salert_id=val | Add alert to user when given alert_id and email |
+| **PUT** | /users/user_id/update?name=name&email=email&phone_number=phone_number&company_name=company_name&key=val | Update user's `user_id` name, email, phone number, company name |
+| **GET** | /users/user_id/getAlerts?key=val| Return Alerts for user with `user_id` |
+| **GET** | /users/user_id/getEmail?key=val | Return Email for user with `user_id` |
+| **GET** | /users/user_id/getName?key=val | Return Name for user with `user_id` |
+| **GET** | /users/user_id/getCompanyName?key=val | Return Company Name for user with `user_id` |
+| **GET** | /users/user_id/getPhoneNumber?key=val | Return Phone Number for user with `user_id` |
 
 ## Rate Limiting:
 > API keys are rate limited based on their level. By default, API keys are issued at Level 1.

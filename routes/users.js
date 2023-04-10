@@ -241,15 +241,16 @@ router.put("/", limiter, async (req, res, next) => {
 
 });
 
-router.put("/:user_id/:name/:email/:phone_number/:company_name/updateUser", limiter, async (req, res, next) => {
+//router.put("/:user_id/:name/:email/:phone_number/:company_name/updateUser", limiter, async (req, res, next) => {
+router.put("/:user_id/update", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
     const user_Id = parseInt(req.params.user_id);
-    const name = String(req.params.name);
-    const email = String(req.params.email);
-    const phone_number = String(req.params.phone_number);
-    const company_name = String(req.params.company_name);
+    const name = String(req.query.name);
+    const email = String(req.query.email);
+    const phone_number = String(req.query.phone_number);
+    const company_name = String(req.query.company_name);
 
     if ( user_Id === NaN || !name || !email || !phone_number || !company_name) {
         return res.status(400).json({error: `Invalid arguments`})
