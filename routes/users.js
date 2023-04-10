@@ -19,7 +19,7 @@ const api_key_util = require('./util/api_key_util');
 //PUT | /users?key=apikey&username=name&alert_id=alert_id | Add alert to user when given alert_id and username 
 //PUT | /users?key=apikey&email=email&salert_id=alert_id | Add alert to user when given alert_id and email
 
-router.get("/:user_id/getPhoneNumber", limiter, async (req, res, next) => {
+router.get("/:user_id/PhoneNumber", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
@@ -34,7 +34,7 @@ router.get("/:user_id/getPhoneNumber", limiter, async (req, res, next) => {
 
 });
 
-router.get("/:user_id/getCompanyName", limiter, async (req, res, next) => {
+router.get("/:user_id/CompanyName", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
@@ -49,7 +49,7 @@ router.get("/:user_id/getCompanyName", limiter, async (req, res, next) => {
 
 });
 
-router.get("/:user_id/getName", limiter, async (req, res, next) => {
+router.get("/:user_id/Name", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
@@ -64,7 +64,7 @@ router.get("/:user_id/getName", limiter, async (req, res, next) => {
 
 });
 
-router.get("/:user_id/getEmail", limiter, async (req, res, next) => {
+router.get("/:user_id/Email", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
@@ -79,7 +79,7 @@ router.get("/:user_id/getEmail", limiter, async (req, res, next) => {
 
 });
 
-router.get("/:user_id/getAlerts", limiter, async (req, res, next) => {
+router.get("/:user_id/Alerts", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 

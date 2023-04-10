@@ -13,11 +13,11 @@ const api_key_util = require('./util/api_key_util');
 //DELETE | /sensors?key=apikey&sensor=name | Delete a sensor with a name
 //PUT | /sensors?key=apikey&sensor=name&datatype=battery&value=100 | Add new data to a sensor
 
-router.get('/:user_id/countOffline', async (req, res) => {
+router.get('/countOffline', async (req, res) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
-    const user_Id = parseInt(req.params.user_id);
+    const user_Id = parseInt(req.query.user_id);
     
     if (user_Id === NaN) {
         res.status(400).send('Invalid arguments');
@@ -27,11 +27,11 @@ router.get('/:user_id/countOffline', async (req, res) => {
     }
 });
 
-router.get('/:user_id/countOnline', async (req, res) => {
+router.get('/countOnline', async (req, res) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
-    const user_Id = parseInt(req.params.user_id);
+    const user_Id = parseInt(req.query.user_id);
     
     if (user_Id === NaN) {
         res.status(400).send('Invalid arguments');
@@ -41,11 +41,11 @@ router.get('/:user_id/countOnline', async (req, res) => {
     }
 });
 
-router.get('/:sensor_id/getLastUpdated', async (req, res) => {
+router.get('/LastUpdated', async (req, res) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
-    const sensor_Id = parseInt(req.params.sensor_id);
+    const sensor_Id = parseInt(req.query.sensor_id);
     
     if (sensor_Id === NaN) {
         res.status(400).send('Invalid arguments');
@@ -64,12 +64,12 @@ router.get('/:sensor_id/getLastUpdated', async (req, res) => {
     }
 });
 
-router.get('/:sensor_id/:dataType/getLastReading', async (req, res) => {
+router.get('/LastReading', async (req, res) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
-    const sensor_Id = parseInt(req.params.sensor_id);
-    const dataType = String(req.params.dataType);
+    const sensor_Id = parseInt(req.query.sensor_id);
+    const dataType = String(req.query.dataType);
     
     if (sensor_Id === NaN || !dataType) {
         res.status(400).send('Invalid arguments')
@@ -79,14 +79,14 @@ router.get('/:sensor_id/:dataType/getLastReading', async (req, res) => {
     }
 });
 
-router.get('/:sensor_id/:dataType/:timeStart/:timeEnd/getReadings', async (req, res) => {
+router.get('/Readings', async (req, res) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
-    const sensor_Id = parseInt(req.params.sensor_id);
-    const dataType = String(req.params.dataType);
-    const timeStart = parseInt(req.params.timeStart);
-    const timeEnd = parseInt(req.params.timeEnd);
+    const sensor_Id = parseInt(req.query.sensor_id);
+    const dataType = String(req.query.dataType);
+    const timeStart = parseInt(req.query.timeStart);
+    const timeEnd = parseInt(req.query.timeEnd);
 
     if (sensor_Id === NaN || !dataType || timeStart === NaN || timeEnd === NaN) {
         res.status(400).send('Invalid arguments')
@@ -97,11 +97,11 @@ router.get('/:sensor_id/:dataType/:timeStart/:timeEnd/getReadings', async (req, 
 });
 
 
-router.get('/:sensor_id/getStatus', async (req, res) => {
+router.get('/Status', async (req, res) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
-    const sensorId = parseInt(req.params.sensor_id);
+    const sensorId = parseInt(req.query.sensor_id);
 
     const status = await sensor_api.getStatus(sensorId);
 
@@ -112,11 +112,11 @@ router.get('/:sensor_id/getStatus', async (req, res) => {
     }
 });
 
-router.get('/:sensor_id/getName', async (req, res) => {
+router.get('/Name', async (req, res) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
-    const sensorId = parseInt(req.params.sensor_id);
+    const sensorId = parseInt(req.query.sensor_id);
 
     const name = await sensor_api.getName(sensorId);
 
@@ -224,12 +224,12 @@ router.put("/", limiter, async (req, res, next) => {
     }
 });
 
-router.put('/:sensor_id/:status/setStatus', async (req, res) => {
+router.put('/Status', async (req, res) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
-    const sensor_Id = parseInt(req.params.sensor_id);
-    const status = String(req.params.status);
+    const sensor_Id = parseInt(req.query.sensor_id);
+    const status = String(req.query.status);
 
     console.log(sensor_Id, status);
     
