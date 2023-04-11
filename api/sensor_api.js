@@ -19,10 +19,15 @@ async function getNextSensorID() {
  * @param {Number} longitude
  * @param {Number} latitude
  */
-async function createSensor(name, longitude, latitude) {
+async function createSensor(name, longitude, latitude, type) {
 
     if (longitude > 180 || longitude < -180 || latitude > 90 || latitude < -90) {
         console.log(`Invalid longitude/longitude`);
+        return false;
+    }
+
+    if (type != "Flood" && type != "Forest" && type != "Gateway") {
+        console.log(`Invalid sensor type`);
         return false;
     }
 
@@ -41,6 +46,7 @@ async function createSensor(name, longitude, latitude) {
         "sensor_id":sensor_id,
         "name":`${name}`,
         "status":"Online",
+        "type": `${type}`,
         "last_update":time,
         "geolocation":{
             "type": "Point",
@@ -137,7 +143,7 @@ async function getSensorData(name) {
  */
  async function addSensorData(sensor_name, data_type, value) {
 
-    if (data_type != "battery" && data_type != "temperature" && data_type != "humidity" && data_type != "pressure") {
+    if (data_type != "battery" && data_type != "temperature" && data_type != "humidity" && data_type != "pressure" && data_type != "co2") {
         console.log(`Invalid data type ${data_type}.`);
         return false;
     }
