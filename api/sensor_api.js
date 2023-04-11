@@ -41,7 +41,7 @@ async function createSensor(name, longitude, latitude, type) {
         "sensor_id":sensor_id,
         "name":`${name}`,
         "status":"Online",
-        "type":`${type}`,
+        "type": `${type}`,
         "last_update":time,
         "geolocation":{
             "type": "Point",

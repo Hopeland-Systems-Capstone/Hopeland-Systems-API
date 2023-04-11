@@ -882,11 +882,12 @@ async function getBills(user_id) {
  * @returns {number} A new unique ID for an alarm recipient.
  */
 async function getNextAlarmRecipientID() {
-    const sequence = await Mongo.users.findOneAndUpdate({
+    const result = await Mongo.users.findOneAndUpdate({
         "_id":`alarm_recipient_id`
-    },{ $inc: { "sequencevalue":1 },},{ new:true }
+    },{ $inc: { "sequencevalue":1 } },{ new:true }
     );
-    return sequence.value.sequencevalue;
+  
+    return result.value.sequencevalue;
 }
   
 

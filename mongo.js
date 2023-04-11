@@ -47,22 +47,22 @@ class Mongo {
         }
 
         if (! await this.users.findOne({
-          "_id":"bill_id"
+            "_id":"bill_id"
+        })) {
+            this.users.insertOne({
+                "_id":"bill_id",
+                "sequencevalue":0
+            });
+        }
+  
+        if (! await this.users.findOne({
+          "_id":"alarm_recipient_id"
       })) {
           this.users.insertOne({
-              "_id":"bill_id",
+              "_id":"alarm_recipient_id",
               "sequencevalue":0
           });
       }
-
-      if (! await this.users.findOne({
-        "_id":"alarm_recipient_id"
-    })) {
-        this.users.insertOne({
-            "_id":"alarm_recipient_id",
-            "sequencevalue":0
-        });
-    }
 
         this.apikeys = this.db.collection("apikeys");
         console.log("Connected to MongoDB successfully");
@@ -78,7 +78,7 @@ class Mongo {
     }
 
     static async initializeSimulation() { //TODO: Delete this
-        const names = [
+       const names = [
             {
               "First Name": "Garry",
               "Last Name": "Baker"
@@ -480,137 +480,135 @@ class Mongo {
               "Last Name": "Walker"
             }
         ];
-          
+
         //Change these values to add documents to database
-        const USERS_TO_GENERATE = 20; //MAX 20
-        const SENSORS_TO_GENERATE = 40; //MAX 40
-        const ALERTS_TO_GENERATE = 10; //MAX 10
+        const USERS_TO_GENERATE = 0; //MAX 20
+        const SENSORS_TO_GENERATE = 0; //MAX 40
+        const ALERTS_TO_GENERATE = 0; //MAX 10
 
         const MS_TO_5MIN = 1000*60*5;
-        
+
         var userList = [];
         var sensorList = [];
         var alertList = []
-        
+
         function makePassword(n) {
-        let result = '';
-        const characters = "abcdefghijklmnopqrstuvwxyz";
-        let counter = 0;
-        while (counter < n) {
-            result += characters.charAt(Math.floor(Math.random() * 26));
-            counter++;
+            let result = '';
+            const characters = "abcdefghijklmnopqrstuvwxyz";
+            let counter = 0;
+            while (counter < n) {
+                result += characters.charAt(Math.floor(Math.random() * 26));
+                counter++;
+            }
+            return result;
         }
-        return result;
-        }
-        
+
         //USERS
         var uid = 100;
         for (uid = 100; uid < 100 + USERS_TO_GENERATE; uid++) {
-        const n = names.shift();
-        const a1 = names.shift();
-        const a2 = names.shift();
-        const a3 = names.shift();
-        
-        const name = `${n["First Name"]} ${n["Last Name"]}`;
-        const email = `${n["First Name"]}${n["Last Name"]}@mail.com`;
-        const password = makePassword(3);
-        const phone_number = `${Math.round(Math.random() * 9999999999)}`;
-        const company_name = "Hopeland";
-        const timezone = "MST";
-        const card = {
-            number: `${Math.round(Math.random() * 9999999999999999)}`,
-            expiration_month: `${Math.ceil(Math.random() * 12)}`,
-            expiration_month: `${Math.ceil(Math.random() * 5) + 2023}`,
-            cvc: `${Math.round(Math.random() * 999)}`
+            const n = names.shift();
+            const a1 = names.shift();
+            const a2 = names.shift();
+            const a3 = names.shift();
+
+            const name = `${n["First Name"]} ${n["Last Name"]}`;
+            const email = `${n["First Name"]}${n["Last Name"]}@mail.com`;
+            const password = makePassword(3);
+            const phone_number = `${Math.round(Math.random() * 9999999999)}`;
+            const company_name = "Hopeland";
+            const timezone = "MST";
+            const card = {
+                number: `${Math.round(Math.random() * 9999999999999999)}`,
+                expiration_month: `${Math.ceil(Math.random() * 12)}`,
+                expiration_month: `${Math.ceil(Math.random() * 5) + 2023}`,
+                cvc: `${Math.round(Math.random() * 999)}`
+            }
+            const bill = {
+                time: Date.now(),
+                amount: `${Math.ceil(Math.random() * 100)}`,
+                status: "Unpaid"
+            }
+            const alarm1 = {
+                name: `${a1["First Name"]} ${a1["Last Name"]}`,
+                email: `${a1["First Name"]}${a1["Last Name"]}@mail.com`
+            }
+            const alarm2 = {
+                name: `${a2["First Name"]} ${a2["Last Name"]}`,
+                email: `${a2["First Name"]}${a2["Last Name"]}@mail.com`
+            }
+            const alarm3 = {
+                name: `${a3["First Name"]} ${a3["Last Name"]}`,
+                email: `${a3["First Name"]}${a3["Last Name"]}@mail.com`
+            }
+
+            userList.push({
+                user_id: uid,
+                name: name,
+                email: email,
+                password: password,
+                phone_number: phone_number,
+                company_name: company_name,
+                timezone: timezone,
+                cards: [card],
+                active_card: `1`,
+                bills: [bill],
+                alarm_recipients: [alarm1, alarm2, alarm3]
+            })
         }
-        const bill = {
-            time: Date.now(),
-            amount: `${Math.ceil(Math.random() * 100)}`,
-            status: "Unpaid"
-        }
-        const alarm1 = {
-            name: `${a1["First Name"]} ${a1["Last Name"]}`,
-            email: `${a1["First Name"]}${a1["Last Name"]}@mail.com`
-        }
-        const alarm2 = {
-            name: `${a2["First Name"]} ${a2["Last Name"]}`,
-            email: `${a2["First Name"]}${a2["Last Name"]}@mail.com`
-        }
-        const alarm3 = {
-            name: `${a3["First Name"]} ${a3["Last Name"]}`,
-            email: `${a3["First Name"]}${a3["Last Name"]}@mail.com`
-        }
-        
-        userList.push({
-            user_id: uid,
-            name: name,
-            email: email,
-            password: password,
-            phone_number: phone_number,
-            company_name: company_name,
-            timezone: timezone,
-            cards: [card],
-            active_card: `1`,
-            bills: [bill],
-            alarm_recipients: [alarm1, alarm2, alarm3]
-        })
-        }
-        
-        
+
+
         //SENSORS
         var sid = 100;
         for (sid = 100; sid < 100 + SENSORS_TO_GENERATE; sid++) {
-        const name = `sensor${sid}`;
-        const status = Math.random() > 0.5 ? `Online` : `Offline`;
-        const type = Math.random() > 0.33 ? (Math.random() > 0.66 ? "Gateway" : "Flood") : "Forest";
-        const last_update = Date.now();
-        const geolocation = [Math.random()*4.3+32.7, Math.random()*4.8-113.8];
-        const battery = {
-            time: Date.now(),
-            value: Math.random()*100
-        }
-        const temperature1 = Math.random()*20+60;
-        const temperature2 = Math.random()*20+60;
-        const temperature3 = Math.random()*20+60;
-        
-        const humidity1 = Math.random()*100;
-        const humidity2 = Math.random()*100;
-        const humidity3 = Math.random()*100;
-        
-        const co1 = Math.random()*300+400;
-        const co2 = Math.random()*300+400;
-        const co3 = Math.random()*300+400;
-        
-        const pressure1 = Math.random()*50+1000;
-        const pressure2 = Math.random()*50+1000;
-        const pressure3 = Math.random()*50+1000;
-        
-        sensorList.push({
-            sensor_id: sid,
-            name: name,
-            status: status,
-            type: type,
-            last_update: last_update,
-            geolocation: { coordinates: geolocation },
-            battery: [battery],
-            temperature: [temperature3,temperature2,temperature1],
-            humidity: [humidity3,humidity2,humidity1],
-            co2: [co3,co2,co1],
-            pressure: [pressure3, pressure2, pressure1]
-        })
+            const name = `sensor${sid}`;
+            const status = Math.random() > 0.5 ? `Online` : `Offline`;
+            const type = Math.random() > 0.33 ? (Math.random() > 0.66 ? "Gateway" : "Flood") : "Forest";
+            const last_update = Date.now();
+            const geolocation = [Math.random()*4.3+32.7, Math.random()*4.8-113.8];
+            const battery = {
+                time: Date.now(),
+                value: Math.random()*100
+            }
+            const temperature1 = Math.random()*20+60;
+            const temperature2 = Math.random()*20+60;
+            const temperature3 = Math.random()*20+60;
+
+            const humidity1 = Math.random()*100;
+            const humidity2 = Math.random()*100;
+            const humidity3 = Math.random()*100;
+
+            const co1 = Math.random()*300+400;
+            const co2 = Math.random()*300+400;
+            const co3 = Math.random()*300+400;
+
+            const pressure1 = Math.random()*50+1000;
+            const pressure2 = Math.random()*50+1000;
+            const pressure3 = Math.random()*50+1000;
+
+            sensorList.push({
+                sensor_id: sid,
+                name: name,
+                status: status,
+                type: type,
+                last_update: last_update,
+                geolocation: { coordinates: geolocation },
+                battery: [battery],
+                temperature: [temperature3,temperature2,temperature1],
+                humidity: [humidity3,humidity2,humidity1],
+                co2: [co3,co2,co1],
+                pressure: [pressure3, pressure2, pressure1]
+            })
         }
 
         var aid;
         for (aid = 0; aid < ALERTS_TO_GENERATE; aid++) {
-        alertList.push({
-            title: `Alert ${aid}`,
-            alert: `This is an alert...`,
-            time: Date.now() - Math.random()*10000*MS_TO_5MIN,
-            associated_sensor: aid*4
-        })
+            alertList.push({
+                title: `Alert ${aid}`,
+                alert: `This is an alert...`,
+                time: Date.now() - Math.random()*10000*MS_TO_5MIN,
+                associated_sensor: aid*4
+            })
         }
-
-        
 
         const sensor_api = require('./api/sensor_api');
         var i;

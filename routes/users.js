@@ -28,7 +28,6 @@ const api_key_util = require('./util/api_key_util');
 //GET | /users/:user_id/:recipient_id/getAlarmRecipientStatus?key=apikey | Returns the status of the alarm recipient with a given id belonging to the user of a given id.
 //PUT | /users/:user_id.:recipient_id/:status/setAlarmRecipientStatus?key=apikey | Sets the status of the alarm recipient with a given id belonging to the user of a given id.
 
-
 router.get("/", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
@@ -176,7 +175,8 @@ router.put("/", limiter, async (req, res, next) => {
 
 });
 
-router.put("/:user_id/:amount/createBill", limiter, async (req, res, next) => {
+r
+outer.put("/:user_id/:amount/createBill", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
