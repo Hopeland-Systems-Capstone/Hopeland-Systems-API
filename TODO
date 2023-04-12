@@ -1,34 +1,34 @@
 New Methods: (33 Methods)
-- Sensor - getStatus(sensor_id) | Retrieves status for sensor (Online/Offline)
-- Sensor - setStatus(sensor_id,status) | Set status for sensor (Online/Offline)
-- Sensor - getName(sensor_id) | Retrieves sensor name
-- Sensor - getReadings(sensor_id,dataType,timeStart,timeEnd) | Retrieves all readings between timeStart and timeEnd in epoch time of type dataType (temp, pressure, etc). This will allow creating the graphs.
-- Sensor - getLastReading(sensor_id,dataType) | Retrieves the last reading for dataType from a sensor
-- Sensor - getLastUpdated(sensor_id) | Retrieves the time in minutes since the last update
-- Sensor - countOnline(user_id) | Returns amount of online sensors for a user
-- Sensor - countOffline(user_id) | Returns amount of offline sensors for a user
-- Alert - getSensor(alert_id) | Returns the sensor_id associated with the alert
-- User - updateUser(user_id,name,email,phone_number,company_name) | Update user's basic information
-- User - getAlerts(user_id) | Returns a list of alerts sent to the user
-- User - getEmail(user_id) | Get email for a user
-- User - getName(user_id) | Get name for a user
-- User - getCompanyName(user_id) | Get company name for a user
-- User - getPhoneNumber(user_id) | Get phone number for a user
-- User - getTimeZone(user_id) | Get timezone for a user
-- User - setTimeZone(user_id,timezone) | Set timezone for a user
-- User - updatePassword(user_id,old_password,new_password) | Update password for user
-- User - addCard(user_id,cardNumber,nameOnCard,cardExpiration,cvc,address1,address2,city,state,country,zip) | Add a card for a user
-- User - updateCard(user_id,card_id,cardNumber,nameOnCard,cardExpiration,cvc,address1,address2,city,state,country,zip) | Update a card for a user
-- User - deleteCard(user_id,card_id) | Delete a card for a user
-- User - getActiveCard(user_id) | Get the active card for a user
-- User - setActiveCard(user_id,card_id) | Set the active card for a user
-- User - getCards(user_id) | Get all cards on file for a user
-- User - createBill(user_id,billing_date,amount) | Create a bill for a user
-- User - updateBill(user_id,bill_id,status) | Update the status of a bill for a user
-- User - deleteBill(user_id,bill_id) | Delete a bill for a user
-- User - getBills(user_id) | Get all bills for a user
-- User - addAlarmRecipient(user_id,name,email) | Add an alarm recipient for user
-- User - deleteAlarmRecipient(user_id,alarm_recipient_id) | Delete an alarm recipient for a user
-- User - getAlarmRecipients(user_id) | Get all alarm recipients for user
-- User - getAlarmRecipientStatus(user_id,alarm_recipient_id) | Get enabled (true or false) for alarm recipient for a user
-- User - setAlarmRecipientStatus(user_id,alarm_recipient_id,enabled) | Set enabled (true or false) for alarm recipient for a user
+- Sensor - getStatus(sensor_id) | Retrieves status for sensor (Online/Offline) | GET /sensors/:sensor_id/status
+- Sensor - setStatus(sensor_id,status) | Set status for sensor (Online/Offline) | PUT /sensors/:sensor_id/status/:status
+- Sensor - getName(sensor_id) | Retrieves sensor name | GET /sensors/:sensor_id/name
+- Sensor - getReadings(sensor_id,dataType,timeStart,timeEnd) | Retrieves all readings between timeStart and timeEnd in epoch time of type dataType (temp, pressure, etc). This will allow creating the graphs. | GET /sensors/:sensor_id/readings?dataType=:dataType&timeStart=:timeStart&timeEnd=:timeEnd
+- Sensor - getLastReading(sensor_id,dataType) | Retrieves the last reading for dataType from a sensor | GET /sensors/:sensor_id/lastReading?dataType=:dataType
+- Sensor - getLastUpdated(sensor_id) | Retrieves the time in minutes since the last update | GET /sensors/:sensor_id/lastUpdated
+- Sensor - countOnline(user_id) | Returns amount of online sensors for a user | GET /users/:user_id/sensors/countOnline
+- Sensor - countOffline(user_id) | Returns amount of offline sensors for a user | GET /users/:user_id/sensors/countOffline
+- Alert - getSensor(alert_id) | Returns the sensor_id associated with the alert | GET /alerts/:alert_id/sensor
+- User - updateUser(user_id,name,email,phone_number,company_name) | Update user's basic information | PUT /users/:user_id/update?name=:name&email=:email&phone_number=:phone_number&company_name=:company_name
+- User - getAlerts(user_id) | Returns a list of alerts sent to the user | GET /users/:user_id/alerts
+- User - getEmail(user_id) | Get email for a user | GET /users/:user_id/email
+- User - getName(user_id) | Get name for a user | GET /users/:user_id/name
+- User - getCompanyName(user_id) | Get company name for a user | GET /users/:user_id/companyName
+- User - getPhoneNumber(user_id) | Get phone number for a user | GET /users/:user_id/phoneNumber
+- User - getTimeZone(user_id) | Get timezone for a user | GET /users/:user_id/timezone
+- User - setTimeZone(user_id,timezone) | Set timezone for a user | PUT /users/:user_id/timezone/:timezone
+- User - updatePassword(user_id,old_password,new_password) | Update password for user | PUT /users/:user_id/password?new=:new_password&old=:old_password
+- User - addCard(user_id,cardNumber,nameOnCard,cardExpiration,cvc,address1,address2,city,state,country,zip) | Add a card for a user | POST /users/:user_id/cards?cardNumber=:cardNumber&nameOnCard=:nameOnCard&cardExpiration=:cardExpiration&cvc=:cvc&address1=:address1&address2=:address2&city=:city&state=:state&country=:country&zip=:zip
+- User - updateCard(user_id,card_id,cardNumber,nameOnCard,cardExpiration,cvc,address1,address2,city,state,country,zip) | Update a card for a user | POST /users/:user_id/cards/:card_id/update?cardNumber=:cardNumber&nameOnCard=:nameOnCard&cardExpiration=:cardExpiration&cvc=:cvc&address1=:address1&address2=:address2&city=:city&state=:state&country=:country&zip=:zip
+- User - deleteCard(user_id,card_id) | Delete a card for a user | DELETE /users/:user_id/cards/:card_id
+- User - getActiveCard(user_id) | Get the active card for a user | GET /users/:user_id/activeCard
+- User - setActiveCard(user_id,card_id) | Set the active card for a user | PUT /users/:user_id/activeCard/:card_id
+- User - getCards(user_id) | Get all cards on file for a user | GET /users/:user_id/cards
+- User - createBill(user_id,billing_date,amount) | Create a bill for a user | POST /users/:user_id/bills?billing_date=:billing_date&amount=:amount
+- User - updateBill(user_id,bill_id,status) | Update the status of a bill for a user | PUT /users/:user_id/bills/:bill_id/update?status=:status
+- User - deleteBill(user_id,bill_id) | Delete a bill for a user | DELETE /users/:user_id/bills/:bill_id
+- User - getBills(user_id) | Get all bills for a user | GET /users/:user_id/bills
+- User - addAlarmRecipient(user_id,name,email) | Add an alarm recipient for user | POST /users/:user_id/alarmRecipients?name=:name&email=:email
+- User - deleteAlarmRecipient(user_id,alarm_recipient_id) | Delete an alarm recipient for a user | DELETE /users/:user_id/alarmRecipients/:alarm_recipient_id
+- User - getAlarmRecipients(user_id) | Get all alarm recipients for user | GET /users/:user_id/alarmRecipients
+- User - getAlarmRecipientStatus(user_id,alarm_recipient_id) | Get enabled (true or false) for alarm recipient for a user | GET /users/:user_id/alarmRecipients/:alarm_recipient_id/enabled
+- User - setAlarmRecipientStatus(user_id,alarm_recipient_id,enabled) | Set enabled (true or false) for alarm recipient for a user | PUT /users/:user_id/alarmRecipients/:alarm_recipient_id/enabled/:enabled
