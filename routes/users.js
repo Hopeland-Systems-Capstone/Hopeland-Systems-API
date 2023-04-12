@@ -90,7 +90,7 @@ router.post("/addCard", limiter, async (req, res, next) => {
     }
 
     try {
-        if(await users_api.addCard(user_id, card_number, name_on_card, card_expiration, cvc, address1, address2, city, state, zip))  {
+        if (await users_api.addCard(user_id, card_number, name_on_card, card_expiration, cvc, address1, address2, city, state, zip)) {
             return res.status(201).json({ message: 'Card created successfully.' });
         } else {
             return res.status(500).json({ message: 'Error adding card to user.' });
@@ -103,6 +103,28 @@ router.post("/addCard", limiter, async (req, res, next) => {
 });
 
 //DELETE | /users/deleteCard?key=apikey?user_id=user_id?card_id=card_id
+router.delete("/deleteCard", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res, req.query.key)) return;
+
+    const user_id = req.query.user_id;
+    const card_id = req.query.card_id;
+
+    if (user_id && card_id) {
+
+        if (await users_api.deleteCard(user_id, card_id)) {
+            return res.status(200).json( { message: 'Deleted card successfully.' });
+        } else {
+            return res.status(500).json( { message: 'Error deleting card.' });
+        }
+
+    }
+
+    return res.status(400).json({ error: 'Invalid arguments.' });
+});
+
+
+
 
 router.get("/", limiter, async (req, res, next) => {
 
