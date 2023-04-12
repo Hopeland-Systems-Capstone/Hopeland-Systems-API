@@ -19,16 +19,18 @@ const api_key_util = require('./util/api_key_util');
 //PUT | /users?key=apikey&username=name&alert_id=alert_id | Add alert to user when given alert_id and username 
 //PUT | /users?key=apikey&email=email&salert_id=alert_id | Add alert to user when given alert_id and email
 
-//GET | /users/getCards?key=apikey&user_id=user_id
-//GET | /users/getActiveCard?key=apikey&user_id=user_id
-//GET | /users/getTimeZone?key=apikey&user_id=user_id
-//POST | /users/addCard?key=apikey&user_id=user_id&card_number=card_number&name_on_card=name_on_card&card_expiration=card_expiration&cvc=cvc&address1=address1&address2=address2&city=city&state=state&country=country&zip=zip
-//DELETE | /users/deleteCard?key=apikey?user_id=user_id?card_id=card_id
-//PUT | /users/updatePassword?key=apikey&user_id=user_id&old_hashed_password=old_hashed_password&new_hashed_password=new_hashed_password
-//PUT | /users/setTimeZone?key=apikey&user_id=user_id&timezone=timezone
-//PUT | /users/updateCard?key=apikey&user_id=user_id&card_id=card_id&card_number=card_number&name_on_card=name_on_card&card_expiration=card_expiration&cvc=cvc&address1=address1&address2=address2&city=city&state=state&country=country&zip=zip
-//PUT | /users/setActiveCard?key=apikey&user_id=user_id&card_id=card_id
+//GET | /users/getCards?key=apikey&user_id=user_id | Get the cards for a user
+//GET | /users/getActiveCard?key=apikey&user_id=user_id | Get the user's active cards
+//GET | /users/getTimeZone?key=apikey&user_id=user_id | Get the user's timezone
+//POST | /users/addCard?key=apikey&user_id=user_id&card_number=card_number&name_on_card=name_on_card&card_expiration=card_expiration&cvc=cvc&address1=address1&address2=address2&city=city&state=state&country=country&zip=zip | Add a card to a user's account
+//DELETE | /users/deleteCard?key=apikey?user_id=user_id?card_id=card_id | Delete a card from a user's account
+//PUT | /users/updatePassword?key=apikey&user_id=user_id&old_hashed_password=old_hashed_password&new_hashed_password=new_hashed_password | Update a user's password, confirm using the old password
+//PUT | /users/setTimeZone?key=apikey&user_id=user_id&timezone=timezone | Set the user's timezone
+//PUT | /users/updateCard?key=apikey&user_id=user_id&card_id=card_id&card_number=card_number&name_on_card=name_on_card&card_expiration=card_expiration&cvc=cvc&address1=address1&address2=address2&city=city&state=state&country=country&zip=zip | Update a user's card
+//PUT | /users/setActiveCard?key=apikey&user_id=user_id&card_id=card_id | Set the user's active card
 
+
+//GET | /users/getTimeZone?key=apikey&user_id=user_id | Get the user's timezone
 router.get("/getTimeZone", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res, req.query.key)) return;
@@ -43,7 +45,7 @@ router.get("/getTimeZone", limiter, async (req, res, next) => {
     return res.status(400).json({ error: 'Invalid arguments.' });
 });
 
-//GET | /users/getActiveCard?key=apikey&user_id=user_id
+//GET | /users/getActiveCard?key=apikey&user_id=user_id | Get the user's active cards
 router.get("/getActiveCard", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res, req.query.key)) return;
@@ -58,7 +60,7 @@ router.get("/getActiveCard", limiter, async (req, res, next) => {
     return res.status(400).json({ error: 'Invalid arguments.' });
 });
 
-//GET | /users/getCards?key=apikey&user_id=user_id
+//GET | /users/getCards?key=apikey&user_id=user_id | Get the cards for a user
 router.get("/getCards", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res, req.query.key)) return;
@@ -73,7 +75,7 @@ router.get("/getCards", limiter, async (req, res, next) => {
     return res.status(400).json({ error: 'Invalid arguments.' });
 });
 
-//POST | /users/addCard?key=apikey&user_id=user_id&card_number=card_number&name_on_card=name_on_card&card_expiration=card_expiration&cvc=cvc&address1=address1&address2=address2&city=city&state=state&country=country&zip=zip
+//POST | /users/addCard?key=apikey&user_id=user_id&card_number=card_number&name_on_card=name_on_card&card_expiration=card_expiration&cvc=cvc&address1=address1&address2=address2&city=city&state=state&country=country&zip=zip | Add a card to a user's account
 router.post("/addCard", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res, req.query.key)) return;
@@ -107,7 +109,7 @@ router.post("/addCard", limiter, async (req, res, next) => {
     }
 });
 
-//DELETE | /users/deleteCard?key=apikey?user_id=user_id?card_id=card_id
+//DELETE | /users/deleteCard?key=apikey?user_id=user_id?card_id=card_id | Delete a card from a user's account
 router.delete("/deleteCard", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res, req.query.key)) return;
@@ -128,7 +130,8 @@ router.delete("/deleteCard", limiter, async (req, res, next) => {
     return res.status(400).json({ error: 'Invalid arguments.' });
 });
 
-//PUT | /users/setActiveCard?key=apikey&user_id=user_id&card_id=card_id
+
+//PUT | /users/setActiveCard?key=apikey&user_id=user_id&card_id=card_id | Set the user's active card
 router.put("/setActiveCard", limiter, async (req, res, next) => {
     
     if (!await api_key_util.checkKey(res, req.query.key)) return;
@@ -149,7 +152,7 @@ router.put("/setActiveCard", limiter, async (req, res, next) => {
     return res.status(400).json({ error: 'Invalid arguments.' });
 });
 
-//PUT | /users/updateCard?key=apikey&user_id=user_id&card_id=card_id&card_number=card_number&name_on_card=name_on_card&card_expiration=card_expiration&cvc=cvc&address1=address1&address2=address2&city=city&state=state&country=country&zip=zip
+//PUT | /users/updateCard?key=apikey&user_id=user_id&card_id=card_id&card_number=card_number&name_on_card=name_on_card&card_expiration=card_expiration&cvc=cvc&address1=address1&address2=address2&city=city&state=state&country=country&zip=zip | Update a user's card
 router.put("/updateCard", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res, req.query.key)) return;
@@ -184,7 +187,8 @@ router.put("/updateCard", limiter, async (req, res, next) => {
     }
 });
 
-//PUT | /users/setTimeZone?key=apikey&user_id=user_id&timezone=timezone
+
+//PUT | /users/setActiveCard?key=apikey&user_id=user_id&card_id=card_id | Set the user's active card
 router.put("/setActiveCard", limiter, async (req, res, next) => {
     
     if (!await api_key_util.checkKey(res, req.query.key)) return;
@@ -205,7 +209,7 @@ router.put("/setActiveCard", limiter, async (req, res, next) => {
     return res.status(400).json({ error: 'Invalid arguments.' });
 });
 
-//PUT | /users/updatePassword?key=apikey&user_id=user_id&old_hashed_password=old_hashed_password&new_hashed_password=new_hashed_password
+//PUT | /users/updatePassword?key=apikey&user_id=user_id&old_hashed_password=old_hashed_password&new_hashed_password=new_hashed_password | Update a user's password, confirm using the old password
 router.put("/updatePassword", limiter, async (req, res, next) => {
     
     if (!await api_key_util.checkKey(res, req.query.key)) return;
