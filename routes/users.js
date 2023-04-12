@@ -19,7 +19,8 @@ const api_key_util = require('./util/api_key_util');
 //PUT | /users?key=apikey&username=name&alert_id=alert_id | Add alert to user when given alert_id and username 
 //PUT | /users?key=apikey&email=email&salert_id=alert_id | Add alert to user when given alert_id and email
 
-router.get("/:user_id/PhoneNumber", limiter, async (req, res, next) => {
+
+router.get("/:user_id/phoneNumber", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
@@ -34,7 +35,7 @@ router.get("/:user_id/PhoneNumber", limiter, async (req, res, next) => {
 
 });
 
-router.get("/:user_id/CompanyName", limiter, async (req, res, next) => {
+router.get("/:user_id/companyName", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
@@ -49,7 +50,7 @@ router.get("/:user_id/CompanyName", limiter, async (req, res, next) => {
 
 });
 
-router.get("/:user_id/Name", limiter, async (req, res, next) => {
+router.get("/:user_id/name", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
@@ -64,7 +65,7 @@ router.get("/:user_id/Name", limiter, async (req, res, next) => {
 
 });
 
-router.get("/:user_id/Email", limiter, async (req, res, next) => {
+router.get("/:user_id/email", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
@@ -79,7 +80,7 @@ router.get("/:user_id/Email", limiter, async (req, res, next) => {
 
 });
 
-router.get("/:user_id/Alerts", limiter, async (req, res, next) => {
+router.get("/:user_id/alerts", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
@@ -241,7 +242,6 @@ router.put("/", limiter, async (req, res, next) => {
 
 });
 
-//router.put("/:user_id/:name/:email/:phone_number/:company_name/updateUser", limiter, async (req, res, next) => {
 router.put("/:user_id/update", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
@@ -251,6 +251,8 @@ router.put("/:user_id/update", limiter, async (req, res, next) => {
     const email = String(req.query.email);
     const phone_number = String(req.query.phone_number);
     const company_name = String(req.query.company_name);
+
+    console.log(user_Id + name + email);
 
     if ( user_Id === NaN || !name || !email || !phone_number || !company_name) {
         return res.status(400).json({error: `Invalid arguments`})
