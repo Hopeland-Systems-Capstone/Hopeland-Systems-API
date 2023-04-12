@@ -39,8 +39,8 @@ docker run -p 3000:3000 hopeland/backend-api:1.0
 # API Usage
 ## Sensors:
 ```javascript
-// Create sensor named sensor1 at longitude 10, latitude 20
-sensor_api.createSensor("sensor1",10,20);
+// Create flood sensor named sensor1 at longitude 10, latitude 20
+sensor_api.createSensor("sensor1",10,20,"Flood");
 
 // Delete sensor named sensor1
 sensor_api.deleteSensor("sensor1");
@@ -285,16 +285,25 @@ users_api.setAlarmRecipientStatus(0, 2, false)
 | **GET** | /users?key=val&email=val | Return user information when only given email |
 | **GET** | /users?key=val&username=val&hashed_password=val | Verify user password combo when given username and password |
 | **GET** | /users?key=val&email=val&hashed_password=val | Verify user password combo when given email and password |
+| **GET** | /users/:user_id/bills | Returns list of bills belonging to the indicated user_id |
+| **GET** | /users/:user_id/alarmRecipients | Returns list of alarm recipients belonging to the indicated user_id |
+| **GET** | /users/:user_id/alarmRecipients/:alarm_recipient_id/enabled | Returns whether an alarm recipient, given its alarm_recipient_id and associated user_id, is enabled |
 | **POST** | /users?key=val&username=val&email=val&hashed_password=val&phone_number=val&company_name=val&timezone=val | Create new user given username, email, hashed_password, and optional phone_number, company_name, and timezone |
+| **POST** | /users/:user_id/bills?billing_date=val&amount=val | Creates a new bill and adds bill to an indicated user_id given billing_date and amount |
+| **POST** | /users/:user_id/alarmRecipients?name=val&email=val | Creates a new alarm recipient and adds alarm recipient to an indicated user_id given name and email|
 | **DELETE** | /users?key=val&user_id=val | Delete user give user_id |
 | **DELETE** | /users?key=val&username=val&sensor_id=val | Delete sensor from user when given sensor_id and username |
 | **DELETE** | /users?key=val&email=val&sensor_id=val | Delete sensor from user when given sensor_id and email |
 | **DELETE** | /users?key=val&username=val&alert_id=val | Delete alert from user when given alert_id and username |
 | **DELETE** | /users?key=val&email=val&alert_id=val | Delete alert from user when given alert_id and email |
+| **DELETE** | /users/:user_id/bills/:bill_id | Deletes the bill with a given bill_id from the indicated user_id |
+| **DELETE** | /users/:user_id/alarmRecipients/:alarm_recipient_id | Deletes the alarm recipient with a given alarm_recipient_id from the indicated user_id |
 | **PUT** | /users?key=val&username=val&sensor_id=val | Add sensor to user when given sensor_id and name |
 | **PUT** | /users?key=val&email=val&sensor_id=val | Add sensor to user when given sensor_id and email |
 | **PUT** | /users?key=val&username=val&alert_id=val | Add alert to user when given alert_id and username |
 | **PUT** | /users?key=val&email=val&salert_id=val | Add alert to user when given alert_id and email |
+| **PUT** | /users/:user_id/bills/:bill_id/update?status=val | Updates the bill when given status |
+| **PUT** | /users/:user_id/alarmRecipients/:alarm_recipient_id/enabled/:enabled | Updates the alarm recipient when given enabled (must be true or false) |
 
 ## Rate Limiting:
 > API keys are rate limited based on their level. By default, API keys are issued at Level 1.
