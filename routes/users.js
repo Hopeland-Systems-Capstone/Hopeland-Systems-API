@@ -22,11 +22,11 @@ const api_key_util = require('./util/api_key_util');
 //GET | /users/getCards?key=apikey&user_id=user_id
 //GET | /users/getActiveCard?key=apikey&user_id=user_id
 //GET | /users/getTimeZone?key=apikey&user_id=user_id
-//POST | /users/addCard?key=apikey&user_id=user_id&card_number=card_number&name_on_card=name_on_card&card_expiration=card_expiration&cvc=cvc&address1=address1&address2=address2&city=city&state=state&zip=zip
+//POST | /users/addCard?key=apikey&user_id=user_id&card_number=card_number&name_on_card=name_on_card&card_expiration=card_expiration&cvc=cvc&address1=address1&address2=address2&city=city&state=state&country=country&zip=zip
 //DELETE | /users/deleteCard?key=apikey?user_id=user_id?card_id=card_id
 //PATCH | /users/updatePassword?key=apikey&user_id=user_id&old_hashed_password=old_hashed_password&new_hashed_password=new_hashed_password
 //PATCH | /users/setTimeZone?key=apikey&user_id=user_id&timezone=timezone
-//PATCH | /users/updateCard?key=apikey&user_id=user_id&card_id=card_id&card_number=card_number&name_on_card=name_on_card&card_expiration=card_expiration&cvc=cvc&address1=address1&address2=address2&city=city&state=state&zip=zip
+//PATCH | /users/updateCard?key=apikey&user_id=user_id&card_id=card_id&card_number=card_number&name_on_card=name_on_card&card_expiration=card_expiration&cvc=cvc&address1=address1&address2=address2&city=city&state=state&country=country&zip=zip
 //PATCH | /users/setActiveCard?key=apikey&user_id=user_id&card_id=card_id
 
 router.get("/getTimeZone", limiter, async (req, res, next) => {
@@ -73,7 +73,7 @@ router.get("/getCards", limiter, async (req, res, next) => {
     return res.status(400).json({ error: 'Invalid arguments.' });
 });
 
-//POST | /users/addCard?key=apikey&user_id=user_id&card_number=card_number&name_on_card=name_on_card&card_expiration=card_expiration&cvc=cvc&address1=address1&address2=address2&city=city&state=state&zip=zip
+//POST | /users/addCard?key=apikey&user_id=user_id&card_number=card_number&name_on_card=name_on_card&card_expiration=card_expiration&cvc=cvc&address1=address1&address2=address2&city=city&state=state&country=country&zip=zip
 router.post("/addCard", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res, req.query.key)) return;
@@ -149,7 +149,7 @@ router.patch("/setActiveCard", limiter, async (req, res, next) => {
     return res.status(400).json({ error: 'Invalid arguments.' });
 });
 
-//PATCH | /users/updateCard?key=apikey&user_id=user_id&card_id=card_id&card_number=card_number&name_on_card=name_on_card&card_expiration=card_expiration&cvc=cvc&address1=address1&address2=address2&city=city&state=state&zip=zip
+//PATCH | /users/updateCard?key=apikey&user_id=user_id&card_id=card_id&card_number=card_number&name_on_card=name_on_card&card_expiration=card_expiration&cvc=cvc&address1=address1&address2=address2&city=city&state=state&country=country&zip=zip
 router.patch("/updateCard", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res, req.query.key)) return;
