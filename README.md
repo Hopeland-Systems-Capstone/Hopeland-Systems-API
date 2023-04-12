@@ -270,8 +270,6 @@ users_api.setAlarmRecipientStatus(0, 2, false)
 | **GET** | /sensors/:sensor_id/readings?dataType=dataType&timeStart=timeStart&timeEnd=timeEnd&key=val | Return sensor readings of `dataType` from `timeStart` to `timeEnd` for `sensor_id`|
 | **GET** | /sensors/:sensor_id/lastReading?dataType=:dataType&key=val | Return last sensor reading of `dataType` for `sensor_id`|
 | **GET** | /sensors/:sensor_id/LastUpdate?key=val | Return last sensor update for `sensor_id`|
-| **GET** | /sensors/users/:user_id/sensors/countOnline?key=val | Return amount of online sensors for user `user_id`|
-| **GET** | /sensors/users/:user_id/sensors/countOffline?key=val | Return amount of offline sensors for user `user_id`|
 
 
 ## Alerts:
@@ -311,6 +309,8 @@ users_api.setAlarmRecipientStatus(0, 2, false)
 | **GET** | /users/user_id/name?key=val | Return Name for user with `user_id` |
 | **GET** | /users/user_id/companyName?key=val | Return Company Name for user with `user_id` |
 | **GET** | /users/user_id/phoneNumber?key=val | Return Phone Number for user with `user_id` |
+| **GET** | /users/:user_id/sensors/countOnline?key=val | Return amount of online sensors for user `user_id`|
+| **GET** | /users/:user_id/sensors/countOffline?key=val | Return amount of offline sensors for user `user_id`|
 
 ## Rate Limiting:
 > API keys are rate limited based on their level. By default, API keys are issued at Level 1.

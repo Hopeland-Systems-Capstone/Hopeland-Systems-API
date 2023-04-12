@@ -19,6 +19,33 @@ const api_key_util = require('./util/api_key_util');
 //PUT | /users?key=apikey&username=name&alert_id=alert_id | Add alert to user when given alert_id and username 
 //PUT | /users?key=apikey&email=email&salert_id=alert_id | Add alert to user when given alert_id and email
 
+router.get('/:user_id/sensors/countOffline', async (req, res) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const user_Id = parseInt(req.params.user_id);
+   
+    if (user_Id === NaN) {
+        res.status(400).send('Invalid arguments');
+    } else {
+        const data = await users_api.countOffline(user_Id);
+        res.status(200).json(data);
+    }
+});
+
+router.get('/:user_id/sensors/countOnline', async (req, res) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const user_Id = parseInt(req.params.user_id);
+    
+    if (user_Id === NaN) {
+        res.status(400).send('Invalid arguments');
+    } else {
+        const data = await users_api.countOnline(user_Id);
+        res.status(200).json(data);
+    }
+});
 
 router.get("/:user_id/phoneNumber", limiter, async (req, res, next) => {
 

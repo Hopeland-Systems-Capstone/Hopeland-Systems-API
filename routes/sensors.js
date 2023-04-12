@@ -13,33 +13,6 @@ const api_key_util = require('./util/api_key_util');
 //DELETE | /sensors?key=apikey&sensor=name | Delete a sensor with a name
 //PUT | /sensors?key=apikey&sensor=name&datatype=battery&value=100 | Add new data to a sensor
 
-router.get('/users/:user_id/sensors/countOffline', async (req, res) => {
-
-    if (!await api_key_util.checkKey(res,req.query.key)) return;
-
-    const user_Id = parseInt(req.params.user_id);
-   
-    if (user_Id === NaN) {
-        res.status(400).send('Invalid arguments');
-    } else {
-        const data = await sensor_api.countOffline(user_Id);
-        res.status(200).json(data);
-    }
-});
-
-router.get('/users/:user_id/sensors/countOnline', async (req, res) => {
-
-    if (!await api_key_util.checkKey(res,req.query.key)) return;
-
-    const user_Id = parseInt(req.params.user_id);
-    
-    if (user_Id === NaN) {
-        res.status(400).send('Invalid arguments');
-    } else {
-        const data = await sensor_api.countOnline(user_Id);
-        res.status(200).json(data);
-    }
-});
 
 router.get('/:sensor_id/lastUpdated', async (req, res) => {
 
