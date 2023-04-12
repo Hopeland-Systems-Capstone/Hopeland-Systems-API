@@ -175,7 +175,6 @@ router.put("/", limiter, async (req, res, next) => {
 
 });
 
-
 router.put("/:user_id/bills", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
@@ -192,8 +191,6 @@ router.put("/:user_id/bills", limiter, async (req, res, next) => {
     }
 });
 
-//updateBill
-//PUT /users/:user_id/bills/:bill_id?status
 router.put("/:user_id/bills/:bill_id/update", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
@@ -210,7 +207,6 @@ router.put("/:user_id/bills/:bill_id/update", limiter, async (req, res, next) =>
     }
 });
 
-//deleteBill
 router.delete("/:user_id/bills/:bill_id", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
@@ -226,7 +222,6 @@ router.delete("/:user_id/bills/:bill_id", limiter, async (req, res, next) => {
     }
 });
 
-//getBills
 router.get("/:user_id/bills", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
@@ -241,7 +236,6 @@ router.get("/:user_id/bills", limiter, async (req, res, next) => {
     }
 });
 
-//addAlarmRecipient
 router.put("/:user_id/alarmRecipients", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
@@ -260,7 +254,6 @@ router.put("/:user_id/alarmRecipients", limiter, async (req, res, next) => {
     }
 });
 
-//deleteAlarmRecipient
 router.delete("/:user_id/alarmRecipients/:alarm_recipient_id", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
@@ -278,7 +271,6 @@ router.delete("/:user_id/alarmRecipients/:alarm_recipient_id", limiter, async (r
     }    
 });
 
-//getAlarmRecipients
 router.get("/:user_id/alarmRecipients", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
@@ -293,7 +285,6 @@ router.get("/:user_id/alarmRecipients", limiter, async (req, res, next) => {
     }
 });
 
-//getAlarmRecipientStatus
 router.get("/:user_id/alarmRecipients/:alarm_recipient_id/enabled", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
@@ -309,7 +300,6 @@ router.get("/:user_id/alarmRecipients/:alarm_recipient_id/enabled", limiter, asy
     }    
 });
 
-//setAlarmRecipientStatus
 router.put("/:user_id/alarmRecipients/:alarm_recipient_id/enabled/:enabled", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
