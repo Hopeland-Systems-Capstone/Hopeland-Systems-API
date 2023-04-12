@@ -175,29 +175,32 @@ router.put("/", limiter, async (req, res, next) => {
 
 });
 
-router.put("/:user_id/:amount/createBill", limiter, async (req, res, next) => {
+
+router.put("/:user_id/bills", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
     const user_id = parseInt(req.params.user_id);
-    const amount = parseFloat(req.params.amount);
-    const time = Date.now();
+    const billing_date = parseInt(req.query.billing_date);
+    const amount = parseFloat(req.query.amount);
 
-    if (user_id === NaN || !amount) {
+    if (user_id === NaN || amount === NaN || billing_date === NaN) {
         return res.status(400).json({ error: 'Invalid arguments.' });
     } else {
-        await users_api.createBill(user_id, time, amount);
+        await users_api.createBill(user_id, billing_date, amount);
         return res.status(200).json({ message: `Created a new bill for $${amount} added to user with id ${user_id}` });
     }
 });
 
-router.put("/:user_id/:bill_id/:status/updateBill", limiter, async (req, res, next) => {
+//updateBill
+//PUT /users/:user_id/bills/:bill_id?status
+router.put("/:user_id/bills/:bill_id/update", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
     const user_id = parseInt(req.params.user_id);
     const bill_id = parseInt(req.params.bill_id);
-    const status = req.params.status;
+    const status = req.query.status;
 
     if (user_id === NaN || bill_id === NaN || !status) {
         return res.status(400).json({ error: 'Invalid arguments.' });
@@ -207,7 +210,8 @@ router.put("/:user_id/:bill_id/:status/updateBill", limiter, async (req, res, ne
     }
 });
 
-router.delete("/:user_id/:bill_id/deleteBill", limiter, async (req, res, next) => {
+//deleteBill
+router.delete("/:user_id/bills/:bill_id", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
@@ -222,7 +226,8 @@ router.delete("/:user_id/:bill_id/deleteBill", limiter, async (req, res, next) =
     }
 });
 
-router.get("/:user_id/getBills", limiter, async (req, res, next) => {
+//getBills
+router.get("/:user_id/bills", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
@@ -236,13 +241,14 @@ router.get("/:user_id/getBills", limiter, async (req, res, next) => {
     }
 });
 
-router.put("/:user_id/:name/:email/addAlarmRecipient", limiter, async (req, res, next) => {
+//addAlarmRecipient
+router.put("/:user_id/alarmRecipients", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
     const user_id = parseInt(req.params.user_id);
-    const name = req.params.name;
-    const email = req.params.email;
+    const name = req.query.name;
+    const email = req.query.email;
 
     if (user_id === NaN || !name || !email) {
         return res.status(400).json({ error: 'Invalid arguments.' });
@@ -254,12 +260,13 @@ router.put("/:user_id/:name/:email/addAlarmRecipient", limiter, async (req, res,
     }
 });
 
-router.delete("/:user_id/:recipient_id/deleteAlarmRecipient", limiter, async (req, res, next) => {
+//deleteAlarmRecipient
+router.delete("/:user_id/alarmRecipients/:alarm_recipient_id", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
     const user_id = parseInt(req.params.user_id);
-    const recipient_id = parseInt(req.params.recipient_id);
+    const recipient_id = parseInt(req.params.alarm_recipient_id);
 
     if (user_id === NaN || recipient_id === NaN) {
         return res.status(400).json({ error: 'Invalid arguments.' });
@@ -271,7 +278,8 @@ router.delete("/:user_id/:recipient_id/deleteAlarmRecipient", limiter, async (re
     }    
 });
 
-router.get("/:user_id/getAlarmRecipients", limiter, async (req, res, next) => {
+//getAlarmRecipients
+router.get("/:user_id/alarmRecipients", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
@@ -285,12 +293,13 @@ router.get("/:user_id/getAlarmRecipients", limiter, async (req, res, next) => {
     }
 });
 
-router.get("/:user_id/:recipient_id/getAlarmRecipientStatus", limiter, async (req, res, next) => {
+//getAlarmRecipientStatus
+router.get("/:user_id/alarmRecipients/:alarm_recipient_id/enabled", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
     const user_id = parseInt(req.params.user_id);
-    const recipient_id = parseInt(req.params.recipient_id);
+    const recipient_id = parseInt(req.params.alarm_recipient_id);
 
     if (user_id === NaN || recipient_id === NaN) {
         return res.status(400).json({ error: 'Invalid arguments.' });
@@ -300,20 +309,21 @@ router.get("/:user_id/:recipient_id/getAlarmRecipientStatus", limiter, async (re
     }    
 });
 
-router.put("/:user_id/:recipient_id/:status/setAlarmRecipientStatus", limiter, async (req, res, next) => {
+//setAlarmRecipientStatus
+router.put("/:user_id/alarmRecipients/:alarm_recipient_id/enabled/:enabled", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
     const user_id = parseInt(req.params.user_id);
-    const recipient_id = parseInt(req.params.recipient_id);
-    const status = req.params.status === "false" ? false : (req.params.status === "true" ? true : -1);
+    const recipient_id = parseInt(req.params.alarm_recipient_id);
+    const enabled = req.params.enabled === "false" ? false : (req.params.enabled === "true" ? true : -1);
 
-    if (user_id === NaN || recipient_id === NaN || status === -1) {
+    if (user_id === NaN || recipient_id === NaN || enabled === -1) {
         return res.status(400).json({ error: 'Invalid arguments.' });
     } else {
-        await users_api.setAlarmRecipientStatus(user_id, recipient_id, status);
+        await users_api.setAlarmRecipientStatus(user_id, recipient_id, enabled);
         return res.status(200).json({ 
-            message: `Set status of alarm recipient with id ${recipient_id} from user with id ${user_id} to ${status}`
+            message: `Set status of alarm recipient with id ${recipient_id} from user with id ${user_id} to ${enabled}`
         });
     }    
 });
