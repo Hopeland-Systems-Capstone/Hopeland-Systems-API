@@ -19,12 +19,16 @@ const api_key_util = require('./util/api_key_util');
 //PUT | /users?key=apikey&username=name&alert_id=alert_id | Add alert to user when given alert_id and username 
 //PUT | /users?key=apikey&email=email&salert_id=alert_id | Add alert to user when given alert_id and email
 
-//PUT | /users/setActiveCard?key=apikey&user_id=user_id&card_id=card_id
-//PUT | /users/updateCard?key=apikey&user_id=user_id&card_id=card_id&card_number=card_number&name_on_card=name_on_card&card_expiration=card_expiration&cvc=cvc&address1=address1&address2=address2&city=city&state=state&zip=zip
-//PUT | /users/setTimeZone?key=apikey&user_id=user_id&timezone=timezone
-//PUT | /users/updatePassword?key=apikey&user_id=user_id&old_hashed_password=old_hashed_password&new_hashed_password=new_hashed_password
-
+//GET | /users/getCards?key=apikey&user_id=user_id
+//GET | /users/getActiveCard?key=apikey&user_id=user_id
 //GET | /users/getTimeZone?key=apikey&user_id=user_id
+//POST | /users/addCard?key=apikey&user_id=user_id&card_number=card_number&name_on_card=name_on_card&card_expiration=card_expiration&cvc=cvc&address1=address1&address2=address2&city=city&state=state&zip=zip
+//DELETE | /users/deleteCard?key=apikey?user_id=user_id?card_id=card_id
+//PATCH | /users/updatePassword?key=apikey&user_id=user_id&old_hashed_password=old_hashed_password&new_hashed_password=new_hashed_password
+//PATCH | /users/setTimeZone?key=apikey&user_id=user_id&timezone=timezone
+//PATCH | /users/updateCard?key=apikey&user_id=user_id&card_id=card_id&card_number=card_number&name_on_card=name_on_card&card_expiration=card_expiration&cvc=cvc&address1=address1&address2=address2&city=city&state=state&zip=zip
+//PATCH | /users/setActiveCard?key=apikey&user_id=user_id&card_id=card_id
+
 router.get("/getTimeZone", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res, req.query.key)) return;
@@ -47,7 +51,7 @@ router.get("/getActiveCard", limiter, async (req, res, next) => {
     const user_id = req.query.user_id;
 
     if (user_id) {
-        const activeCard = await users_api.getActiveCard(user_id);
+        const activeCard = users_api.getActiveCard(user_id);
         return res.status(200).json(activeCard);
     }
 
@@ -83,14 +87,15 @@ router.post("/addCard", limiter, async (req, res, next) => {
     const address2 = req.query.address2;
     const city = req.query.city;
     const state = req.query.state;
+    const country = req.query.country;
     const zip = req.query.zip;
 
-    if (!user_id || !card_number || !name_on_card || !card_expiration || !cvc || !address1 || !city || !state || !zip) {
+    if (!user_id || !card_number || !name_on_card || !card_expiration || !cvc || !address1 || !city || !state || !country || !zip) {
         return res.status(400).json({ error: 'Invalid arguments.' });
     }
 
     try {
-        if (await users_api.addCard(user_id, card_number, name_on_card, card_expiration, cvc, address1, address2, city, state, zip)) {
+        if (await users_api.addCard(user_id, card_number, name_on_card, card_expiration, cvc, address1, address2, city, state, country, zip)) {
             return res.status(201).json({ message: 'Card created successfully.' });
         } else {
             return res.status(500).json({ message: 'Error adding card to user.' });
@@ -123,8 +128,104 @@ router.delete("/deleteCard", limiter, async (req, res, next) => {
     return res.status(400).json({ error: 'Invalid arguments.' });
 });
 
+//PATCH | /users/setActiveCard?key=apikey&user_id=user_id&card_id=card_id
+router.patch("/setActiveCard", limiter, async (req, res, next) => {
+    
+    if (!await api_key_util.checkKey(res, req.query.key)) return;
 
+    const user_id = req.query.user_id;
+    const card_id = req.query.card_id;
 
+    if (user_id && card_id) {
+
+        if (await users_api.setActiveCard(user_id, card_id)) {
+            return res.status(200).json( { message: 'Set active card successfully.' });
+        } else {
+            return res.status(500).json( { message: 'Error setting active card.' });
+        }
+
+    }
+
+    return res.status(400).json({ error: 'Invalid arguments.' });
+});
+
+//PATCH | /users/updateCard?key=apikey&user_id=user_id&card_id=card_id&card_number=card_number&name_on_card=name_on_card&card_expiration=card_expiration&cvc=cvc&address1=address1&address2=address2&city=city&state=state&zip=zip
+router.patch("/updateCard", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res, req.query.key)) return;
+
+    const user_id = req.query.user_id;
+    const card_id = req.query.card_id;
+    const card_number = req.query.card_number;
+    const name_on_card = req.query.name_on_card;
+    const card_expiration = req.query.card_expiration;
+    const cvc = req.query.cvc;
+    const address1 = req.query.address1;
+    const address2 = req.query.address2;
+    const city = req.query.city;
+    const state = req.query.state;
+    const country = req.query.country;
+    const zip = req.query.zip;
+
+    if (!user_id || !card_number || !name_on_card || !card_expiration || !cvc || !address1 || !city || !state || !country || !zip) {
+        return res.status(400).json({ error: 'Invalid arguments.' });
+    }
+
+    try {
+        if (await users_api.updateCard(user_id, card_id, card_number, name_on_card, card_expiration, cvc, address1, address2, city, state, country, zip)) {
+            return res.status(201).json({ message: 'Card updated successfully.' });
+        } else {
+            return res.status(500).json({ message: 'Error updating card.' });
+        }
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: 'Error adding card to user.' });
+    }
+});
+
+//PATCH | /users/setTimeZone?key=apikey&user_id=user_id&timezone=timezone
+router.patch("/setActiveCard", limiter, async (req, res, next) => {
+    
+    if (!await api_key_util.checkKey(res, req.query.key)) return;
+
+    const user_id = req.query.user_id;
+    const timezone = req.query.timezone;
+
+    if(user_id && timezone) {
+
+        if(await users_api.setTimezone(user_id, timezone)) {
+            return res.status(201).json({ message: 'Timezone updated successfully.' });
+        } else {
+            return res.status(500).json({ message: 'Error updating card.' });
+        }
+
+    }
+
+    return res.status(400).json({ error: 'Invalid arguments.' });
+});
+
+//PATCH | /users/updatePassword?key=apikey&user_id=user_id&old_hashed_password=old_hashed_password&new_hashed_password=new_hashed_password
+router.patch("/updatePassword", limiter, async (req, res, next) => {
+    
+    if (!await api_key_util.checkKey(res, req.query.key)) return;
+
+    const user_id = req.query.user_id;
+    const old_hashed_password = req.query.old_hashed_password;
+    const new_hashed_password = req.query.new_hashed_password;
+
+    if(user_id && new_hashed_password && old_hashed_password) {
+
+        if(await users_api.updatePassword(user_id, old_hashed_password, new_hashed_password)) {
+            return res.status(201).json({ message: 'Password updated successfully.' });
+        } else {
+            return res.status(500).json({ message: 'Error updating password.' });
+        }
+
+    }
+
+    return res.status(400).json({ error: 'Invalid arguments.' });
+});
 
 router.get("/", limiter, async (req, res, next) => {
 
