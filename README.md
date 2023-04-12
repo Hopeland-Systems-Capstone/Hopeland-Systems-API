@@ -267,7 +267,7 @@ users_api.setAlarmRecipientStatus(0, 2, false)
 | **GET** | /sensors/:sensor_id/name?key=val | Return sensor name given `sensor_id`|
 | **GET** | /sensors/:sensor_id/status?&key=val | Return sensor status given `sensor_id`|
 | **PUT** | /sensors/:sensor_id/status/:status?&key=val | Set sensor with `sensor_id` to `status`|
-| **GET** | /sensors/:sensor_id/readings?dataType=:dataType&timeStart=:timeStart&timeEnd=:timeEnd&key=val | Return sensor readings of `dataType` from `timeStart` to `timeEnd` for `sensor_id`|
+| **GET** | /sensors/:sensor_id/readings?dataType=dataType&timeStart=timeStart&timeEnd=timeEnd&key=val | Return sensor readings of `dataType` from `timeStart` to `timeEnd` for `sensor_id`|
 | **GET** | /sensors/:sensor_id/lastReading?dataType=:dataType&key=val | Return last sensor reading of `dataType` for `sensor_id`|
 | **GET** | /sensors/:sensor_id/LastUpdate?key=val | Return last sensor update for `sensor_id`|
 | **GET** | /sensors/users/:user_id/sensors/countOnline?key=val | Return amount of online sensors for user `user_id`|
