@@ -19,6 +19,58 @@ const api_key_util = require('./util/api_key_util');
 //PUT | /users?key=apikey&username=name&alert_id=alert_id | Add alert to user when given alert_id and username 
 //PUT | /users?key=apikey&email=email&salert_id=alert_id | Add alert to user when given alert_id and email
 
+//POST | /users/addCard?key=apikey&user_id=user_id&card_number=card_number&name_on_card=name_on_card&card_expiration=card_expiration&cvc=cvc&address1=address1&address2=address2&city=city&state=state&zip=zip
+//DELETE | /users/deleteCard?key=apikey?user_id=user_id?card_id=card_id
+//PUT | /users/setActiveCard?key=apikey&user_id=user_id&card_id=card_id
+//PUT | /users/updateCard?key=apikey&user_id=user_id&card_id=card_id&card_number=card_number&name_on_card=name_on_card&card_expiration=card_expiration&cvc=cvc&address1=address1&address2=address2&city=city&state=state&zip=zip
+//PUT | /users/setTimeZone?key=apikey&user_id=user_id&timezone=timezone
+//PUT | /users/updatePassword?key=apikey&user_id=user_id&old_hashed_password=old_hashed_password&new_hashed_password=new_hashed_password
+
+//GET | /users/getTimeZone?key=apikey&user_id=user_id
+router.get("/getTimeZone", limiter, async (req, res, next) => {
+
+    if(!await api_key_util.checkKey(res, req.query.key)) return;
+
+    const user_id = req.query.user_id;
+
+    if(user_id) {
+        const timezone = await users_api.getTimezone(user_id);
+        return res.status(200).json(timezone);
+    }
+
+    return res.status(400).json({ error: 'Invalid arguments.' });
+});
+
+//GET | /users/getActiveCard?key=apikey&user_id=user_id
+router.get("/getActiveCard", limiter, async (req, res, next) => {
+
+    if(!await api_key_util.checkKey(res, req.query.key)) return;
+
+    const user_id = req.query.user_id;
+
+    if(user_id) {
+        const activeCard = await users_api.getActiveCard(user_id);
+        return res.status(200).json(activeCard);
+    }
+
+    return res.status(400).json({ error: 'Invalid arguments.' });
+});
+
+//GET | /users/getCards?key=apikey&user_id=user_id
+router.get("/getCards", limiter, async (req, res, next) => {
+
+    if(!await api_key_util.checkKey(res, req.query.key)) return;
+
+    const user_id = req.query.user_id;
+
+    if(user_id) {
+        const cards = users_api.getCards(user_id);
+        return res.status(200).json(cards);
+    }
+
+    return res.status(400).json({ error: 'Invalid arguments.' });
+});
+
 router.get("/", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
@@ -165,5 +217,7 @@ router.put("/", limiter, async (req, res, next) => {
     return res.status(400).json({ error: 'Invalid arguments.' });
 
 });
+
+
 
 module.exports = router;
