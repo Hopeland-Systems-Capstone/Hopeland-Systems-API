@@ -392,3 +392,23 @@ users_api.setAlarmRecipientStatus(0, 2, false)
     }
 ]
 ```
+
+## Card Format
+```json
+[
+    {
+        "_id": "63f729a661a5521ee483e416",
+        "card_id": 1,
+        "cardNumber": "4242424242424242",
+        "nameOnCard": "Walter White",
+        "cardExpiration": "0424",
+        "cvc": "424",
+        "address1": "308 Negra Arroyo Lane",
+        "address2": "#0000",
+        "city": "Albuquerque",
+        "state": "New Mexico",
+        "country": "United States of America",
+        "zip": "87104"
+    }
+]
+```
