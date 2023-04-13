@@ -9,10 +9,15 @@ const api_key_util = require('./util/api_key_util');
 //GET | /sensors?key=apikey&longitude=0&latitude=0&distance=1000 | Returns all sensors within 1000 meters of longitude=0,latitude=0
 //GET | /sensors?key=apikey&username=name | Return all sensors a user has access to given only username
 //GET | /sensors?key=apikey&email=email | Return all sensors a user has access to given only email
+//GET | /sensors/:sensor_id/name?key=val | Return sensor name given `sensor_id`
+//GET | /sensors/:sensor_id/status?&key=val | Return sensor status given `sensor_id`
+//PUT | /sensors/:sensor_id/status/:status?&key=val | Set sensor with `sensor_id` to `status`
+//GET | /sensors/:sensor_id/readings?dataType=dataType&timeStart=timeStart&timeEnd=timeEnd&key=val | Return sensor readings of `dataType` from `timeStart` to `timeEnd` for `sensor_id`
+//GET | /sensors/:sensor_id/lastReading?dataType=:dataType&key=val | Return last sensor reading of `dataType` for `sensor_id`
+//GET | /sensors/:sensor_id/LastUpdate?key=val | Return last sensor update for `sensor_id`
 //POST | /sensors?key=apikey&sensor=name&longitude=0&latitude=0 | Create a sensor with a name, longitude, and latitude
 //DELETE | /sensors?key=apikey&sensor=name | Delete a sensor with a name
 //PUT | /sensors?key=apikey&sensor=name&datatype=battery&value=100 | Add new data to a sensor
-
 
 router.get('/:sensor_id/lastUpdated', async (req, res) => {
 
@@ -201,16 +206,16 @@ router.put('/:sensor_id/status/:status', async (req, res) => {
 
     if (!await api_key_util.checkKey(res,req.query.key)) return;
 
-    const sensor_Id = parseInt(req.params.sensor_id);
+    const sensor_id = parseInt(req.params.sensor_id);
     const status = String(req.params.status);
 
-    console.log(sensor_Id, status);
+    console.log(sensor_id, status);
     
-    if (sensor_Id === NaN || !status ) {
+    if (!sensor_id || sensor_id === NaN || !status ) {
         return res.status(400).json({ error: 'Invalid arguments.' });
     } else {
-        await sensor_api.setStatus(sensor_Id, status);
-        return res.status(200).json({ message: `Changed sensor ${sensor_Id} to status ${status}.` });
+        await sensor_api.setStatus(sensor_id, status);
+        return res.status(200).json({ message: `Changed sensor ${sensor_id} to status ${status}.` });
     }
 });
 
