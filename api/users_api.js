@@ -103,75 +103,37 @@ async function updateUser(user_id, name, email, phone_number = "", company_name 
 }
 
 /**
- * Get user given a username
- * @param {String} name
+ * Get user given a user_id
+ * @param {Number} user_id
  */
-async function getUserByUsername(name) {
+async function getUser(user_id) {
 
     const result = await Mongo.users.find({
-        "name":`${name}`
+        "user_id":user_id
     });
 
     if (result) {
-        console.log(`Found user with username ${name}.`);
+        console.log(`Found user with id ${user_id}.`);
     } else {
-        console.log(`Did not find any user with this username.`);
+        console.log(`Did not find any user with this user_id.`);
         return null;
     }
     return result;
 }
 
 /**
- * Get user given an email
- * @param {String} email
+ * Get all the sensors a user has access to
+ * @param {Number} user_id
  */
-async function getUserByEmail(email) {
-
-    const result = await Mongo.users.find({
-        "email":`${email}`
-    });
-
-    if (result) {
-        console.log(`Found user with email ${email}.`);
-    } else {
-        console.log(`Did not find any user with this email.`);
-        return null;
-    }
-    return result;
-}
-
-/**
- * Get all the sensors a user has access to given username
- * @param {String} name
- */
-async function getUserSensorsByUsername(name) {
+async function getUserSensors(user_id) {
 
     const projection = { sensors: 1, _id: 0 };
 
     const exists = await Mongo.users.findOne({
-        "name":`${name}`
+        "user_id":user_id
     }, projection);
     if (!exists) {
-        console.log(`User with username: ${name} does not exist.`);
-        return;
-    }
-
-    return JSON.parse(JSON.stringify(exists));
-}
-
-/**
- * Get all the sensors a user has access to given email
- * @param {String} email
- */
-async function getUserSensorsByEmail(email) {
-
-    const projection = { sensors: 1, _id: 0 };
-
-    const exists = await Mongo.users.findOne({
-        "email":`${email}`
-    }, projection);
-    if (!exists) {
-        console.log(`User with email: ${email} does not exist.`);
+        console.log(`User with id: ${user_id} does not exist.`);
         return;
     }
 
@@ -180,36 +142,17 @@ async function getUserSensorsByEmail(email) {
 
 /**
  * Check if a username/password combo is correct
- * @param {String} name
+ * @param {Number} user_id
  * @param {String} hashed_password
  */
-async function verifyUsernamePasswordCombo(name, hashed_password) {
+async function verifyUserPassword(user_id, hashed_password) {
 
     const exists = await Mongo.users.findOne({
-        "name":`${name}`,
+        "user_id":user_id,
         "password":`${hashed_password}`
     });
     if (!exists) {
-        console.log(`Username ${name} with hashed password ${hashed_password} is invalid.`);
-        return false;
-    }
-
-    return true;
-}
-
-/**
- * Check if a email/password combo is correct
- * @param {String} email
- * @param {String} hashed_password
- */
-async function verifyEmailPasswordCombo(email, hashed_password) {
-
-    const exists = await Mongo.users.findOne({
-        "email":`${email}`,
-        "password":`${hashed_password}`
-    });
-    if (!exists) {
-        console.log(`Email ${email} with hashed password ${hashed_password} is invalid.`);
+        console.log(`User ${user_id} with hashed password ${hashed_password} is invalid.`);
         return false;
     }
 
@@ -218,12 +161,12 @@ async function verifyEmailPasswordCombo(email, hashed_password) {
 
 /**
  * Add a sensor to a user's list of sensors
- * @param {String} username
+ * @param {Number} user_id
  * @param {Number} sensor_id
  */
-async function addSensorToUserWithUsername(name, sensor_id) {
+async function addSensorToUser(user_id, sensor_id) {
     await Mongo.users.updateOne({
-        "name":`${name}`
+        "user_id":user_id
     }, {
         $addToSet: {
             "sensors": sensor_id
@@ -231,49 +174,24 @@ async function addSensorToUserWithUsername(name, sensor_id) {
     }).then((res) => {
         if (res.matchedCount > 0) {
             if (res.modifiedCount > 0) {
-                console.log(`Added sensor with sensor_id ${sensor_id} to ${name}'s sensors.`);
+                console.log(`Added sensor with sensor_id ${sensor_id} to ${user_id}'s sensors.`);
             } else {
-                console.log(`Sensor with sensor_id ${sensor_id} already exists in ${name}'s sensors.`);
+                console.log(`Sensor with sensor_id ${sensor_id} already exists in ${user_id}'s sensors.`);
             }
         } else {
-            console.log(`User with username ${name} does not exist.`);
-        } 
-    });
-}
-
-/**
- * Add a sensor to a user's list of sensors
- * @param {String} email
- * @param {Number} sensor_id
- */
-async function addSensorToUserWithEmail(email, sensor_id) {
-    await Mongo.users.updateOne({
-        "email":`${email}`
-    }, {
-        $addToSet: {
-            "sensors": sensor_id
-        }
-    }).then((res) => {
-        if (res.matchedCount > 0) {
-            if (res.modifiedCount > 0) {
-                console.log(`Added sensor with sensor_id ${sensor_id} to ${email}'s sensors.`);
-            } else {
-                console.log(`Sensor with sensor_id ${sensor_id} already exists in ${email}'s sensors.`);
-            }
-        } else {
-            console.log(`User with email ${email} does not exist.`);
+            console.log(`User with id ${user_id} does not exist.`);
         } 
     });
 }
 
 /**
  * Remove a sensor from a user's list of sensors
- * @param {String} username
+ * @param {Number} user_id
  * @param {Number} sensor_id
  */
-async function removeSensorFromUserWithUsername(name, sensor_id) {
+async function removeSensorFromUser(user_id, sensor_id) {
     await Mongo.users.updateOne({
-        "name":`${name}`
+        "user_id":user_id
     }, {
         $pull: {
             "sensors": sensor_id
@@ -281,49 +199,24 @@ async function removeSensorFromUserWithUsername(name, sensor_id) {
     }).then((res) => {
         if (res.matchedCount > 0) {
             if (res.modifiedCount > 0) {
-                console.log(`Removed sensor with sensor_id ${sensor_id} from ${name}'s sensors.`);
+                console.log(`Removed sensor with sensor_id ${sensor_id} from ${user_id}'s sensors.`);
             } else {
-                console.log(`Sensor with sensor_id ${sensor_id} does not exist in ${name}'s sensors.`);
+                console.log(`Sensor with sensor_id ${sensor_id} does not exist in ${user_id}'s sensors.`);
             }
         } else {
-            console.log(`User with username ${name} does not exist.`);
-        } 
-    });
-}
-
-/**
- * Remove a sensor from a user's list of sensors
- * @param {String} email
- * @param {Number} sensor_id
- */
-async function removeSensorFromUserWithEmail(email, sensor_id) {
-    await Mongo.users.updateOne({
-        "email":`${email}`
-    }, {
-        $pull: {
-            "sensors": sensor_id
-        }
-    }).then((res) => {
-        if (res.matchedCount > 0) {
-            if (res.modifiedCount > 0) {
-                console.log(`Removed sensor with sensor_id ${sensor_id} from ${email}'s sensors.`);
-            } else {
-                console.log(`Sensor with sensor_id ${sensor_id} does not exist in ${email}'s sensors.`);
-            }
-        } else {
-            console.log(`User with email ${email} does not exist.`);
+            console.log(`User with id ${user_id} does not exist.`);
         } 
     });
 }
 
 /**
  * Add an alert to a user's list of alerts
- * @param {String} username
+ * @param {Number} user_id
  * @param {Number} alert_id
  */
-async function addAlertToUserWithUsername(name, alert_id) {
+async function addAlertToUser(user_id, alert_id) {
     await Mongo.users.updateOne({
-        "name":`${name}`
+        "user_id":user_id
     }, {
         $addToSet: {
             "alerts": alert_id
@@ -331,49 +224,24 @@ async function addAlertToUserWithUsername(name, alert_id) {
     }).then((res) => {
         if (res.matchedCount > 0) {
             if (res.modifiedCount > 0) {
-                console.log(`Added alert with alert_id ${alert_id} to ${name}'s alerts.`);
+                console.log(`Added alert with alert_id ${alert_id} to ${user_id}'s alerts.`);
             } else {
-                console.log(`Alert with alert_id ${alert_id} already exists in ${name}'s alerts.`);
+                console.log(`Alert with alert_id ${alert_id} already exists in ${user_id}'s alerts.`);
             }
         } else {
-            console.log(`User with username ${name} does not exist.`);
-        } 
-    });
-}
-
-/**
- * Add an alert to a user's list of alerts
- * @param {String} email
- * @param {Number} alert_id
- */
-async function addAlertToUserWithEmail(email, alert_id) {
-    await Mongo.users.updateOne({
-        "email":`${email}`
-    }, {
-        $addToSet: {
-            "alerts": alert_id
-        }
-    }).then((res) => {
-        if (res.matchedCount > 0) {
-            if (res.modifiedCount > 0) {
-                console.log(`Added alert with alert_id ${alert_id} to ${email}'s alerts.`);
-            } else {
-                console.log(`Alert with alert_id ${alert_id} already exists in ${email}'s alerts.`);
-            }
-        } else {
-            console.log(`User with email ${email} does not exist.`);
+            console.log(`User with id ${user_id} does not exist.`);
         } 
     });
 }
 
 /**
  * Remove an alert from a user's list of alert
- * @param {String} username
+ * @param {Number} user_id
  * @param {Number} alert_id
  */
-async function removeAlertFromUserWithUsername(name, alert_id) {
+async function removeAlertFromUser(user_id, alert_id) {
     await Mongo.users.updateOne({
-        "name":`${name}`
+        "user_id":user_id
     }, {
         $pull: {
             "alerts": alert_id
@@ -381,12 +249,12 @@ async function removeAlertFromUserWithUsername(name, alert_id) {
     }).then((res) => {
         if (res.matchedCount > 0) {
             if (res.modifiedCount > 0) {
-                console.log(`Removed alert with alert_id ${alert_id} from ${name}'s alerts.`);
+                console.log(`Removed alert with alert_id ${alert_id} from ${user_id}'s alerts.`);
             } else {
-                console.log(`Alert with alert_id ${alert_id} does not exist in ${name}'s alerts.`);
+                console.log(`Alert with alert_id ${alert_id} does not exist in ${user_id}'s alerts.`);
             }
         } else {
-            console.log(`User with name ${name} does not exist.`);
+            console.log(`User with id ${user_id} does not exist.`);
         } 
     });
 }
@@ -1084,20 +952,13 @@ module.exports = {
     createUser,
     updateUser,
     deleteUser,
-    getUserByUsername,
-    getUserByEmail,
-    getUserSensorsByUsername,
-    getUserSensorsByEmail,
-    verifyUsernamePasswordCombo,
-    verifyEmailPasswordCombo,
-    addSensorToUserWithUsername,
-    addSensorToUserWithEmail,
-    removeSensorFromUserWithUsername,
-    removeSensorFromUserWithEmail,
-    addAlertToUserWithUsername,
-    addAlertToUserWithEmail,
-    removeAlertFromUserWithUsername,
-    removeAlertFromUserWithEmail,
+    getUser,
+    getUserSensors,
+    verifyUserPassword,
+    addSensorToUser,
+    removeSensorFromUser,
+    addAlertToUser,
+    removeAlertFromUser,
     getAlerts,
     getEmail,
     getName,

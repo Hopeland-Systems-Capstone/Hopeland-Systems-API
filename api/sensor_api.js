@@ -72,18 +72,18 @@ async function createSensor(name, longitude, latitude, type) {
 }
 
 /**
- * Delete a sensor given a name
- * @param {String} name
+ * Delete a sensor given a sensor id
+ * @param {Number} sensor_id
  */
- async function deleteSensor(name) {
+ async function deleteSensor(sensor_id) {
     const result = await Mongo.sensors.deleteOne({
-        "name":`${name}`,
+        "sensor_id":sensor_id,
     });
     if (result.deletedCount === 1) {
-        console.log(`Deleted sensor with name: ${name}.`);
+        console.log(`Deleted sensor with id: ${sensor_id}.`);
         return true;
     } else {
-        console.log(`Sensor with name ${name} does not exist.`);
+        console.log(`Sensor with id ${sensor_id} does not exist.`);
         return false;
     }
 }
@@ -120,15 +120,15 @@ async function getSensorsByGeolocation(longitude, latitude, distance_meters) {
 
 /**
  * Get sensor data given sensor name
- * @param {String} name
+ * @param {Number} sensor_id
  */
-async function getSensorData(name) {
+async function getSensorData(sensor_id) {
 
     const exists = await Mongo.sensors.findOne({
-        "name":`${name}`
+        "sensor_id":sensor_id
     });
     if (!exists) {
-        console.log(`Sensor with name: ${name} does not exist.`);
+        console.log(`Sensor with id: ${sensor_id} does not exist.`);
         return;
     }
 
@@ -137,11 +137,11 @@ async function getSensorData(name) {
 
 /**
  * Add new battery, temperature, humidity, or pressure data to sensor
- * @param {String} sensor_name
+ * @param {Number} sensor_id
  * @param {String} data_type
  * @param {Number} value
  */
- async function addSensorData(sensor_name, data_type, value) {
+ async function addSensorData(sensor_id, data_type, value) {
 
     if (data_type != "battery" && data_type != "temperature" && data_type != "humidity" && data_type != "pressure" && data_type != "co2") {
         console.log(`Invalid data type ${data_type}.`);
@@ -165,12 +165,12 @@ async function getSensorData(name) {
 
     passed = false;
 
-    await Mongo.sensors.updateOne({"name": `${sensor_name}`}, new_data).then((res) => {
+    await Mongo.sensors.updateOne({"sensor_id":sensor_id}, new_data).then((res) => {
         if (res.matchedCount > 0) {
-            console.log(`Added ${data_type} of ${value} at ${time} to sensor ${sensor_name}.`);
+            console.log(`Added ${data_type} of ${value} at ${time} to sensor ${sensor_id}.`);
             passed = true;
         } else {
-            console.log(`Sensor with name ${sensor_name} does not exist.`);
+            console.log(`Sensor with name ${sensor_id} does not exist.`);
             passed = false;
         } 
     });

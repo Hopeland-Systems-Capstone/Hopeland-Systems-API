@@ -42,14 +42,14 @@ docker run -p 3000:3000 hopeland/backend-api:1.0
 // Create flood sensor named sensor1 at longitude 10, latitude 20
 sensor_api.createSensor("sensor1",10,20,"Flood");
 
-// Delete sensor named sensor1
-sensor_api.deleteSensor("sensor1");
+// Delete sensor with id 1
+sensor_api.deleteSensor(1);
 
 // Get all sensors within 100 meters of longitude 10, latitude 20
 sensor_api.getSensorsByGeolocation(10,20,100);
 
-// Get sensor data from sensor named sensor1
-sensor_api.getSensorData("sensor1");
+// Get sensor data from sensor with sensor_id 1
+sensor_api.getSensorData(1);
 
 // Add battery value of 100 to sensor1
 sensor_api.addSensorData("sensor1","battery",100);
@@ -140,47 +140,26 @@ users_api.updateUser(0,"User1","user1@gmail.com","0000000000","Hopeland")
 // Delete the user with user_id 0
 users_api.deleteUser(0);
 
-// Get the user who's name is User1
-users_api.getUserByUsername("User1");
+// Get the user with id 1
+users_api.getUser(1);
 
-// Get the user who's email is user1@gmail.com
-users_api.getUserByEmail("user1@gmail.com");
+// Get all sensors a user with id 1 has access to
+users_api.getUserSensors(1);
 
-// Get all sensors User1 has access to
-users_api.getUserSensorsByUsername("User1");
+// Check if user with user_id 1's hashed password is xxxx
+users_api.verifyUserPassword(1,"xxxx");
 
-// Get all sensors user1@gmail.com has access to
-users_api.getUserSensorsByEmail("user1@gmail.com");
+// Add sensor 0 to user with id 1
+users_api.addSensorToUser(1,0);
 
-// Check if User1's hashed password is xxxx
-users_api.verifyUsernamePasswordCombo("User1","xxxx");
+// Remove sensor 0 from user  with id 1
+users_api.removeSensorFromUser(1,0);
 
-// Check if user1@gmail.com's hashed password is xxxx
-users_api.verifyEmailPasswordCombo("user1@gmail.com","xxxx");
+// Add alert with alert id 0 to user with id 1
+users_api.addAlertToUser(1, 0)
 
-// Add sensor 0 to User1
-users_api.addSensorToUserWithUsername("User1",0);
-
-// Add sensor 0 to user1@gmail.com
-users_api.addSensorToUserWithEmail("user1@gmail.com",0);
-
-// Remove sensor 0 from User1
-users_api.removeSensorFromUserWithUsername("User1",0);
-
-// Remove sensor 0 from user1@gmail.com
-users_api.removeSensorFromUserWithEmail("user1@gmail.com",0);
-
-// Add alert with alert id 0 to user User1
-users_api.addAlertToUserWithUsername("User1", 0)
-
-// Add alert with alert id 0 to user user1@gmail.com
-users_api.addAlertToUserWithEmail("user1@gmail.com", 0)
-
-// Remove alert with alert id 0 from user User1
-users_api.removeAlertFromUserWithUsername("User1", 0)
-
-// Remove alert with alert id 0 from user user1@gmail.com
-users_api.removeAlertFromUserWithEmail("user1@gmail.com", 0)
+// Remove alert with alert id 0 from user with id 1
+users_api.removeAlertFromUser(1, 0)
 
 // Get all alerts from user with id 0
 users_api.getAlerts(0)
@@ -257,13 +236,11 @@ users_api.setAlarmRecipientStatus(0, 2, false)
 ## Sensors:
 | Method | Path | Description |
 |:------- |:-------|:------|
-| **GET** | /sensors?key=val&sensor=val | Returns all sensors with name of `sensor` |
+| **GET** | /sensors/:sensor_id?key=val | Returns all sensors with id of `sensor_id` |
 | **GET** | /sensors?key=val&longitude=val&latitude=val&distance=val | Returns all sensors within `distance` meters of `longitude` and `latitude` |
-| **GET** | /sensors?key=val&username=val | Return all sensors a user has access to given username |
-| **GET** | /sensors?key=val&email=val | Return all sensors a user has access to given email |
 | **POST** | /sensors?key=val&sensor=val&longitude=val&latitude=val | Create a sensor with a `name`, `longitude`, and `latitude` |
-| **DELETE** | /sensors?key=val&sensor=val | Delete a sensor with a `sensor` name |
-| **PUT** | /sensors?key=val&sensor=val&datatype=val&value=val | Add new data of `datatype` with `value` to `sensor` with name |
+| **DELETE** | /sensors/:sensor_id?key=val | Delete a sensor with `sensor_id` id |
+| **PUT** | /sensors/:sensor_id?key=val&datatype=val&value=val | Add new data of `datatype` with `value` to `sensor` with name |
 | **GET** | /sensors/:sensor_id/name?key=val | Return sensor name given `sensor_id`|
 | **GET** | /sensors/:sensor_id/status?&key=val | Return sensor status given `sensor_id`|
 | **PUT** | /sensors/:sensor_id/status/:status?&key=val | Set sensor with `sensor_id` to `status`|
@@ -283,16 +260,14 @@ users_api.setAlarmRecipientStatus(0, 2, false)
 | **GET** | /alerts?key=val&days=val&amount=val | Returns all alerts from the past `days` days, but caps at `amount` alerts |
 | **GET** | /alerts?key=val&amount=val | Returns the last `amount` alerts |
 | **POST** | /alerts?key=val&title=val&alert=val&associated_sensor=val | Create an alert with `title` and `alert` and associated with sensor_id `associated_sensor` |
-| **DELETE** | /alerts?key=val&alert_id=val | Delete an alert given an `alert_id` |
+| **DELETE** | /alerts/:alert_id?key=val | Delete an alert given an `alert_id` |
 | **GET** | /alerts/:alert_id/sensor?key=val | Return sensor_id associated with `alert_id`|
 
 ## Users:
 | Method | Path | Description |
 |:------- |:-------|:------|
-| **GET** | /users?key=val&username=val | Return user information when only given username |
-| **GET** | /users?key=val&email=val | Return user information when only given email |
-| **GET** | /users?key=val&username=val&hashed_password=val | Verify user password combo when given username and password |
-| **GET** | /users?key=val&email=val&hashed_password=val | Verify user password combo when given email and password |
+| **GET** | /users/:user_id?key=val | Return user information given user_id |
+| **GET** | /users/:user_id/password/:hashed_password?key=val | Verify user password combo |
 | **GET** | /users/:user_id/cards?key=val | Get all cards on file for a user |
 | **GET** | /users/:user_id/activeCard?key=val | Get the active card for a user |
 | **GET** | /users/:user_id/timezone | Get timezone for a user |
@@ -305,27 +280,24 @@ users_api.setAlarmRecipientStatus(0, 2, false)
 | **POST** | /users?key=val&username=val&email=val&hashed_password=val&phone_number=val&company_name=val&timezone=val | Create new user given username, email, hashed_password, and optional phone_number, company_name, and timezone |
 | **POST** | /users/:user_id/bills?billing_date=val&amount=val | Creates a new bill and adds bill to an indicated user_id given billing_date and amount |
 | **POST** | /users/:user_id/alarmRecipients?name=val&email=val | Creates a new alarm recipient and adds alarm recipient to an indicated user_id given name and email|
-| **DELETE** | /users?key=val&user_id=val | Delete user give user_id |
-| **DELETE** | /users?key=val&username=val&sensor_id=val | Delete sensor from user when given sensor_id and username |
-| **DELETE** | /users?key=val&email=val&sensor_id=val | Delete sensor from user when given sensor_id and email |
-| **DELETE** | /users?key=val&username=val&alert_id=val | Delete alert from user when given alert_id and username |
-| **DELETE** | /users?key=val&email=val&alert_id=val | Delete alert from user when given alert_id and email |
+| **DELETE** | /users/:user_id?key=val | Delete user give user_id |
+| **DELETE** | /users/:user_id/sensor/:sensor_id?key=val | Delete sensor from user give user_id and sensor_id |
+| **DELETE** | /users/:user_id/alert/:alert_id?key=val | Delete alert from user give user_id and alert_id |
 | **DELETE** | /users/:user_id/cards/:card_id?key=val | Delete a card for a user |
 | **DELETE** | /users/:user_id/bills/:bill_id | Deletes the bill with a given bill_id from the indicated user_id |
 | **DELETE** | /users/:user_id/alarmRecipients/:alarm_recipient_id | Deletes the alarm recipient with a given alarm_recipient_id from the indicated user_id |
-| **PUT** | /users?key=val&username=val&sensor_id=val | Add sensor to user when given sensor_id and name |
-| **PUT** | /users?key=val&email=val&sensor_id=val | Add sensor to user when given sensor_id and email |
-| **PUT** | /users?key=val&username=val&alert_id=val | Add alert to user when given alert_id and username |
-| **PUT** | /users?key=val&email=val&salert_id=val | Add alert to user when given alert_id and email |
+| **PUT** | /users/:user_id/sensor/:sensor_id?key=val | Add sensor to user when given user_id and sensor_id |
+| **PUT** | /users/:user_id/alert/:alert_id?key=val | Add alert to user when given user_id and alert_id |
 | **PUT** | /users/:user_id/password?key=val&new=new_password&old=old_password | Update password for user |
 | **PUT** | /users/:user_id/timezone/:timezone?key=val | Set timezone for a user |
 | **PUT** | /users/:user_id/activeCard/:card_id?key=val | Set the active card for a user |
-| **PUT** | /users/user_id/update?name=name&email=email&phone_number=phone_number&company_name=company_name&key=val | Update user's `user_id` name, email, phone number, company name |
-| **GET** | /users/user_id/alerts?key=val| Return Alerts for user with `user_id` |
-| **GET** | /users/user_id/email?key=val | Return Email for user with `user_id` |
-| **GET** | /users/user_id/name?key=val | Return Name for user with `user_id` |
-| **GET** | /users/user_id/companyName?key=val | Return Company Name for user with `user_id` |
-| **GET** | /users/user_id/phoneNumber?key=val | Return Phone Number for user with `user_id` |
+| **PUT** | /users/:user_id/update?name=name&email=email&phone_number=phone_number&company_name=company_name&key=val | Update user's `user_id` name, email, phone number, company name |
+| **GET** | /users/:user_id/alerts?key=val| Return Alerts for user with `user_id` |
+| **GET** | /users/:user_id/email?key=val | Return Email for user with `user_id` |
+| **GET** | /users/:user_id/name?key=val | Return Name for user with `user_id` |
+| **GET** | /users/:user_id/companyName?key=val | Return Company Name for user with `user_id` |
+| **GET** | /users/:user_id/phoneNumber?key=val | Return Phone Number for user with `user_id` |
+| **GET** | /users/:user_id/sensors?key=val | Return all sensors a user with `user_id` has access to |
 | **GET** | /users/:user_id/sensors/countOnline?key=val | Return amount of online sensors for user `user_id`|
 | **GET** | /users/:user_id/sensors/countOffline?key=val | Return amount of offline sensors for user `user_id`|
 | **PUT** | /users/:user_id/bills/:bill_id/update?status=val | Updates the bill when given status |
