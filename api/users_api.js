@@ -563,7 +563,7 @@ async function getNextCardID() {
       { $group: { _id: null, maxCardID: { $max: "$cards.card_id" } } }
     ]).toArray();
     
-    const maxCardID = result[0]?.maxCardID || 0;
+    const maxCardID = result[0].maxCardID || 0;
     
     return maxCardID + 1;
   }
@@ -1029,6 +1029,58 @@ async function setAlarmRecipientStatus(user_id, alarm_recipient_id, enabled) {
     console.log(`Updated status of alarm recipient with id ${alarm_recipient_id} for user with id ${user_id}.`);
   }
 
+  /**
+ * Count the number of online sensors associated with a user_id
+ * @param {Number} user_id - user id
+ */
+async function countOnline(user_id) {
+    const projection = { sensors: 1, _id: 0 };
+
+    const user = await Mongo.users.findOne({
+        "user_id":user_id
+    }, projection);
+
+    if (!user) {
+        console.log(`User ${user_id} does not exist.`);
+        return null;
+    }
+
+    const sensorIds = user.sensors.map(sensor => sensor.sensor_id);
+
+    const onlineSensors = await Mongo.sensors.countDocuments({
+        sensor_id: { $in: sensorIds },
+        status: "Online"
+    });
+
+    return onlineSensors;
+}
+
+/**
+ * Count the number of offline sensors associated with a user_id
+ * @param {Number} user_id - user id
+ */
+async function countOffline(user_id) {
+    const projection = { sensors: 1, _id: 0 };
+
+    const user = await Mongo.users.findOne({
+        "user_id":user_id
+    }, projection);
+
+    if (!user) {
+        console.log(`User ${user_id} does not exist.`);
+        return null;
+    }
+
+    const sensorIds = user.sensors.map(sensor => sensor.sensor_id);
+
+    const offlineSensors = await Mongo.sensors.countDocuments({
+        sensor_id: { $in: sensorIds },
+        status: "Offline"
+    });
+
+    return offlineSensors;
+}
+
 module.exports = {
     createUser,
     updateUser,
@@ -1073,4 +1125,6 @@ module.exports = {
     getAlarmRecipients,
     getAlarmRecipientStatus,
     setAlarmRecipientStatus,
+    countOnline,
+    countOffline,
 };

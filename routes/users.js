@@ -8,6 +8,13 @@ const api_key_util = require('./util/api_key_util');
 //GET | /users?key=apikey&email=email | Return user information when only given email
 //GET | /users?key=apikey&username=name&hashed_password=hashed_password | Verify user password combo when given username and password
 //GET | /users?key=apikey&email=email&hashed_password=hashed_password | Verify user password combo when given email and password
+//GET | /users/user_id/alerts?key=val| Return Alerts for user with `user_id`
+//GET | /users/user_id/email?key=val | Return Email for user with `user_id`
+//GET | /users/user_id/name?key=val | Return Name for user with `user_id`
+//GET | /users/user_id/companyName?key=val | Return Company Name for user with `user_id`
+//GET | /users/user_id/phoneNumber?key=val | Return Phone Number for user with `user_id`
+//GET | /users/:user_id/sensors/countOnline?key=val | Return amount of online sensors for user `user_id`
+//GET | /users/:user_id/sensors/countOffline?key=val | Return amount of offline sensors for user `user_id`
 //POST | /users?key=apikey&username=name&email=email&hashed_password=hashed_password&phone_number=0000000000&company_name=Hopeland&timezone=MST | Create new user given username, email, hashed_password (Optional phone_number, company_name, and timezone)
 //DELETE | /users?key=apikey&user_id=user_id | Delete user give user_id
 //DELETE | /users?key=apikey&username=name&sensor_id=sensor_id | Delete sensor from user when given sensor_id and username
@@ -18,6 +25,110 @@ const api_key_util = require('./util/api_key_util');
 //PUT | /users?key=apikey&email=email&sensor_id=sensor_id | Add sensor to user when given sensor_id and email 
 //PUT | /users?key=apikey&username=name&alert_id=alert_id | Add alert to user when given alert_id and username 
 //PUT | /users?key=apikey&email=email&salert_id=alert_id | Add alert to user when given alert_id and email
+//PUT | /users/user_id/update?name=name&email=email&phone_number=phone_number&company_name=company_name&key=val | Update user's `user_id` name, email, phone number, company name
+
+router.get('/:user_id/sensors/countOffline', async (req, res) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const user_Id = parseInt(req.params.user_id);
+   
+    if (user_Id === NaN) {
+        res.status(400).send('Invalid arguments');
+    } else {
+        const data = await users_api.countOffline(user_Id);
+        res.status(200).json(data);
+    }
+});
+
+router.get('/:user_id/sensors/countOnline', async (req, res) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const user_Id = parseInt(req.params.user_id);
+    
+    if (user_Id === NaN) {
+        res.status(400).send('Invalid arguments');
+    } else {
+        const data = await users_api.countOnline(user_Id);
+        res.status(200).json(data);
+    }
+});
+
+router.get("/:user_id/phoneNumber", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const user_Id = parseInt(req.params.user_id);
+
+    if ( user_Id === NaN) {
+        return res.status(400).json({error: `Invalid arguments`})
+    } else {
+        const data = await users_api.getPhoneNumber(user_Id);
+        return res.status(200).json(data);
+    }
+
+});
+
+router.get("/:user_id/companyName", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const user_Id = parseInt(req.params.user_id);
+
+    if ( user_Id === NaN) {
+        return res.status(400).json({error: `Invalid arguments`})
+    } else {
+        const data = await users_api.getCompanyName(user_Id);
+        return res.status(200).json(data);
+    }
+
+});
+
+router.get("/:user_id/name", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const user_Id = parseInt(req.params.user_id);
+
+    if ( user_Id === NaN) {
+        return res.status(400).json({error: `Invalid arguments`})
+    } else {
+        const data = await users_api.getName(user_Id);
+        return res.status(200).json(data);
+    }
+
+});
+
+router.get("/:user_id/email", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const user_Id = parseInt(req.params.user_id);
+
+    if ( user_Id === NaN) {
+        return res.status(400).json({error: `Invalid arguments`})
+    } else {
+        const data = await users_api.getEmail(user_Id);
+        return res.status(200).json(data);
+    }
+
+});
+
+router.get("/:user_id/alerts", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const user_Id = parseInt(req.params.user_id);
+
+    if ( user_Id === NaN) {
+        return res.status(400).json({error: `Invalid arguments`})
+    } else {
+        const data = await users_api.getAlerts(user_Id);
+        return res.status(200).json(data);
+    }
+
+});
 
 router.get("/", limiter, async (req, res, next) => {
 
@@ -165,5 +276,25 @@ router.put("/", limiter, async (req, res, next) => {
     return res.status(400).json({ error: 'Invalid arguments.' });
 
 });
+
+router.put("/:user_id/update", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const user_Id = parseInt(req.params.user_id);
+    const name = String(req.query.name);
+    const email = String(req.query.email);
+    const phone_number = String(req.query.phone_number);
+    const company_name = String(req.query.company_name);
+
+    console.log(user_Id + name + email);
+
+    if ( user_Id === NaN || !name || !email || !phone_number || !company_name) {
+        return res.status(400).json({error: `Invalid arguments`})
+    } else {
+        await users_api.updateUser(user_Id,name,email,phone_number,company_name);
+        return res.status(200).json({message: `Updated user ${user_Id}`});
+    }
+});    
 
 module.exports = router;
