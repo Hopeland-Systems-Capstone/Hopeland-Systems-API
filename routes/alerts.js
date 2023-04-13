@@ -43,8 +43,9 @@ router.post("/", limiter, async (req, res, next) => {
     }
 
     try {
-        if (await alerts_api.createAlert(title, alert, associated_sensor)) {
-            return res.status(201).json({ message: 'Alert created successfully.' });
+        const alert_id = await alerts_api.createAlert(title, alert, associated_sensor);
+        if (alert_id) {
+            return res.status(201).json({ message: 'Alert created successfully.', alert_id: alert_id });
         } else {
             return res.status(500).json({ message: 'Error creating alert.' });
         }

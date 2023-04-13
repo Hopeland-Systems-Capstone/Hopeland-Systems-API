@@ -28,7 +28,7 @@ async function createAlert(title,alert,associated_sensor) {
         "associated_sensor":associated_sensor
     });
     console.log(`Created new alert with title: ${title}, alert of: ${alert}, and alert_id of ${alert_id}.`);
-    return true;
+    return alert_id;
 }
 
 /**

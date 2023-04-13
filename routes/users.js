@@ -46,7 +46,7 @@ router.get("/:user_id", limiter, async (req, res, next) => {
 
     const user_id = parseInt(req.params.user_id);
 
-    if (!user_id || user_id === NaN) {
+    if (typeof user_id == 'undefined' || user_id === NaN) {
         return res.status(400).json({ error: 'Invalid arguments.' });
     }
 
@@ -62,7 +62,7 @@ router.get("/:user_id/password/:hashed_password", limiter, async (req, res, next
     const user_id = parseInt(req.params.user_id);
     const hashed_password = req.params.hashed_password;
 
-    if (!user_id || user_id === NaN || !hashed_password) {
+    if (typeof user_id == 'undefined' || user_id === NaN || !hashed_password) {
         return res.status(400).json({ error: 'Invalid arguments.' });
     }
 
@@ -103,7 +103,7 @@ router.delete("/:user_id", limiter, async (req, res, next) => {
 
     const user_id = parseInt(req.params.user_id);
 
-    if (!user_id || user_id == NaN) {
+    if (typeof user_id == 'undefined' || user_id == NaN) {
         return res.status(400).json({ error: 'Invalid arguments.' });
     }
 
@@ -122,7 +122,7 @@ router.delete("/:user_id/sensor/:sensor_id", limiter, async (req, res, next) => 
     const user_id = parseInt(req.params.user_id);
     const sensor_id = parseInt(req.params.sensor_id);
 
-    if (!user_id || user_id == NaN || !sensor_id || sensor_id === NaN) {
+    if (typeof user_id == 'undefined' || user_id == NaN || typeof sensor_id == 'undefined' || sensor_id === NaN) {
         return res.status(400).json({ error: 'Invalid arguments.' });
     }
 
@@ -138,7 +138,7 @@ router.delete("/:user_id/alert/:alert_id", limiter, async (req, res, next) => {
     const user_id = parseInt(req.params.user_id);
     const alert_id = parseInt(req.params.alert_id);
 
-    if (!user_id || user_id == NaN || !alert_id || alert_id === NaN) {
+    if (typeof user_id == 'undefined' || user_id == NaN || typeof alert_id == 'undefined' || alert_id === NaN) {
         return res.status(400).json({ error: 'Invalid arguments.' });
     }
 
@@ -154,12 +154,12 @@ router.put("/:user_id/sensor/:sensor_id", limiter, async (req, res, next) => {
     const user_id = parseInt(req.params.user_id);
     const sensor_id = parseInt(req.params.sensor_id);
 
-    if (!user_id || user_id === NaN || !sensor_id || sensor_id == NaN) {
+    if (typeof user_id == 'undefined' || user_id === NaN || typeof sensor_id == 'undefined' || sensor_id === NaN) {
         return res.status(400).json({ error: 'Invalid arguments.' });
     }
 
     await users_api.addSensorToUser(user_id, sensor_id);
-    return res.status(200).json({ message: `Added ${sensor_id} to user with id ${user_id}.` });
+    return res.status(200).json({ message: `Added sensor ${sensor_id} to user with id ${user_id}.` });
 
 });
 
@@ -170,12 +170,13 @@ router.put("/:user_id/alert/:alert_id", limiter, async (req, res, next) => {
     const user_id = parseInt(req.params.user_id);
     const alert_id = parseInt(req.params.alert_id);
 
-    if (!user_id || user_id === NaN || !alert_id || alert_id == NaN) {
+    if (typeof user_id == 'undefined' || user_id === NaN || typeof alert_id == 'undefined' || alert_id === NaN) {
+        console.log("Failed");
         return res.status(400).json({ error: 'Invalid arguments.' });
     }
 
     await users_api.addAlertToUser(user_id, alert_id);
-    return res.status(200).json({ message: `Added ${alert_id} to user with id ${user_id}.` });
+    return res.status(200).json({ message: `Added alert ${alert_id} to user with id ${user_id}.` });
 
 });
 
@@ -185,7 +186,7 @@ router.get("/:user_id/timezone", limiter, async (req, res, next) => {
 
     const user_id = parseInt(req.params.user_id);
 
-    if (user_id) {
+    if (typeof user_id != 'undefined') {
         const timezone = await users_api.getTimezone(user_id);
         return res.status(200).json(timezone);
     }
@@ -199,7 +200,7 @@ router.get("/:user_id/activeCard", limiter, async (req, res, next) => {
 
     const user_id = parseInt(req.params.user_id);
 
-    if (user_id) {
+    if (typeof user_id != 'undefined') {
         const activeCard = await users_api.getActiveCard(user_id);
         return res.status(200).json(activeCard);
     }
@@ -213,8 +214,7 @@ router.get("/:user_id/cards", limiter, async (req, res, next) => {
 
     const user_id = parseInt(req.params.user_id);
 
-    if (user_id) {
-
+    if (typeof user_id != 'undefined') {
         const cards = await users_api.getCards(user_id);
         console.log(cards);
         return res.status(200).json(cards);
@@ -239,7 +239,7 @@ router.post("/:user_id/cards", limiter, async (req, res, next) => {
     const country = req.query.country;
     const zip = req.query.zip;
 
-    if (!user_id || !card_number || !name_on_card || !card_expiration || !cvc || !address1 || !city || !state || !country || !zip) {
+    if (typeof user_id == 'undefined' || !card_number || !name_on_card || !card_expiration || !cvc || !address1 || !city || !state || !country || !zip) {
         return res.status(400).json({ error: 'Invalid arguments.' });
     }
 
@@ -261,7 +261,7 @@ router.delete("/:user_id/cards/:card_id", limiter, async (req, res, next) => {
     const user_id = parseInt(req.params.user_id);
     const card_id = parseInt(req.params.card_id);
 
-    if (user_id && card_id) {
+    if (typeof user_id != 'undefined' && typeof card_id != 'undefined') {
         await users_api.deleteCard(user_id, card_id);
         return res.status(200).json({ message: 'Deleted card successfully.' });
     }
@@ -276,12 +276,9 @@ router.put("/:user_id/activeCard/:card_id", limiter, async (req, res, next) => {
     const user_id = parseInt(req.params.user_id);
     const card_id = parseInt(req.params.card_id);
 
-    if (user_id && card_id) {
-
+    if (typeof user_id != 'undefined' && typeof card_id != 'undefined') {
         await users_api.setActiveCard(user_id, card_id)
         return res.status(200).json({ message: 'Set active card successfully.' });
-
-
     }
 
     return res.status(400).json({ error: 'Invalid arguments.' });
@@ -304,7 +301,7 @@ router.post("/:user_id/cards/:card_id/update", limiter, async (req, res, next) =
     const country = req.query.country;
     const zip = req.query.zip;
 
-    if (!user_id || !card_number || !name_on_card || !card_expiration || !cvc || !address1 || !city || !state || !country || !zip) {
+    if (typeof user_id == 'undefined' || !card_number || !name_on_card || !card_expiration || !cvc || !address1 || !city || !state || !country || !zip) {
         return res.status(400).json({ error: 'Invalid arguments.' });
     }
 
@@ -327,14 +324,12 @@ router.put("/:user_id/timezone/:timezone", limiter, async (req, res, next) => {
     const timezone = req.params.timezone;
 
 
-    if (user_id && timezone) {
-
+    if (typeof user_id != 'undefined' && timezone) {
         if (await users_api.setTimezone(user_id, timezone)) {
             return res.status(201).json({ message: 'Timezone updated successfully.' });
         } else {
             return res.status(500).json({ message: 'Error updating timezone.' });
         }
-
     }
 
     return res.status(400).json({ error: 'Invalid arguments.' });
@@ -348,7 +343,7 @@ router.put("/:user_id/password", limiter, async (req, res, next) => {
     const old_hashed_password = req.query.new;
     const new_hashed_password = req.query.old;
 
-    if (user_id && new_hashed_password && old_hashed_password) {
+    if (typeof user_id != 'undefined' && new_hashed_password && old_hashed_password) {
 
         if (await users_api.updatePassword(user_id, old_hashed_password, new_hashed_password)) {
             return res.status(201).json({ message: 'Password updated successfully.' });
