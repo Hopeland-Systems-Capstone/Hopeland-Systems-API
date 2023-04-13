@@ -293,6 +293,12 @@ users_api.setAlarmRecipientStatus(0, 2, false)
 | **GET** | /users?key=val&email=val | Return user information when only given email |
 | **GET** | /users?key=val&username=val&hashed_password=val | Verify user password combo when given username and password |
 | **GET** | /users?key=val&email=val&hashed_password=val | Verify user password combo when given email and password |
+| **GET** | /users/:user_id/cards?key=val | Get all cards on file for a user |
+| **GET** | /users/:user_id/activeCard?key=val | Get the active card for a user |
+| **GET** | /users/:user_id/timezone | Get timezone for a user |
+| **POST** | /users?key=val&username=val&email=val&hashed_password=val&phone_number=val&company_name=val&timezone=val | Create new user given username, email, hashed_password, and optional phone_number, company_name, and timezone |
+| **POST** | /users/:user_id/cards?cardNumber=cardNumber&nameOnCard=nameOnCard&cardExpiration=cardExpiration&cvc=cvc&address1=address1&address2=address2&city=city&state=state&country=country&zip=zip | Add a card for a user |
+| **POST** | /users/:user_id/cards/:card_id/update?cardNumber=cardNumber&nameOnCard=nameOnCard&cardExpiration=cardExpiration&cvc=cvc&address1=address1&address2=address2&city=city&state=state&country=country&zip=zip | Update a card for a user |
 | **GET** | /users/:user_id/bills | Returns list of bills belonging to the indicated user_id |
 | **GET** | /users/:user_id/alarmRecipients | Returns list of alarm recipients belonging to the indicated user_id |
 | **GET** | /users/:user_id/alarmRecipients/:alarm_recipient_id/enabled | Returns whether an alarm recipient, given its alarm_recipient_id and associated user_id, is enabled |
@@ -304,12 +310,16 @@ users_api.setAlarmRecipientStatus(0, 2, false)
 | **DELETE** | /users?key=val&email=val&sensor_id=val | Delete sensor from user when given sensor_id and email |
 | **DELETE** | /users?key=val&username=val&alert_id=val | Delete alert from user when given alert_id and username |
 | **DELETE** | /users?key=val&email=val&alert_id=val | Delete alert from user when given alert_id and email |
+| **DELETE** | /users/:user_id/cards/:card_id?key=val | Delete a card for a user |
 | **DELETE** | /users/:user_id/bills/:bill_id | Deletes the bill with a given bill_id from the indicated user_id |
 | **DELETE** | /users/:user_id/alarmRecipients/:alarm_recipient_id | Deletes the alarm recipient with a given alarm_recipient_id from the indicated user_id |
 | **PUT** | /users?key=val&username=val&sensor_id=val | Add sensor to user when given sensor_id and name |
 | **PUT** | /users?key=val&email=val&sensor_id=val | Add sensor to user when given sensor_id and email |
 | **PUT** | /users?key=val&username=val&alert_id=val | Add alert to user when given alert_id and username |
 | **PUT** | /users?key=val&email=val&salert_id=val | Add alert to user when given alert_id and email |
+| **PUT** | /users/:user_id/password?key=val&new=new_password&old=old_password | Update password for user |
+| **PUT** | /users/:user_id/timezone/:timezone?key=val | Set timezone for a user |
+| **PUT** | /users/:user_id/activeCard/:card_id?key=val | Set the active card for a user |
 | **PUT** | /users/user_id/update?name=name&email=email&phone_number=phone_number&company_name=company_name&key=val | Update user's `user_id` name, email, phone number, company name |
 | **GET** | /users/user_id/alerts?key=val| Return Alerts for user with `user_id` |
 | **GET** | /users/user_id/email?key=val | Return Email for user with `user_id` |
@@ -405,6 +415,26 @@ users_api.setAlarmRecipientStatus(0, 2, false)
         "alarm_recipients":[],
         "sensors":[],
         "alerts":[]
+    }
+]
+```
+
+## Card Format
+```json
+[
+    {
+        "_id": "63f729a661a5521ee483e416",
+        "card_id": 1,
+        "cardNumber": "4242424242424242",
+        "nameOnCard": "Walter White",
+        "cardExpiration": "0424",
+        "cvc": "424",
+        "address1": "308 Negra Arroyo Lane",
+        "address2": "#0000",
+        "city": "Albuquerque",
+        "state": "New Mexico",
+        "country": "United States of America",
+        "zip": "87104"
     }
 ]
 ```
