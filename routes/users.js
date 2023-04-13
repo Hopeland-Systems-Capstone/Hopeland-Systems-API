@@ -24,7 +24,7 @@ router.get("/:user_id/timezone", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res, req.query.key)) return;
 
-    const user_id = req.params.user_id;
+    const user_id = parseInt(req.params.user_id);
 
     if (user_id) {
         const timezone = await users_api.getTimezone(user_id);
@@ -39,10 +39,10 @@ router.get("/:user_id/activeCard", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res, req.query.key)) return;
 
-    const user_id = req.params.user_id;
+    const user_id = parseInt(req.params.user_id);
 
     if (user_id) {
-        const activeCard = users_api.getActiveCard(user_id);
+        const activeCard = await users_api.getActiveCard(user_id);
         return res.status(200).json(activeCard);
     }
 
@@ -54,10 +54,12 @@ router.get("/:user_id/cards", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res, req.query.key)) return;
 
-    const user_id = req.params.user_id;
+    const user_id = parseInt(req.params.user_id);
 
     if (user_id) {
-        const cards = users_api.getCards(user_id);
+
+        const cards = await users_api.getCards(user_id);
+        console.log(cards);
         return res.status(200).json(cards);
     }
 
@@ -69,7 +71,7 @@ router.post("/:user_id/cards", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res, req.query.key)) return;
 
-    const user_id = req.params.user_id;
+    const user_id = parseInt(req.params.user_id);
     const card_number = req.query.cardNumber;
     const name_on_card = req.query.nameOnCard;
     const card_expiration = req.query.cardExpiration;
@@ -86,11 +88,9 @@ router.post("/:user_id/cards", limiter, async (req, res, next) => {
     }
 
     try {
-        if (await users_api.addCard(user_id, card_number, name_on_card, card_expiration, cvc, address1, address2, city, state, country, zip)) {
-            return res.status(201).json({ message: 'Card created successfully.' });
-        } else {
-            return res.status(500).json({ message: 'Error adding card to user.' });
-        }
+        await users_api.addCard(user_id, card_number, name_on_card, card_expiration, cvc, address1, address2, city, state, country, zip)
+        return res.status(201).json({ message: 'Card created successfully.' });
+
     }
     catch (error) {
         console.log(error);
@@ -103,17 +103,12 @@ router.delete("/:user_id/cards/:card_id", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res, req.query.key)) return;
 
-    const user_id = req.params.user_id;
-    const card_id = req.query.card_id;
+    const user_id = parseInt(req.params.user_id);
+    const card_id = parseInt(req.params.card_id);
 
     if (user_id && card_id) {
-
-        if (await users_api.deleteCard(user_id, card_id)) {
-            return res.status(200).json( { message: 'Deleted card successfully.' });
-        } else {
-            return res.status(500).json( { message: 'Error deleting card.' });
-        }
-
+        await users_api.deleteCard(user_id, card_id);
+        return res.status(200).json({ message: 'Deleted card successfully.' });
     }
 
     return res.status(400).json({ error: 'Invalid arguments.' });
@@ -121,19 +116,17 @@ router.delete("/:user_id/cards/:card_id", limiter, async (req, res, next) => {
 
 // - User - setActiveCard(user_id,card_id) | Set the active card for a user | PUT /users/:user_id/activeCard/:card_id
 router.put("/:user_id/activeCard/:card_id", limiter, async (req, res, next) => {
-    
+
     if (!await api_key_util.checkKey(res, req.query.key)) return;
 
-    const user_id = req.params.user_id;
-    const card_id = req.params.card_id;
+    const user_id = parseInt(req.params.user_id);
+    const card_id = parseInt(req.params.card_id);
 
     if (user_id && card_id) {
 
-        if (await users_api.setActiveCard(user_id, card_id)) {
-            return res.status(200).json( { message: 'Set active card successfully.' });
-        } else {
-            return res.status(500).json( { message: 'Error setting active card.' });
-        }
+        await users_api.setActiveCard(user_id, card_id)
+        return res.status(200).json({ message: 'Set active card successfully.' });
+
 
     }
 
@@ -145,8 +138,8 @@ router.put("/:user_id/cards/:card_id/update", limiter, async (req, res, next) =>
 
     if (!await api_key_util.checkKey(res, req.query.key)) return;
 
-    const user_id = req.params.user_id;
-    const card_id = req.params.card_id;
+    const user_id = parseInt(req.params.user_id);
+    const card_id = parseInt(req.params.card_id);
     const card_number = req.query.cardNumber;
     const name_on_card = req.query.nameOnCard;
     const card_expiration = req.query.cardExpiration;
@@ -163,11 +156,9 @@ router.put("/:user_id/cards/:card_id/update", limiter, async (req, res, next) =>
     }
 
     try {
-        if (await users_api.updateCard(user_id, card_id, card_number, name_on_card, card_expiration, cvc, address1, address2, city, state, country, zip)) {
-            return res.status(201).json({ message: 'Card updated successfully.' });
-        } else {
-            return res.status(500).json({ message: 'Error updating card.' });
-        }
+        await users_api.updateCard(user_id, card_id, card_number, name_on_card, card_expiration, cvc, address1, address2, city, state, country, zip);
+        return res.status(201).json({ message: 'Card updated successfully.' });
+
     }
     catch (error) {
         console.log(error);
@@ -177,18 +168,19 @@ router.put("/:user_id/cards/:card_id/update", limiter, async (req, res, next) =>
 
 // - User - setTimeZone(user_id,timezone) | Set timezone for a user | PUT /users/:user_id/timezone/:timezone
 router.put("/:user_id/timezone/:timezone", limiter, async (req, res, next) => {
-    
+
     if (!await api_key_util.checkKey(res, req.query.key)) return;
 
-    const user_id = req.params.user_id;
+    const user_id = parseInt(req.params.user_id);
     const timezone = req.params.timezone;
 
-    if(user_id && timezone) {
 
-        if(await users_api.setTimezone(user_id, timezone)) {
+    if (user_id && timezone) {
+
+        if (await users_api.setTimezone(user_id, timezone)) {
             return res.status(201).json({ message: 'Timezone updated successfully.' });
         } else {
-            return res.status(500).json({ message: 'Error updating card.' });
+            return res.status(500).json({ message: 'Error updating timezone.' });
         }
 
     }
@@ -198,16 +190,16 @@ router.put("/:user_id/timezone/:timezone", limiter, async (req, res, next) => {
 
 // - User - updatePassword(user_id,old_password,new_password) | Update password for user | PUT /users/:user_id/password?new=:new_password&old=:old_password
 router.put("/:user_id/password", limiter, async (req, res, next) => {
-    
+
     if (!await api_key_util.checkKey(res, req.query.key)) return;
 
-    const user_id = req.params.user_id;
+    const user_id = parseInt(req.params.user_id);
     const old_hashed_password = req.query.new;
     const new_hashed_password = req.query.old;
 
-    if(user_id && new_hashed_password && old_hashed_password) {
+    if (user_id && new_hashed_password && old_hashed_password) {
 
-        if(await users_api.updatePassword(user_id, old_hashed_password, new_hashed_password)) {
+        if (await users_api.updatePassword(user_id, old_hashed_password, new_hashed_password)) {
             return res.status(201).json({ message: 'Password updated successfully.' });
         } else {
             return res.status(500).json({ message: 'Error updating password.' });
