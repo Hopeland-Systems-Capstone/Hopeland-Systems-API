@@ -8,16 +8,25 @@ const api_key_util = require('./util/api_key_util');
 //GET | /users?key=apikey&email=email | Return user information when only given email
 //GET | /users?key=apikey&username=name&hashed_password=hashed_password | Verify user password combo when given username and password
 //GET | /users?key=apikey&email=email&hashed_password=hashed_password | Verify user password combo when given email and password
+//GET | /users/:user_id/cards?key=val | Get all cards on file for a user
+//GET | /users/:user_id/activeCard?key=val | Get the active card for a user
+//GET | /users/:user_id/timezone | Get timezone for a user
 //POST | /users?key=apikey&username=name&email=email&hashed_password=hashed_password&phone_number=0000000000&company_name=Hopeland&timezone=MST | Create new user given username, email, hashed_password (Optional phone_number, company_name, and timezone)
+//POST | /users/:user_id/cards?cardNumber=cardNumber&nameOnCard=nameOnCard&cardExpiration=cardExpiration&cvc=cvc&address1=address1&address2=address2&city=city&state=state&country=country&zip=zip | Add a card for a user
+//POST | /users/:user_id/cards/:card_id/update?cardNumber=cardNumber&nameOnCard=nameOnCard&cardExpiration=cardExpiration&cvc=cvc&address1=address1&address2=address2&city=city&state=state&country=country&zip=zip | Update a card for a user
 //DELETE | /users?key=apikey&user_id=user_id | Delete user give user_id
 //DELETE | /users?key=apikey&username=name&sensor_id=sensor_id | Delete sensor from user when given sensor_id and username
 //DELETE | /users?key=apikey&email=email&sensor_id=sensor_id | Delete sensor from user when given sensor_id and email
 //DELETE | /users?key=apikey&username=name&alert_id=alert_id | Delete alert from user when given alert_id and username
 //DELETE | /users?key=apikey&email=email&alert_id=alert_id | Delete alert from user when given alert_id and email
+//DELETE | /users/:user_id/cards/:card_id?key=val | Delete a card for a user
 //PUT | /users?key=apikey&username=name&sensor_id=sensor_id | Add sensor to user when given sensor_id and name 
 //PUT | /users?key=apikey&email=email&sensor_id=sensor_id | Add sensor to user when given sensor_id and email 
 //PUT | /users?key=apikey&username=name&alert_id=alert_id | Add alert to user when given alert_id and username 
 //PUT | /users?key=apikey&email=email&salert_id=alert_id | Add alert to user when given alert_id and email
+//PUT | /users/:user_id/password?key=val&new=new_password&old=old_password | Update password for user
+//PUT | /users/:user_id/timezone/:timezone?key=val | Set timezone for a user
+//PUT | /users/:user_id/activeCard/:card_id?key=val | Set the active card for a user
 
 // - User - getTimeZone(user_id) | Get timezone for a user | GET /users/:user_id/timezone
 router.get("/:user_id/timezone", limiter, async (req, res, next) => {
