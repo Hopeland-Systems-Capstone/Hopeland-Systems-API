@@ -297,31 +297,31 @@ async function getLastUpdated(sensor_id) {
     return exists.last_update;
 }
 
-/**
- * Count the number of online sensors associated with a user_id
- * @param {Number} user_id - user id
- */
-async function countOnline(user_id) {
-    const projection = { sensors: 1, _id: 0 };
+// /**
+//  * Count the number of online sensors associated with a user_id
+//  * @param {Number} user_id - user id
+//  */
+// async function countOnline(user_id) {
+//     const projection = { sensors: 1, _id: 0 };
 
-    const user = await Mongo.users.findOne({
-        "user_id":user_id
-    }, projection);
+//     const user = await Mongo.users.findOne({
+//         "user_id":user_id
+//     }, projection);
 
-    if (!user) {
-        console.log(`User ${user_id} does not exist.`);
-        return null;
-    }
+//     if (!user) {
+//         console.log(`User ${user_id} does not exist.`);
+//         return null;
+//     }
 
-    const sensorIds = user.sensors.map(sensor => sensor.sensor_id);
+//     const sensorIds = user.sensors.map(sensor => sensor.sensor_id);
 
-    const onlineSensors = await Mongo.sensors.countDocuments({
-        sensor_id: { $in: sensorIds },
-        status: "Online"
-    });
+//     const onlineSensors = await Mongo.sensors.countDocuments({
+//         sensor_id: { $in: sensorIds },
+//         status: "Online"
+//     });
 
-    return onlineSensors;
-}
+//     return onlineSensors;
+// }
 
 /**
  * Count the number of offline sensors associated with a user_id
@@ -363,7 +363,5 @@ module.exports = {
     getReadings,
     getLastReading,
     getLastUpdated,
-    countOnline,
-    countOffline,
 };
   

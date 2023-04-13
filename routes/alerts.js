@@ -11,8 +11,21 @@ const api_key_util = require('./util/api_key_util');
 //GET | /alerts?key=apikey&days=10 | Returns all alerts from the past 10 days
 //GET | /alerts?key=apikey&days=10&amount=100 | Returns all alerts from the past 10 days, but caps at 100 alerts
 //GET | /alerts?key=apikey&amount=10 | Returns the last 10 alerts
+//GET | /alerts/:alert_id/sensor?key=val | Return sensor_id associated with `alert_id`
 //POST | /alerts?key=apikey&title=New%20Alert&alert=This%20is%20a%20new%20alert&associated_sensor=0 | Create a new alert with a title and alert
 //DELETE | /alerts?key=apikey&alert_id=0 | Delete alert with alert_id
+
+router.get("/:alert_id/sensor", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const alert_Id = parseInt(req.params.alert_id);
+
+    const data = await alerts_api.getSensor(alert_Id);
+
+    res.status(200).json(data);
+
+});
 
 router.get("/", limiter, async (req, res, next) => {
 

@@ -11,6 +11,13 @@ const api_key_util = require('./util/api_key_util');
 //GET | /users/:user_id/bills | Returns list of bills belonging to the indicated user_id |
 //GET | /users/:user_id/alarmRecipients | Returns list of alarm recipients belonging to the indicated user_id |
 //GET | /users/:user_id/alarmRecipients/:alarm_recipient_id/enabled | Returns whether an alarm recipient, given its alarm_recipient_id and associated user_id, is enabled |
+//GET | /users/user_id/alerts?key=val| Return Alerts for user with `user_id`
+//GET | /users/user_id/email?key=val | Return Email for user with `user_id`
+//GET | /users/user_id/name?key=val | Return Name for user with `user_id`
+//GET | /users/user_id/companyName?key=val | Return Company Name for user with `user_id`
+//GET | /users/user_id/phoneNumber?key=val | Return Phone Number for user with `user_id`
+//GET | /users/:user_id/sensors/countOnline?key=val | Return amount of online sensors for user `user_id`
+//GET | /users/:user_id/sensors/countOffline?key=val | Return amount of offline sensors for user `user_id`
 //POST | /users?key=apikey&username=name&email=email&hashed_password=hashed_password&phone_number=0000000000&company_name=Hopeland&timezone=MST | Create new user given username, email, hashed_password (Optional phone_number, company_name, and timezone)
 //POST | /users/:user_id/bills?billing_date=val&amount=val | Creates a new bill and adds bill to an indicated user_id given billing_date and amount |
 //POST | /users/:user_id/alarmRecipients?name=val&email=val | Creates a new alarm recipient and adds alarm recipient to an indicated user_id given name and email|
@@ -27,6 +34,110 @@ const api_key_util = require('./util/api_key_util');
 //PUT | /users?key=apikey&email=email&salert_id=alert_id | Add alert to user when given alert_id and email
 //PUT | /users/:user_id/bills/:bill_id/update?status=val | Updates the bill when given status |
 //PUT | /users/:user_id/alarmRecipients/:alarm_recipient_id/enabled/:enabled | Updates the alarm recipient when given enabled (must be true or false) |
+//PUT | /users/user_id/update?name=name&email=email&phone_number=phone_number&company_name=company_name&key=val | Update user's `user_id` name, email, phone number, company name
+
+router.get('/:user_id/sensors/countOffline', async (req, res) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const user_Id = parseInt(req.params.user_id);
+   
+    if (user_Id === NaN) {
+        res.status(400).send('Invalid arguments');
+    } else {
+        const data = await users_api.countOffline(user_Id);
+        res.status(200).json(data);
+    }
+});
+
+router.get('/:user_id/sensors/countOnline', async (req, res) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const user_Id = parseInt(req.params.user_id);
+    
+    if (user_Id === NaN) {
+        res.status(400).send('Invalid arguments');
+    } else {
+        const data = await users_api.countOnline(user_Id);
+        res.status(200).json(data);
+    }
+});
+
+router.get("/:user_id/phoneNumber", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const user_Id = parseInt(req.params.user_id);
+
+    if ( user_Id === NaN) {
+        return res.status(400).json({error: `Invalid arguments`})
+    } else {
+        const data = await users_api.getPhoneNumber(user_Id);
+        return res.status(200).json(data);
+    }
+
+});
+
+router.get("/:user_id/companyName", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const user_Id = parseInt(req.params.user_id);
+
+    if ( user_Id === NaN) {
+        return res.status(400).json({error: `Invalid arguments`})
+    } else {
+        const data = await users_api.getCompanyName(user_Id);
+        return res.status(200).json(data);
+    }
+
+});
+
+router.get("/:user_id/name", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const user_Id = parseInt(req.params.user_id);
+
+    if ( user_Id === NaN) {
+        return res.status(400).json({error: `Invalid arguments`})
+    } else {
+        const data = await users_api.getName(user_Id);
+        return res.status(200).json(data);
+    }
+
+});
+
+router.get("/:user_id/email", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const user_Id = parseInt(req.params.user_id);
+
+    if ( user_Id === NaN) {
+        return res.status(400).json({error: `Invalid arguments`})
+    } else {
+        const data = await users_api.getEmail(user_Id);
+        return res.status(200).json(data);
+    }
+
+});
+
+router.get("/:user_id/alerts", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const user_Id = parseInt(req.params.user_id);
+
+    if ( user_Id === NaN) {
+        return res.status(400).json({error: `Invalid arguments`})
+    } else {
+        const data = await users_api.getAlerts(user_Id);
+        return res.status(200).json(data);
+    }
+
+});
 
 router.get("/", limiter, async (req, res, next) => {
 
@@ -317,5 +428,24 @@ router.put("/:user_id/alarmRecipients/:alarm_recipient_id/enabled/:enabled", lim
         });
     }    
 });
+router.put("/:user_id/update", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const user_Id = parseInt(req.params.user_id);
+    const name = String(req.query.name);
+    const email = String(req.query.email);
+    const phone_number = String(req.query.phone_number);
+    const company_name = String(req.query.company_name);
+
+    console.log(user_Id + name + email);
+
+    if ( user_Id === NaN || !name || !email || !phone_number || !company_name) {
+        return res.status(400).json({error: `Invalid arguments`})
+    } else {
+        await users_api.updateUser(user_Id,name,email,phone_number,company_name);
+        return res.status(200).json({message: `Updated user ${user_Id}`});
+    }
+});    
 
 module.exports = router;

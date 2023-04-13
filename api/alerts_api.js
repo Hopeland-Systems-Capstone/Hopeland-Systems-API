@@ -88,7 +88,7 @@ async function getSensor(alert_id) {
         console.log(`Alert with id ${alert_id} does not exist.`);
         return -1;
     }
-    return result.associated_sensor;
+    return exists.associated_sensor;
 }
 
 module.exports = {
