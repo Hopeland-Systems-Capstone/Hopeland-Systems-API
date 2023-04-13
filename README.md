@@ -39,8 +39,8 @@ docker run -p 3000:3000 hopeland/backend-api:1.0
 # API Usage
 ## Sensors:
 ```javascript
-// Create sensor named sensor1 at longitude 10, latitude 20
-sensor_api.createSensor("sensor1",10,20);
+// Create flood sensor named sensor1 at longitude 10, latitude 20
+sensor_api.createSensor("sensor1",10,20,"Flood");
 
 // Delete sensor named sensor1
 sensor_api.deleteSensor("sensor1");
@@ -264,6 +264,13 @@ users_api.setAlarmRecipientStatus(0, 2, false)
 | **POST** | /sensors?key=val&sensor=val&longitude=val&latitude=val | Create a sensor with a `name`, `longitude`, and `latitude` |
 | **DELETE** | /sensors?key=val&sensor=val | Delete a sensor with a `sensor` name |
 | **PUT** | /sensors?key=val&sensor=val&datatype=val&value=val | Add new data of `datatype` with `value` to `sensor` with name |
+| **GET** | /sensors/:sensor_id/name?key=val | Return sensor name given `sensor_id`|
+| **GET** | /sensors/:sensor_id/status?&key=val | Return sensor status given `sensor_id`|
+| **PUT** | /sensors/:sensor_id/status/:status?&key=val | Set sensor with `sensor_id` to `status`|
+| **GET** | /sensors/:sensor_id/readings?dataType=dataType&timeStart=timeStart&timeEnd=timeEnd&key=val | Return sensor readings of `dataType` from `timeStart` to `timeEnd` for `sensor_id`|
+| **GET** | /sensors/:sensor_id/lastReading?dataType=:dataType&key=val | Return last sensor reading of `dataType` for `sensor_id`|
+| **GET** | /sensors/:sensor_id/lastUpdated?key=val | Return last sensor update for `sensor_id`|
+
 
 ## Alerts:
 | Method | Path | Description |
@@ -277,6 +284,7 @@ users_api.setAlarmRecipientStatus(0, 2, false)
 | **GET** | /alerts?key=val&amount=val | Returns the last `amount` alerts |
 | **POST** | /alerts?key=val&title=val&alert=val&associated_sensor=val | Create an alert with `title` and `alert` and associated with sensor_id `associated_sensor` |
 | **DELETE** | /alerts?key=val&alert_id=val | Delete an alert given an `alert_id` |
+| **GET** | /alerts/:alert_id/sensor?key=val | Return sensor_id associated with `alert_id`|
 
 ## Users:
 | Method | Path | Description |
@@ -291,12 +299,20 @@ users_api.setAlarmRecipientStatus(0, 2, false)
 | **POST** | /users?key=val&username=val&email=val&hashed_password=val&phone_number=val&company_name=val&timezone=val | Create new user given username, email, hashed_password, and optional phone_number, company_name, and timezone |
 | **POST** | /users/:user_id/cards?cardNumber=cardNumber&nameOnCard=nameOnCard&cardExpiration=cardExpiration&cvc=cvc&address1=address1&address2=address2&city=city&state=state&country=country&zip=zip | Add a card for a user |
 | **POST** | /users/:user_id/cards/:card_id/update?cardNumber=cardNumber&nameOnCard=nameOnCard&cardExpiration=cardExpiration&cvc=cvc&address1=address1&address2=address2&city=city&state=state&country=country&zip=zip | Update a card for a user |
+| **GET** | /users/:user_id/bills | Returns list of bills belonging to the indicated user_id |
+| **GET** | /users/:user_id/alarmRecipients | Returns list of alarm recipients belonging to the indicated user_id |
+| **GET** | /users/:user_id/alarmRecipients/:alarm_recipient_id/enabled | Returns whether an alarm recipient, given its alarm_recipient_id and associated user_id, is enabled |
+| **POST** | /users?key=val&username=val&email=val&hashed_password=val&phone_number=val&company_name=val&timezone=val | Create new user given username, email, hashed_password, and optional phone_number, company_name, and timezone |
+| **POST** | /users/:user_id/bills?billing_date=val&amount=val | Creates a new bill and adds bill to an indicated user_id given billing_date and amount |
+| **POST** | /users/:user_id/alarmRecipients?name=val&email=val | Creates a new alarm recipient and adds alarm recipient to an indicated user_id given name and email|
 | **DELETE** | /users?key=val&user_id=val | Delete user give user_id |
 | **DELETE** | /users?key=val&username=val&sensor_id=val | Delete sensor from user when given sensor_id and username |
 | **DELETE** | /users?key=val&email=val&sensor_id=val | Delete sensor from user when given sensor_id and email |
 | **DELETE** | /users?key=val&username=val&alert_id=val | Delete alert from user when given alert_id and username |
 | **DELETE** | /users?key=val&email=val&alert_id=val | Delete alert from user when given alert_id and email |
 | **DELETE** | /users/:user_id/cards/:card_id?key=val | Delete a card for a user |
+| **DELETE** | /users/:user_id/bills/:bill_id | Deletes the bill with a given bill_id from the indicated user_id |
+| **DELETE** | /users/:user_id/alarmRecipients/:alarm_recipient_id | Deletes the alarm recipient with a given alarm_recipient_id from the indicated user_id |
 | **PUT** | /users?key=val&username=val&sensor_id=val | Add sensor to user when given sensor_id and name |
 | **PUT** | /users?key=val&email=val&sensor_id=val | Add sensor to user when given sensor_id and email |
 | **PUT** | /users?key=val&username=val&alert_id=val | Add alert to user when given alert_id and username |
@@ -304,6 +320,16 @@ users_api.setAlarmRecipientStatus(0, 2, false)
 | **PUT** | /users/:user_id/password?key=val&new=new_password&old=old_password | Update password for user |
 | **PUT** | /users/:user_id/timezone/:timezone?key=val | Set timezone for a user |
 | **PUT** | /users/:user_id/activeCard/:card_id?key=val | Set the active card for a user |
+| **PUT** | /users/user_id/update?name=name&email=email&phone_number=phone_number&company_name=company_name&key=val | Update user's `user_id` name, email, phone number, company name |
+| **GET** | /users/user_id/alerts?key=val| Return Alerts for user with `user_id` |
+| **GET** | /users/user_id/email?key=val | Return Email for user with `user_id` |
+| **GET** | /users/user_id/name?key=val | Return Name for user with `user_id` |
+| **GET** | /users/user_id/companyName?key=val | Return Company Name for user with `user_id` |
+| **GET** | /users/user_id/phoneNumber?key=val | Return Phone Number for user with `user_id` |
+| **GET** | /users/:user_id/sensors/countOnline?key=val | Return amount of online sensors for user `user_id`|
+| **GET** | /users/:user_id/sensors/countOffline?key=val | Return amount of offline sensors for user `user_id`|
+| **PUT** | /users/:user_id/bills/:bill_id/update?status=val | Updates the bill when given status |
+| **PUT** | /users/:user_id/alarmRecipients/:alarm_recipient_id/enabled/:enabled | Updates the alarm recipient when given enabled (must be true or false) |
 
 ## Rate Limiting:
 > API keys are rate limited based on their level. By default, API keys are issued at Level 1.
