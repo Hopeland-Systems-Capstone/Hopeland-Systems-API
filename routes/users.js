@@ -134,7 +134,7 @@ router.put("/:user_id/activeCard/:card_id", limiter, async (req, res, next) => {
 });
 
 // - User - updateCard(user_id,card_id,cardNumber,nameOnCard,cardExpiration,cvc,address1,address2,city,state,country,zip) | Update a card for a user | POST /users/:user_id/cards/:card_id/update?cardNumber=:cardNumber&nameOnCard=:nameOnCard&cardExpiration=:cardExpiration&cvc=:cvc&address1=:address1&address2=:address2&city=:city&state=:state&country=:country&zip=:zip
-router.put("/:user_id/cards/:card_id/update", limiter, async (req, res, next) => {
+router.post("/:user_id/cards/:card_id/update", limiter, async (req, res, next) => {
 
     if (!await api_key_util.checkKey(res, req.query.key)) return;
 
