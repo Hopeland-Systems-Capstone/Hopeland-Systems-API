@@ -122,25 +122,6 @@ async function getUser(user_id) {
 }
 
 /**
- * Get user_id given username
- * @param {String} username
- */
-async function getUserByUsername(username) {
-
-    const result = await Mongo.users.find({
-        "username":`${username}`
-    });
-
-    if (result) {
-        console.log(`Found user with username ${username}.`);
-    } else {
-        console.log(`Did not find any user with this username.`);
-        return null;
-    }
-    return result.user_id;
-}
-
-/**
  * Get user_id given email
  * @param {String} email
  */
@@ -991,7 +972,6 @@ module.exports = {
     updateUser,
     deleteUser,
     getUser,
-    getUserByUsername,
     getUserByEmail,
     getUserSensors,
     verifyUserPassword,
