@@ -270,6 +270,7 @@ users_api.setAlarmRecipientStatus(0, 2, false)
 | Method | Path | Description |
 |:------- |:-------|:------|
 | **GET** | /users/email/:email?key=val | Return user_id given email |
+| **GET** | /users/token/:token?key=val | Return user_id given token |
 | **GET** | /users/:user_id?key=val | Return user information given user_id |
 | **GET** | /users/:user_id/password/:hashed_password?key=val | Verify user password combo |
 | **GET** | /users/:user_id/cards?key=val | Get all cards on file for a user |
@@ -382,6 +383,7 @@ users_api.setAlarmRecipientStatus(0, 2, false)
         "name": "Jacob",
         "email": "jdpark10@asu.edu",
         "password": "aaa",
+        "token": "",
         "phone_number":"0000000000",
         "company_name":"Hopeland",
         "timezone":"MST",

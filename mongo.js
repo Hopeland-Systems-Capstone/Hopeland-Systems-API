@@ -229,8 +229,8 @@ class Mongo {
         for (i = 0; i < USERS_TO_GENERATE; i++) {
             const u = userList[i];
             await users_api.createUser(u.name,u.email,u.password,u.phone_number,u.company_name,u.timezone);
-            await users_api.addSensorToUserWithUsername(u.name,i*2)
-            await users_api.addSensorToUserWithUsername(u.name,i*2+1)
+            await users_api.addSensorToUser(u.user_id,i*2)
+            await users_api.addSensorToUser(u.user_id,i*2+1)
         }
 
         const alerts_api = require('./api/alerts_api');

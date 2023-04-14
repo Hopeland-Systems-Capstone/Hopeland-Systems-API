@@ -45,6 +45,7 @@ async function createUser(name, email, hashed_password, phone_number = "", compa
         "name":`${name}`,
         "email":`${email}`,
         "password":`${hashed_password}`,
+        "token":"",
         "phone_number":`${phone_number}`,
         "company_name":`${company_name}`,
         "timezone":`${timezone}`,
@@ -135,6 +136,26 @@ async function getUserByEmail(email) {
         console.log(`Found user with email ${email}.`);
     } else {
         console.log(`Did not find any user with email ${email}.`);
+        return -1;
+    }
+
+    return result.user_id;
+}
+
+/**
+ * Get user_id given token
+ * @param {String} token
+ */
+async function getUserByToken(token) {
+
+    const result = await Mongo.users.findOne({
+        "token":`${token}`
+    });
+
+    if (result) {
+        console.log(`Found user with token ${token}.`);
+    } else {
+        console.log(`Did not find any user with token ${token}.`);
         return -1;
     }
 
@@ -419,6 +440,21 @@ async function setTimezone(user_id, timezone) {
     }
 
     await Mongo.users.updateOne({ "user_id": user_id }, { $set: { "timezone":`${timezone}` } });
+}
+
+/**
+ * Set token for a user
+ * @param {Number} user_id
+ * @param {String} token
+ */
+async function setToken(user_id, token) {
+    const exists = await Mongo.users.findOne({ "user_id": user_id });
+    if (!exists) {
+        console.log(`User ${user_id} does not exist.`);
+        return null;
+    }
+
+    await Mongo.users.updateOne({ "user_id": user_id }, { $set: { "token":`${token}` } });
 }
 
 /**
@@ -974,6 +1010,7 @@ module.exports = {
     deleteUser,
     getUser,
     getUserByEmail,
+    getUserByToken,
     getUserSensors,
     verifyUserPassword,
     addSensorToUser,
@@ -987,6 +1024,7 @@ module.exports = {
     getPhoneNumber,
     getTimezone,
     setTimezone,
+    setToken,
     updatePassword,
     getNextCardID,
     addCard,

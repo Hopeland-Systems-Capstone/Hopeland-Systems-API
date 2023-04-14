@@ -5,6 +5,7 @@ const users_api = require('../api/users_api');
 const api_key_util = require('./util/api_key_util');
 
 //GET | /users/email/:email?key=apikey | Return user_id given email
+//GET | /users/token/:token?key=apikey | Return user_id given token
 //GET | /users/:user_id?key=apikey | Return user information given user_id
 //GET | /users/:user_id/password/:hashed_password?key=apikey
 //GET | /users/:user_id/cards?key=val | Get all cards on file for a user
@@ -52,6 +53,21 @@ router.get("/email/:email", limiter, async (req, res, next) => {
     }
 
     const user_id = await users_api.getUserByEmail(email);
+    return res.status(200).json(user_id);
+
+});
+
+router.get("/token/:token", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res, req.query.key)) return;
+
+    const token = req.params.token;
+
+    if (!token) {
+        return res.status(400).json({ error: 'Invalid arguments.' });
+    }
+
+    const user_id = await users_api.getUserByToken(token);
     return res.status(200).json(user_id);
 
 });
@@ -160,6 +176,22 @@ router.delete("/:user_id/alert/:alert_id", limiter, async (req, res, next) => {
 
     await users_api.removeAlertFromUser(user_id, alert_id);
     return res.status(200).json({ message: `Removed ${alert_id} from user with id ${user_id}.` });
+
+});
+
+router.put("/:user_id/token/:token", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res, req.query.key)) return;
+
+    const user_id = parseInt(req.params.user_id);
+    const token = req.params.token;
+
+    if (typeof user_id == 'undefined' || user_id === NaN || typeof token == 'undefined' || !token) {
+        return res.status(400).json({ error: 'Invalid arguments.' });
+    }
+
+    await users_api.setToken(user_id, token);
+    return res.status(200).json({ message: `Set token to ${token} for user with id ${user_id}.` });
 
 });
 
