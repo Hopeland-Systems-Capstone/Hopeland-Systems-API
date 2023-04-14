@@ -127,16 +127,17 @@ async function getUser(user_id) {
  */
 async function getUserByEmail(email) {
 
-    const result = await Mongo.users.find({
+    const result = await Mongo.users.findOne({
         "email":`${email}`
     });
 
     if (result) {
         console.log(`Found user with email ${email}.`);
     } else {
-        console.log(`Did not find any user with this email.`);
-        return null;
+        console.log(`Did not find any user with email ${email}.`);
+        return -1;
     }
+
     return result.user_id;
 }
 
