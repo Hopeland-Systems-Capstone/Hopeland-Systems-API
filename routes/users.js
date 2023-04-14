@@ -4,6 +4,8 @@ const limiter = require('./rate_limit/rate_limiting').limiter
 const users_api = require('../api/users_api');
 const api_key_util = require('./util/api_key_util');
 
+//GET | /users/username/:username?key=apikey | Return user_id given username
+//GET | /users/email/:email?key=apikey | Return user_id given email
 //GET | /users/:user_id?key=apikey | Return user information given user_id
 //GET | /users/:user_id/password/:hashed_password?key=apikey
 //GET | /users/:user_id/cards?key=val | Get all cards on file for a user
@@ -39,6 +41,36 @@ const api_key_util = require('./util/api_key_util');
 //PUT | /users/:user_id/bills/:bill_id/update?status=val | Updates the bill when given status |
 //PUT | /users/:user_id/alarmRecipients/:alarm_recipient_id/enabled/:enabled | Updates the alarm recipient when given enabled (must be true or false) |
 //PUT | /users/user_id/update?name=name&email=email&phone_number=phone_number&company_name=company_name&key=val | Update user's `user_id` name, email, phone number, company name
+
+router.get("/username/:username", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res, req.query.key)) return;
+
+    const username = req.params.username;
+
+    if (!username) {
+        return res.status(400).json({ error: 'Invalid arguments.' });
+    }
+
+    const user_id = await users_api.getUserByUsername(username);
+    return res.status(200).json(user_id);
+
+});
+
+router.get("/email/:email", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res, req.query.key)) return;
+
+    const email = req.params.email;
+
+    if (!email) {
+        return res.status(400).json({ error: 'Invalid arguments.' });
+    }
+
+    const user_id = await users_api.getUserByEmail(email);
+    return res.status(200).json(user_id);
+
+});
 
 router.get("/:user_id", limiter, async (req, res, next) => {
 

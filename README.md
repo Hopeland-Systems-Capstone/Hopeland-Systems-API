@@ -140,6 +140,12 @@ users_api.updateUser(0,"User1","user1@gmail.com","0000000000","Hopeland")
 // Delete the user with user_id 0
 users_api.deleteUser(0);
 
+// Get the user_id with username
+users_api.getUserByUsername("user1")
+
+// Get the user_id with email
+users_api.getUserByEmail("user1@gmail.com")
+
 // Get the user with id 1
 users_api.getUser(1);
 
@@ -266,6 +272,8 @@ users_api.setAlarmRecipientStatus(0, 2, false)
 ## Users:
 | Method | Path | Description |
 |:------- |:-------|:------|
+| **GET** | /users/username/:username?key=val | Return user_id given username |
+| **GET** | /users/email/:email?key=val | Return user_id given email |
 | **GET** | /users/:user_id?key=val | Return user information given user_id |
 | **GET** | /users/:user_id/password/:hashed_password?key=val | Verify user password combo |
 | **GET** | /users/:user_id/cards?key=val | Get all cards on file for a user |

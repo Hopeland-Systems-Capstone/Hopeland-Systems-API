@@ -122,6 +122,44 @@ async function getUser(user_id) {
 }
 
 /**
+ * Get user_id given username
+ * @param {String} username
+ */
+async function getUserByUsername(username) {
+
+    const result = await Mongo.users.find({
+        "username":`${username}`
+    });
+
+    if (result) {
+        console.log(`Found user with username ${username}.`);
+    } else {
+        console.log(`Did not find any user with this username.`);
+        return null;
+    }
+    return result.user_id;
+}
+
+/**
+ * Get user_id given email
+ * @param {String} email
+ */
+async function getUserByEmail(email) {
+
+    const result = await Mongo.users.find({
+        "email":`${email}`
+    });
+
+    if (result) {
+        console.log(`Found user with email ${email}.`);
+    } else {
+        console.log(`Did not find any user with this email.`);
+        return null;
+    }
+    return result.user_id;
+}
+
+/**
  * Get all the sensors a user has access to
  * @param {Number} user_id
  */
@@ -953,6 +991,8 @@ module.exports = {
     updateUser,
     deleteUser,
     getUser,
+    getUserByUsername,
+    getUserByEmail,
     getUserSensors,
     verifyUserPassword,
     addSensorToUser,
