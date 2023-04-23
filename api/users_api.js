@@ -167,18 +167,15 @@ async function getUserByToken(token) {
  * @param {Number} user_id
  */
 async function getUserSensors(user_id) {
-
-    const projection = { sensors: 1, _id: 0 };
-
     const exists = await Mongo.users.findOne({
         "user_id":user_id
-    }, projection);
+    });
     if (!exists) {
         console.log(`User with id: ${user_id} does not exist.`);
         return;
     }
 
-    return JSON.parse(JSON.stringify(exists));
+    return JSON.parse(JSON.stringify(exists.sensors));
 }
 
 /**
