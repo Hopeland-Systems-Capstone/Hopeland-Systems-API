@@ -79,7 +79,7 @@ router.delete("/:sensor_id", limiter, async (req, res, next) => {
 
     const sensor_id = parseInt(req.params.sensor_id);
 
-    if (!sensor_id || sensor_id == NaN) {
+    if (typeof sensor_id == 'undefined' || sensor_id == NaN) {
         return res.status(400).json({ error: 'Invalid arguments.' });
     }
 
@@ -98,7 +98,7 @@ router.put("/:sensor_id", limiter, async (req, res, next) => {
     const datatype = req.query.datatype;
     const value = Number(req.query.value);
 
-    if (!sensor_id || sensor_id === NaN || !datatype || isNaN(value)) {
+    if (typeof sensor_id == 'undefined' || sensor_id === NaN || !datatype || isNaN(value)) {
         return res.status(400).json({ error: 'Invalid arguments.' });
     }
 
@@ -204,7 +204,7 @@ router.put('/:sensor_id/status/:status', async (req, res) => {
 
     console.log(sensor_id, status);
     
-    if (!sensor_id || sensor_id === NaN || !status ) {
+    if (typeof sensor_id == 'undefined' || sensor_id == NaN || !status ) {
         return res.status(400).json({ error: 'Invalid arguments.' });
     } else {
         await sensor_api.setStatus(sensor_id, status);
