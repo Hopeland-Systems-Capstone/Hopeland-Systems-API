@@ -40,12 +40,12 @@ router.get("/:sensor_id", limiter, async (req, res, next) => {
 
     const sensor_id = parseInt(req.params.sensor_id);
 
-    if (!sensor_id || sensor_id === NaN) {
+    if (typeof sensor_id == 'undefined' || sensor_id == NaN) {
+        return res.status(400).json({ error: 'Invalid arguments.' });
+    } else {
         const data = await sensor_api.getSensorData(sensor_id);
         return res.status(200).json(data);
     }
-
-    return res.status(400).json({ error: 'Invalid arguments.' });
 
 });
 
