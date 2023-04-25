@@ -109,7 +109,7 @@ async function updateUser(user_id, name, email, phone_number = "", company_name 
  */
 async function getUser(user_id) {
 
-    const result = await Mongo.users.find({
+    const result = await Mongo.users.findOne({
         "user_id":user_id
     });
 
