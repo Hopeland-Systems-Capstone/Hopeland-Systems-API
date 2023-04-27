@@ -459,19 +459,21 @@ async function setToken(user_id, token) {
  * @param {Number} user_id
  * @param {String} old_password
  * @param {String} new_password
+ * @returns {Boolean} whether password was updated
  */
 async function updatePassword(user_id, old_password, new_password) {
     const user = await Mongo.users.findOne({ "user_id": user_id });
     if (!user) {
         console.log(`User ${user_id} does not exist.`);
-        return null;
+        return false;
     }
     console.log(user.password + " " + old_password);
     if (user.password !== old_password) {
         console.log(`Old password does not match current password.`);
-        return null;
+        return false;
     }
     await Mongo.users.updateOne({ "user_id": user_id }, { $set: { password:`${new_password}` } });
+    return true;
 }
 
 /**
