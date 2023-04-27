@@ -77,6 +77,21 @@ async function getAlerts(from, to, days, amount) {
 }
 
 /**
+ * Get alert given alert_id
+ * @param {Number} alert_id Alert ID
+ */
+async function getAlert(alert_id) {
+    const exists = await Mongo.alerts.findOne({
+        "alert_id":alert_id
+    });
+    if (!exists) {
+        console.log(`Alert with id ${alert_id} does not exist.`);
+        return -1;
+    }
+    return exists;
+}
+
+/**
  * Get sensor id associated with alert
  * @param {Number} alert_id Alert ID
  */
@@ -95,5 +110,6 @@ module.exports = {
     createAlert,
     deleteAlert,
     getAlerts,
+    getAlert,
     getSensor
 };

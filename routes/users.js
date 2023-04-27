@@ -388,8 +388,8 @@ router.put("/:user_id/password", limiter, async (req, res, next) => {
     if (!await api_key_util.checkKey(res, req.query.key)) return;
 
     const user_id = parseInt(req.params.user_id);
-    const old_hashed_password = req.query.new;
-    const new_hashed_password = req.query.old;
+    const old_hashed_password = req.query.old;
+    const new_hashed_password = req.query.new;
 
     if (typeof user_id != 'undefined' && new_hashed_password && old_hashed_password) {
 

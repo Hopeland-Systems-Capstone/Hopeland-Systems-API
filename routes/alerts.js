@@ -4,6 +4,7 @@ const limiter = require('./rate_limit/rate_limiting').limiter
 const alerts_api = require('../api/alerts_api');
 const api_key_util = require('./util/api_key_util');
 
+//GET | /alerts/:alert_id | Return alert given alert_id
 //GET | /alerts?key=apikey&from=epochstart | Returns all alerts from "from date" to "now date" (epoch times)
 //GET | /alerts?key=apikey&to=epochend | Returns all alerts from "beginning of time date" to "to date" (epoch times)
 //GET | /alerts?key=apikey&from=epochstart&to=epochend | Returns all alerts from "from date" to "to date" (epoch times)
@@ -53,6 +54,20 @@ router.post("/", limiter, async (req, res, next) => {
         console.error(error);
         return res.status(500).json({ message: 'Error creating alert.' });
     }
+});
+
+router.get("/:alert_id", limiter, async (req, res, next) => {
+
+    if (!await api_key_util.checkKey(res,req.query.key)) return;
+
+    const alert_id = parseInt(req.params.alert_id);
+
+    if (typeof alert_id == 'undefined' || alert_id === NaN) {
+        return res.status(400).json({ error: 'Invalid arguments.' });
+    }
+
+    const data = await alerts_api.getAlert(alert_id);
+    res.status(200).json(data);
 });
 
 router.delete("/:alert_id", limiter, async (req, res, next) => {

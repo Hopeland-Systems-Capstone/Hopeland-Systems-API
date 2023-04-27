@@ -466,6 +466,7 @@ async function updatePassword(user_id, old_password, new_password) {
         console.log(`User ${user_id} does not exist.`);
         return null;
     }
+    console.log(user.password + " " + old_password);
     if (user.password !== old_password) {
         console.log(`Old password does not match current password.`);
         return null;

@@ -84,6 +84,9 @@ sensor_api.getOffline(0)
 
 ## Alerts:
 ```javascript
+// Get alert given alert_id 0
+alerts_api.getAlert(0);
+
 // Create a new alert titled "New Alert" with a message of "This is a test alert" and associated with sensor_id 0
 alerts_api.createAlert("New Alert","This is a test alert",0);
 
@@ -255,6 +258,7 @@ users_api.setAlarmRecipientStatus(0, 2, false)
 ## Alerts:
 | Method | Path | Description |
 |:------- |:-------|:------|
+| **GET** | /alerts/:alerts_id?key=val | Returns alert given alert_id |
 | **GET** | /alerts?key=val&from=val | Returns all alerts from `from` to `to` epoch times |
 | **GET** | /alerts?key=val&to=val | Returns all alerts from beginning of time to `to` epoch time |
 | **GET** | /alerts?key=val&from=val&to=val | Returns all alerts from `from` epoch time to now |
